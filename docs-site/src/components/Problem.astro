@@ -1,80 +1,55 @@
 ---
+import Split from './Split.astro';
 interface Props {
   t: any;
 }
 
 const { t } = Astro.props;
+const p = t.problem;
 ---
 
-<section class="py-12 sm:py-16 lg:py-20 bg-gray-50">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-12 sm:mb-16">
-      <h2 class="text-3xl sm:text-4xl font-bold text-primary mb-4">{t.problem.title}</h2>
-      <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto px-4">
-        {t.problem.subtitle}
-      </p>
+<section class="border-b border-line py-20 sm:py-28">
+  <div class="page-x">
+    <div class="section-head">
+      <h2 class="display-2" data-split><Split text={p.title} /></h2>
+      <p class="text-lg" data-reveal style="--d:300">{p.subtitle}</p>
     </div>
 
-    <div class="max-w-5xl mx-auto mb-12 sm:mb-16">
-      <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-6 sm:p-8 rounded-r-lg shadow-sm">
-        <div class="flex items-start mb-6">
-          <div class="flex-shrink-0">
-            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-            </svg>
-          </div>
-          <div class="ml-4">
-            <h3 class="text-xl sm:text-2xl font-bold text-blue-900 mb-4">{t.problem.historyTitle}</h3>
-
-            <div class="space-y-4 text-sm sm:text-base text-blue-900">
-              {t.problem.history.map((item: any) => (
-                <div>
-                  <h4 class="font-semibold text-base sm:text-lg mb-2">{item.period}</h4>
-                  <p class="text-blue-800">{item.description}</p>
-                </div>
-              ))}
-
-              <div class="bg-blue-100 border border-blue-300 rounded-lg p-4 mt-6">
-                <h4 class="font-semibold text-base sm:text-lg mb-2">{t.problem.whyExists.title}</h4>
-                <p class="text-blue-800">{t.problem.whyExists.description}</p>
-              </div>
-            </div>
+    <div class="grid gap-12 lg:grid-cols-12 lg:gap-10">
+      <div class="lg:col-span-4">
+        <div class="lg:sticky lg:top-24">
+          <h3 class="display-3">{p.historyTitle}</h3>
+          <div class="mt-6 border-s-2 border-amber ps-5">
+            <h4 class="font-semibold text-ink">{p.whyExists.title}</h4>
+            <p class="mt-2 text-fog">{p.whyExists.description}</p>
           </div>
         </div>
       </div>
+
+      <ol class="timeline relative lg:col-span-8 lg:ms-6" data-scrub data-scrub-start="0.6">
+        {p.history.map((item: any) => (
+          <li class="grid gap-2 border-t border-line py-6 sm:grid-cols-[11rem_1fr] sm:gap-8">
+            <h4 class="font-bold text-ink" style="font-stretch: 84%">{item.period}</h4>
+            <p class="max-w-[62ch] text-ink/80">{item.description}</p>
+          </li>
+        ))}
+      </ol>
     </div>
 
-    <div class="grid md:grid-cols-3 gap-6 sm:gap-8">
-      {t.problem.technical.map((item: any, index: number) => {
-        const colors = [
-          { border: 'border-blue-400', icon: 'text-blue-600' },
-          { border: 'border-green-400', icon: 'text-green-600' },
-          { border: 'border-purple-400', icon: 'text-purple-600' }
-        ];
-        const color = colors[index];
-        
-        return (
-          <article class={`bg-white border-l-4 ${color.border} p-6 rounded-r-lg shadow-sm`}>
-            <div class="flex items-start">
-              <div class="flex-shrink-0">
-                <svg class={`w-6 h-6 ${color.icon}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={item.iconPath}></path>
-                </svg>
-              </div>
-              <div class="ml-4">
-                <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">{item.title}</h3>
-                <p class="text-sm sm:text-base text-gray-700">{item.description}</p>
-              </div>
-            </div>
-          </article>
-        );
-      })}
+    <div class="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-3" data-reveal data-spotlight>
+      {p.technical.map((item: any) => (
+        <article class="spot bg-paper p-6 sm:p-8">
+          <svg class="h-6 w-6 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d={item.iconPath}></path>
+          </svg>
+          <h3 class="mt-5 text-lg font-semibold text-ink">{item.title}</h3>
+          <p class="mt-2 text-fog">{item.description}</p>
+        </article>
+      ))}
     </div>
 
-    <div class="mt-12 text-center">
-      <p class="text-base sm:text-lg text-gray-700 max-w-3xl mx-auto px-4">
-        {t.problem.conclusion}
-      </p>
-    </div>
+    <p data-reveal class="mt-14 max-w-[46ch] text-[clamp(1.35rem,2.4vw,1.9rem)] font-medium leading-snug text-ink" style="font-stretch: 90%">
+      {p.conclusion}
+    </p>
   </div>
 </section>

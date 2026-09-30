@@ -6,22 +6,24 @@ interface Props {
 const { t } = Astro.props;
 ---
 
-<section class="py-12 sm:py-16 bg-white border-b border-gray-200">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 text-center">
-      {t.stats.map((stat: any) => (
-        <div class="metric-card p-4 sm:p-6">
-          <div class={`text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 ${stat.color === 'text-accent' ? 'text-green-700' : stat.color}`}>
-            {stat.value}
-          </div>
-          <div class="text-sm sm:text-base text-gray-700 font-semibold">
-            {stat.label}
-          </div>
-          <div class="text-xs sm:text-sm text-gray-600 mt-1">
-            {stat.subtitle}
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
+<section class="border-b border-line bg-paper-2/60">
+  <dl class="page-x grid grid-cols-2 lg:grid-cols-4" data-stagger>
+    {t.stats.map((stat: any, i: number) => (
+      <div
+        class:list={[
+          'border-line py-8 sm:py-10',
+          i % 2 === 1 && 'border-s ps-5 sm:ps-8',
+          i >= 2 && 'border-t lg:border-t-0',
+          i === 2 && 'lg:border-s lg:ps-8',
+          i > 0 && i !== 2 && 'lg:ps-8',
+        ]}
+      >
+        <dt class="text-sm font-semibold text-ink">{stat.label}</dt>
+        <dd data-count class="num mt-2 text-[clamp(2.4rem,4.6vw,3.75rem)] font-bold leading-none tracking-tight text-ink" style="font-stretch: 78%">
+          {stat.value}
+        </dd>
+        <dd class="mt-2 text-sm text-fog">{stat.subtitle}</dd>
+      </div>
+    ))}
+  </dl>
 </section>

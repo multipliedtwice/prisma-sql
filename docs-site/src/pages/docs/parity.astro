@@ -1,0 +1,292 @@
+---
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import {
+  PARITY_ROWS,
+  STATUS_META,
+  STATUS_ORDER,
+  inlineCode,
+  rowsByGroup,
+  type ParityRow,
+} from '../../lib/parity-data';
+
+const base = '/prisma-sql';
+
+function readPackageVersion(): string {
+  for (const path of [resolve(process.cwd(), 'package.json'), resolve(process.cwd(), '..', 'package.json')]) {
+    try {
+      const pkg = JSON.parse(readFileSync(path, 'utf-8'));
+      if (pkg.name === 'prisma-sql') return String(pkg.version);
+    } catch {
+      continue;
+    }
+  }
+  return '';
+}
+
+const version = readPackageVersion();
+const groups = rowsByGroup(PARITY_ROWS);
+const usedStatuses = STATUS_ORDER.filter((s) => PARITY_ROWS.some((r) => r.pg === s || r.sqlite === s));
+const searchText = (r: ParityRow) => `${r.group} ${r.feature} ${r.note} ${r.prisma}`.toLowerCase();
+---
+
+<DocsLayout
+  title="Prisma parity map - prisma-sql"
+  description="Which Prisma Client features prisma-sql accelerates, which fall back to Prisma, and where results can differ, on PostgreSQL and SQLite."
+  active={`${base}/docs/parity`}
+>
+  <h1>Prisma parity map</h1>
+  <p>
+    Every Prisma Client feature we checked, and what prisma-sql does with it on PostgreSQL and SQLite.
+    {version && <> Checked against prisma-sql {version} and the Prisma ORM 7 Client reference.</>}
+  </p>
+
+  <dl class="not-prose mb-10 mt-8 grid gap-x-8 gap-y-4 sm:grid-cols-2 xl:grid-cols-3">
+    {usedStatuses.map((s) => (
+      <div class="flex gap-3">
+        <span class={`st st-${s} mt-1 h-4 w-4 shrink-0 rounded-[3px]`} aria-hidden="true"></span>
+        <div>
+          <dt class="font-semibold text-ink">{STATUS_META[s].label}</dt>
+          <dd class="text-sm text-fog">{STATUS_META[s].description}</dd>
+        </div>
+      </div>
+    ))}
+  </dl>
+
+  <div class="parity-tools sticky top-16 z-10 -mx-2 mb-2 flex flex-col gap-3 rounded-2xl bg-paper/95 px-2 py-3 backdrop-blur" data-parity-tools>
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <label class="relative flex-1">
+        <span class="sr-only">Search features</span>
+        <input
+          type="search"
+          placeholder="Search, e.g. cursor, omit, Json"
+          class="w-full rounded-full border border-ink/30 bg-white px-5 py-2.5 text-base text-ink placeholder:text-fog focus:border-ink"
+          data-parity-search
+        />
+      </label>
+      <div class="flex w-fit rounded-full border border-ink/30 bg-white p-1" role="group" aria-label="Database">
+        {[
+          { id: 'both', label: 'Both' },
+          { id: 'pg', label: 'PostgreSQL' },
+          { id: 'sqlite', label: 'SQLite' },
+        ].map((d, i) => (
+          <button type="button" class="seg rounded-full px-3.5 py-1.5 text-sm font-semibold" data-db={d.id} aria-pressed={i === 0 ? 'true' : 'false'}>
+            {d.label}
+          </button>
+        ))}
+      </div>
+    </div>
+    <div class="flex flex-wrap gap-2" role="group" aria-label="Filter by status">
+      {usedStatuses.map((s) => (
+        <button
+          type="button"
+          class="chip inline-flex items-center gap-2 rounded-full border border-ink/25 bg-white px-3 py-1.5 text-sm font-medium text-ink"
+          data-status={s}
+          aria-pressed="false"
+        >
+          <span class={`st st-${s} h-3 w-3 rounded-[2px]`} aria-hidden="true"></span>
+          {STATUS_META[s].label}
+        </button>
+      ))}
+    </div>
+    <p class="text-sm text-fog" aria-live="polite" data-parity-count>Showing {PARITY_ROWS.length} of {PARITY_ROWS.length} features</p>
+  </div>
+
+  <div class="overflow-x-auto" data-parity-table data-db="both">
+    <table class="parity-table min-w-[48rem]">
+      <thead>
+        <tr>
+          <th scope="col" class="w-[21%]">Feature</th>
+          <th scope="col" class="w-[12%]">Prisma supports</th>
+          <th scope="col" class="col-pg w-[1%] whitespace-nowrap">PostgreSQL</th>
+          <th scope="col" class="col-sqlite w-[1%] whitespace-nowrap">SQLite</th>
+          <th scope="col">Notes</th>
+        </tr>
+      </thead>
+      {groups.map((g) => (
+        <tbody data-group>
+          <tr class="group-row">
+            <th scope="colgroup" colspan="5">{g.group}</th>
+          </tr>
+          {g.rows.map((r) => (
+            <tr data-row data-pg={r.pg} data-sqlite={r.sqlite} data-search={searchText(r)}>
+              <th scope="row" class="font-mono text-[0.84rem] font-medium text-ink">{r.feature}</th>
+              <td>{r.prisma}</td>
+              <td class="col-pg"><span class={`st st-${r.pg} pill`}>{STATUS_META[r.pg].label}</span></td>
+              <td class="col-sqlite"><span class={`st st-${r.sqlite} pill`}>{STATUS_META[r.sqlite].label}</span></td>
+              <td>
+                {r.note && <span set:html={inlineCode(r.note)} />}
+                {!r.verified && <span class="mt-1 block text-xs text-fog">Inferred from the source; not confirmed by a test run.</span>}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      ))}
+    </table>
+    <p class="hidden py-10 text-center text-fog" data-parity-empty>No features match. Clear the search or the status filters.</p>
+  </div>
+
+  <h2>How this was checked</h2>
+  <ul>
+    <li>Prisma behavior comes from the official Prisma ORM 7 Client reference and query guides, with Prisma 6 pages where the v7 pages are thin.</li>
+    <li>prisma-sql behavior comes from reading its source, reviewed twice against the code. The row notes point out partial and differing behavior.</li>
+    <li>Rows marked "inferred from the source" have no test run behind them yet.</li>
+    <li>
+      Anything marked "Falls back" still returns Prisma's result. Enable <code>debug: true</code> to log fallbacks, and run
+      <a href={`${base}/docs/verify`}>prisma-sql-verify</a> to compare results on your own schema.
+    </li>
+  </ul>
+
+  <h2>Databases</h2>
+  <p>
+    prisma-sql supports the <code>postgresql</code> and <code>sqlite</code> providers. Generation fails for MySQL,
+    SQL Server, CockroachDB and MongoDB.
+  </p>
+
+  <h2>Prisma ORM 8</h2>
+  <p>
+    Prisma ORM 8 is a release candidate. According to Prisma's documentation, it replaces the generated
+    <code>PrismaClient</code> and <code>$extends</code> with a new query API, and <code>$extends</code> will not be added
+    to it. prisma-sql hooks in through <code>$extends</code>, so this map covers the Prisma Client API of Prisma 6 and 7.
+    The benchmarks labelled v8 use <code>@prisma/client</code> 8.1.0-dev.1.
+  </p>
+</DocsLayout>
+
+<style>
+  .parity-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+  }
+
+  .parity-table thead th {
+    position: sticky;
+    top: 0;
+    text-align: start;
+    font-weight: 600;
+    color: #0c344b;
+    padding: 0.6rem 0.75rem;
+    border-bottom: 2px solid #0c344b;
+    background: #eef1ec;
+  }
+
+  .parity-table td,
+  .parity-table tbody th[scope='row'] {
+    padding: 0.8rem 0.75rem;
+    border-bottom: 1px solid #c3cec9;
+    vertical-align: top;
+    text-align: start;
+    color: rgba(12, 52, 75, 0.82);
+  }
+
+  .parity-table .group-row th {
+    padding: 2rem 0.75rem 0.6rem;
+    text-align: start;
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-stretch: 84%;
+    color: #0c344b;
+    border-bottom: 1px solid #0c344b;
+  }
+
+  .parity-table :global(code) {
+    font-size: 0.84em;
+    background: #e2e8e1;
+    color: #0c344b;
+    border-radius: 4px;
+    padding: 0.05em 0.35em;
+  }
+
+  .pill {
+    display: inline-block;
+    white-space: nowrap;
+    border-radius: 999px;
+    padding: 0.15rem 0.6rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+
+  [data-db='pg'] .col-sqlite,
+  [data-db='sqlite'] .col-pg {
+    display: none;
+  }
+
+  .seg {
+    color: rgba(12, 52, 75, 0.75);
+  }
+
+  .seg[aria-pressed='true'] {
+    background: #0c344b;
+    color: #eef1ec;
+  }
+
+  .chip[aria-pressed='true'] {
+    border-color: #0c344b;
+    background: #0c344b;
+    color: #eef1ec;
+  }
+</style>
+
+<script>
+  function initParity() {
+    const tools = document.querySelector<HTMLElement>('[data-parity-tools]');
+    const wrap = document.querySelector<HTMLElement>('[data-parity-table]');
+    if (!tools || !wrap || tools.dataset.ready) return;
+    tools.dataset.ready = '1';
+
+    const search = tools.querySelector<HTMLInputElement>('[data-parity-search]');
+    const dbButtons = tools.querySelectorAll<HTMLButtonElement>('[data-db]');
+    const chips = tools.querySelectorAll<HTMLButtonElement>('[data-status]');
+    const count = tools.querySelector<HTMLElement>('[data-parity-count]');
+    const empty = wrap.querySelector<HTMLElement>('[data-parity-empty]');
+    const rows = wrap.querySelectorAll<HTMLElement>('[data-row]');
+    const groups = wrap.querySelectorAll<HTMLElement>('[data-group]');
+
+    const state = { query: '', db: 'both', statuses: new Set<string>() };
+
+    const apply = () => {
+      let shown = 0;
+      rows.forEach((row) => {
+        const statuses =
+          state.db === 'pg' ? [row.dataset.pg] : state.db === 'sqlite' ? [row.dataset.sqlite] : [row.dataset.pg, row.dataset.sqlite];
+        const statusOk = state.statuses.size === 0 || statuses.some((s) => s && state.statuses.has(s));
+        const textOk = !state.query || (row.dataset.search ?? '').includes(state.query);
+        row.hidden = !(statusOk && textOk);
+        if (!row.hidden) shown += 1;
+      });
+      groups.forEach((g) => {
+        g.hidden = !g.querySelector('[data-row]:not([hidden])');
+      });
+      wrap.dataset.db = state.db;
+      if (count) count.textContent = `Showing ${shown} of ${rows.length} features`;
+      if (empty) empty.classList.toggle('hidden', shown > 0);
+    };
+
+    search?.addEventListener('input', () => {
+      state.query = search.value.trim().toLowerCase();
+      apply();
+    });
+
+    dbButtons.forEach((btn) =>
+      btn.addEventListener('click', () => {
+        state.db = btn.dataset.db ?? 'both';
+        dbButtons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+        apply();
+      }),
+    );
+
+    chips.forEach((chip) =>
+      chip.addEventListener('click', () => {
+        const s = chip.dataset.status ?? '';
+        if (state.statuses.has(s)) state.statuses.delete(s);
+        else state.statuses.add(s);
+        chip.setAttribute('aria-pressed', String(state.statuses.has(s)));
+        apply();
+      }),
+    );
+  }
+
+  initParity();
+  document.addEventListener('astro:page-load', initParity);
+</script>

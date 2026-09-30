@@ -1,41 +1,56 @@
 ---
+import Split from './Split.astro';
+import { GENERATOR_SNIPPET, INSTALL_SNIPPET, QUERY_SNIPPET, SETUP_SNIPPET } from '../lib/code';
+
 interface Props {
   t: any;
 }
 
 const { t } = Astro.props;
+const ins = t.installation;
+
+const blocks = [
+  [{ file: 'Terminal', lang: 'language-bash', code: INSTALL_SNIPPET }],
+  [
+    { file: 'schema.prisma', lang: 'language-plaintext', code: GENERATOR_SNIPPET },
+    { file: 'Terminal', lang: 'language-bash', code: 'npx prisma generate' },
+    { file: 'db.ts', lang: 'language-typescript', code: SETUP_SNIPPET },
+  ],
+  [{ file: 'users.ts', lang: 'language-typescript', code: QUERY_SNIPPET }],
+];
+
+const steps = ins.steps.map((step: any, i: number) => ({ title: step.title, blocks: blocks[i] ?? [] }));
 ---
 
-<section class="py-12 sm:py-16 lg:py-20 bg-gray-150 border">
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-12">
-      <h2 class="text-3xl sm:text-4xl font-bold text-primary mb-4">{t.installation.title}</h2>
-      <p class="text-lg sm:text-xl text-gray-600 px-4">{t.installation.subtitle}</p>
+<section class="border-b border-line py-20 sm:py-28" id="install">
+  <div class="page-x">
+    <div class="section-head">
+      <h2 class="display-2" data-split><Split text={ins.title} /></h2>
+      <p class="text-lg" data-reveal style="--d:300">{ins.subtitle}</p>
     </div>
 
-    <div class="space-y-6 sm:space-y-8">
-      {t.installation.steps.map((step: any, index: number) => {
-        const gradients = [
-          'from-accent to-green-600',
-          'from-blue-500 to-blue-600',
-          'from-purple-500 to-purple-600'
-        ];
-        
-        return (
-          <article class="bg-white rounded-xl overflow-hidden shadow-sm">
-            <div class={`bg-gradient-to-r ${gradients[index]} px-4 sm:px-6 py-3 sm:py-4`}>
-              <h3 class="text-white font-bold text-base sm:text-lg">
-                {index === 0 ? '①' : index === 1 ? '②' : '③'} {step.title}
-              </h3>
-            </div>
-            <div class="p-4 sm:p-6">
-              <div class="code-block bg-gray-900 border border-gray-700 overflow-hidden rounded-lg">
-                <pre class="p-3 sm:p-4 overflow-x-auto text-xs sm:text-sm"><code class={step.language}>{step.code}</code></pre>
+    <ol>
+      {steps.map((step: any, index: number) => (
+        <li class="grid gap-6 border-t border-line py-10 lg:grid-cols-12 lg:gap-10" data-reveal>
+          <div class="lg:col-span-4">
+            <span class="num block text-6xl font-bold leading-none text-amber" style="font-stretch: 75%" aria-hidden="true">{index + 1}</span>
+            <h3 class="display-3 mt-4">{step.title}</h3>
+          </div>
+          <div class="grid gap-4 lg:col-span-8">
+            {step.blocks.map((block: any) => (
+              <div class="code-surface overflow-hidden">
+                <div class="border-b border-white/10 px-5 py-2 font-mono text-xs text-[#9fb4c0]">{block.file}</div>
+                <pre class="p-5 text-[0.85rem] leading-relaxed" dir="ltr"><code class={block.lang}>{block.code}</code></pre>
               </div>
-            </div>
-          </article>
-        );
-      })}
-    </div>
+            ))}
+          </div>
+        </li>
+      ))}
+    </ol>
+
+    <p class="mt-4 text-fog">
+      SQLite: pass <code class="text-ink">{'speedExtension({ sqlite: db })'}</code> with a <code class="text-ink">better-sqlite3</code> database.
+      <a href="/prisma-sql/docs" class="link-underlined ms-1 text-ink">Full setup guide</a>
+    </p>
   </div>
 </section>

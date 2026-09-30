@@ -1,0 +1,109 @@
+---
+import Split from './Split.astro';
+import en from '../i18n/en.json';
+import {
+  PARITY_ROWS,
+  STATUS_META,
+  STATUS_ORDER,
+  countByStatus,
+  rowsByGroup,
+  type ParityStatus,
+} from '../lib/parity-data';
+
+interface Props {
+  t: any;
+}
+
+const { t } = Astro.props;
+const copy = t.parity ?? en.parity;
+
+const groups = rowsByGroup(PARITY_ROWS);
+const lanes = [
+  { db: 'pg' as const, label: 'PostgreSQL' },
+  { db: 'sqlite' as const, label: 'SQLite' },
+];
+const pgCounts = countByStatus(PARITY_ROWS, 'pg');
+const sqliteCounts = countByStatus(PARITY_ROWS, 'sqlite');
+const legend = STATUS_ORDER.filter((s) => pgCounts[s] + sqliteCounts[s] > 0);
+
+const summary = String(copy.summary)
+  .replace('{accelerated}', String(pgCounts.accelerated))
+  .replace('{total}', String(PARITY_ROWS.length))
+  .replace('{differs}', String(pgCounts.differs));
+
+const tileLabel = (feature: string, status: ParityStatus, db: string) =>
+  `${feature}, ${db}: ${STATUS_META[status].label}`;
+---
+
+<section class="border-b border-line py-20 sm:py-28" id="parity">
+  <div class="page-x">
+    <div class="section-head">
+      <h2 class="display-2" data-split><Split text={copy.title} /></h2>
+      <p class="text-lg" data-reveal style="--d:300">{copy.subtitle}</p>
+    </div>
+
+    <div class="overflow-x-auto pb-2" dir="ltr" role="img" aria-label="Status of each checked Prisma Client feature on PostgreSQL and SQLite, grouped by area. Counts are in the table below.">
+      <div class="min-w-[46rem]" data-tiles>
+        {lanes.map((lane) => (
+          <div class="grid grid-cols-[6.5rem_1fr] items-center gap-4 py-1.5">
+            <span class="text-sm font-semibold text-ink">{lane.label}</span>
+            <div class="flex gap-3">
+              {groups.map((g) => (
+                <div class="flex flex-1 gap-[3px]" style={`flex-grow:${g.rows.length}`}>
+                  {g.rows.map((row) => (
+                    <span
+                      class={`st st-${row[lane.db]} block h-10 flex-1 rounded-[3px] sm:h-12`}
+                      title={tileLabel(row.feature, row[lane.db], lane.label)}
+                    ></span>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+        <div class="grid grid-cols-[6.5rem_1fr] gap-4 pt-2">
+          <span></span>
+          <div class="flex gap-3">
+            {groups.map((g) => (
+              <span class="flex-1 border-t border-ink pt-2 text-xs leading-tight text-fog" style={`flex-grow:${g.rows.length}`}>
+                {g.group}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12 grid gap-10 lg:grid-cols-12" data-reveal>
+      <p class="text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-snug text-ink lg:col-span-5" style="font-stretch: 90%">
+        {summary}
+      </p>
+      <table class="w-full text-sm lg:col-span-7">
+        <caption class="sr-only">Feature count by status</caption>
+        <thead>
+          <tr class="border-b border-ink text-start text-fog">
+            <th scope="col" class="py-2 text-start font-medium">Status</th>
+            <th scope="col" class="num py-2 text-end font-medium">PostgreSQL</th>
+            <th scope="col" class="num py-2 text-end font-medium">SQLite</th>
+          </tr>
+        </thead>
+        <tbody>
+          {legend.map((s) => (
+            <tr class="border-b border-line">
+              <th scope="row" class="py-2.5 text-start font-normal">
+                <span class="flex items-center gap-3">
+                  <span class={`st st-${s} inline-block h-3.5 w-3.5 shrink-0 rounded-[3px]`} aria-hidden="true"></span>
+                  <span class="font-semibold text-ink">{STATUS_META[s].label}</span>
+                </span>
+              </th>
+              <td class="num py-2.5 text-end text-ink">{pgCounts[s]}</td>
+              <td class="num py-2.5 text-end text-ink">{sqliteCounts[s]}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <a href="/prisma-sql/docs/parity" class="btn-solid mt-10">{copy.link}</a>
+  </div>
+</section>

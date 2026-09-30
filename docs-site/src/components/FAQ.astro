@@ -1,4 +1,5 @@
 ---
+import Split from './Split.astro';
 interface Props {
   t: any;
 }
@@ -6,25 +7,23 @@ interface Props {
 const { t } = Astro.props;
 ---
 
-<section class="py-12 sm:py-16 lg:py-20 bg-white">
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-12 sm:mb-16">
-      <h2 class="text-3xl sm:text-4xl font-bold text-primary mb-4">{t.faq.title}</h2>
-      <p class="text-lg sm:text-xl text-gray-600 px-4">{t.faq.subtitle}</p>
+<section class="border-b border-line py-20 sm:py-28" id="faq">
+  <div class="page-x grid gap-10 lg:grid-cols-12">
+    <div class="lg:col-span-4">
+      <h2 class="display-2" data-split><Split text={t.faq.title} /></h2>
+      <p class="mt-5 text-lg text-fog" data-reveal style="--d:300">{t.faq.subtitle}</p>
     </div>
 
-    <div class="space-y-4 sm:space-y-6">
+    <div class="border-b border-line lg:col-span-8" data-stagger>
       {t.faq.questions.map((item: any) => (
-        <details class="bg-gray-100 rounded-lg p-4 sm:p-6 group">
-          <summary class="font-semibold text-base sm:text-lg text-primary cursor-pointer list-none flex justify-between items-center gap-4">
+        <details class="group border-t border-line">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-lg font-semibold text-ink [&::-webkit-details-marker]:hidden">
             <span>{item.question}</span>
-            <svg class="w-5 h-5 transform group-open:rotate-180 transition-transform flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
+            <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-ink/30 transition-colors group-open:border-ink group-open:bg-ink group-open:text-paper" aria-hidden="true">
+              <svg class="h-3.5 w-3.5 transition-transform group-open:rotate-45" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </span>
           </summary>
-          <div class="mt-4 text-sm sm:text-base text-gray-600">
-            <p>{item.answer}</p>
-          </div>
+          <p class="max-w-[64ch] pb-7 text-fog">{item.answer}</p>
         </details>
       ))}
     </div>

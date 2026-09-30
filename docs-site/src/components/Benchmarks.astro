@@ -1,4 +1,5 @@
 ---
+import Split from './Split.astro';
 import {
   dialectLabel,
   loadBenchmarkResults,
@@ -155,47 +156,45 @@ const processed: ProcessedResult[] = results.map(r => {
 const hasData = processed.length > 0
 const b = t.benchmarks
 ---
+import Split from './Split.astro';
 
-<section class="py-12 sm:py-16 lg:py-20 bg-gray-950 text-white" id="benchmarks">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-10 sm:mb-14">
-      <h2 class="text-3xl sm:text-4xl font-bold mb-3">{b.title}</h2>
-      <p class="text-lg text-gray-400 max-w-3xl mx-auto">{b.subtitle}</p>
-      <p class="text-sm text-gray-500 mt-3 max-w-2xl mx-auto">
+<section class="border-b border-line bg-ink-deep py-20 text-[#D6E3E8] sm:py-28" id="benchmarks">
+  <div class="page-x">
+    <div class="section-head !mb-10">
+      <h2 class="display-2 text-paper" data-split><Split text={b.title} /></h2>
+      <div class="lg:col-span-5 self-end" data-reveal style="--d:300">
+      <p class="text-lg text-[#AFC2CC]">{b.subtitle}</p>
+      <p class="text-sm text-[#8FA6B3] mt-3">
         <Fragment set:html={
           b.modeNote
-            .replace('<runtime>', '<span class="text-gray-300 font-medium">')
+            .replace('<runtime>', '<span class="text-paper font-medium">')
             .replace('</runtime>', '</span>')
-            .replace('<prerendered>', '<span class="text-green-400 font-medium">')
+            .replace('<prerendered>', '<span class="text-amber font-medium">')
             .replace('</prerendered>', '</span>')
         } />
       </p>
+      </div>
     </div>
 
     {!hasData && (
-      <div class="text-center text-gray-500 py-12">
+      <div class="text-center text-[#8FA6B3] py-12">
         <p>{b.noData}</p>
         <p class="mt-2 text-sm" set:html={
-          b.noDataHint.replace('<code>', '<code class="bg-gray-800 px-2 py-1 rounded text-sm">').replace('</code>', '</code>')
+          b.noDataHint.replace('<code>', '<code class="bg-white/[0.08] px-2 py-1 rounded text-sm">').replace('</code>', '</code>')
         } />
       </div>
     )}
 
     {hasData && (
-      <div data-benchmark-tabs>
-        <div class="flex flex-wrap gap-2 mb-8 justify-center" role="tablist">
+      <div data-benchmark-tabs data-reveal>
+        <div class="flex flex-wrap gap-2 mb-8" role="tablist">
           {processed.map((p, i) => (
             <button
               role="tab"
               aria-selected={i === 0 ? 'true' : 'false'}
               aria-controls={`panel-${p.tabId}`}
               data-tab={p.tabId}
-              class:list={[
-                'benchmark-tab px-4 sm:px-6 py-2.5 rounded-lg text-sm font-medium transition-all',
-                i === 0
-                  ? 'bg-accent text-white shadow-lg shadow-green-900/30'
-                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200',
-              ]}
+              class="benchmark-tab rounded-full border border-white/15 px-4 py-2 text-sm font-semibold transition-colors sm:px-5"
             >
               <span class="hidden sm:inline">{p.tabLabel}</span>
               <span class="sm:hidden">{p.tabLabelShort}</span>
@@ -209,42 +208,42 @@ const b = t.benchmarks
             id={`panel-${p.tabId}`}
             role="tabpanel"
             data-panel={p.tabId}
-            class:list={[i !== 0 && 'hidden']}
+            hidden={i !== 0}
           >
             <div class="flex flex-wrap items-baseline gap-3 mb-6">
               <h3 class="text-2xl font-bold">
                 {p.result.dialect === 'postgres' ? 'PostgreSQL' : 'SQLite'}
-                <span class="text-gray-500 font-normal text-lg ml-2">{p.versionLabel}</span>
+                <span class="text-[#8FA6B3] font-normal text-lg ml-2">{p.versionLabel}</span>
               </h3>
               <div class="flex flex-wrap gap-3 text-sm">
-                <span class="bg-green-900/50 text-green-400 px-3 py-1 rounded-full">
+                <span class="bg-pine/40 text-[#9FE3C3] px-3 py-1 rounded-full">
                   {tpl(b.avgVsPrisma, { speed: fmtX(p.result.avgSpeedupVsPrisma) })}
                 </span>
                 {p.result.avgSpeedupVsDrizzle > 0 && (
-                  <span class="bg-blue-900/50 text-blue-400 px-3 py-1 rounded-full">
+                  <span class="bg-steel/40 text-[#C4DAF5] px-3 py-1 rounded-full">
                     {tpl(b.avgVsDrizzle, { speed: fmtX(p.result.avgSpeedupVsDrizzle) })}
                   </span>
                 )}
-                <span class="bg-gray-800 text-gray-400 px-3 py-1 rounded-full">
+                <span class="bg-white/[0.08] text-[#AFC2CC] px-3 py-1 rounded-full">
                   {tpl(b.significantWins, { count: String(p.significantWins), total: String(p.tests.length) })}
                 </span>
                 {p.withinNoise > 0 && (
-                  <span class="bg-gray-800 text-gray-500 px-3 py-1 rounded-full">
+                  <span class="bg-white/[0.08] text-[#8FA6B3] px-3 py-1 rounded-full">
                     {tpl(b.withinNoise, { count: String(p.withinNoise) })}
                   </span>
                 )}
               </div>
               {p.result.timestamp && (
-                <span class="text-xs text-gray-600 ml-auto">
+                <span class="text-xs text-[#6F8896] ml-auto">
                   {new Date(p.result.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                 </span>
               )}
             </div>
 
-            <div class="overflow-x-auto rounded-xl border border-gray-800">
+            <div class="max-h-[min(70vh,40rem)] overflow-auto rounded-2xl border border-white/10" tabindex="0" role="region" aria-label="Per-query benchmark results">
               <table class="w-full text-sm">
-                <thead>
-                  <tr class="bg-gray-900 text-gray-400 text-xs uppercase tracking-wider">
+                <thead class="sticky top-0 z-[1] bg-[#0b2e42]">
+                  <tr class="text-[#AFC2CC] text-xs">
                     <th class="text-left px-4 py-3 font-medium">{b.col.test}</th>
                     <th class="text-right px-4 py-3 font-medium">{b.col.prisma}</th>
                     <th class="text-right px-4 py-3 font-medium">{b.col.prismaSql}</th>
@@ -260,37 +259,37 @@ const b = t.benchmarks
                     const isNoiseFloor = absDiff < PRACTICAL_THRESHOLD_MS
                     const isWin = !isNoiseFloor && test.speedupVsPrisma >= 1.0
                     const highCv = test.extendedStats.cv > 15 || test.prismaStats.cv > 15
-                    const rowBg = i % 2 === 0 ? 'bg-gray-900/30' : 'bg-gray-900/60'
+                    const rowBg = i % 2 === 0 ? 'bg-white/[0.02]' : 'bg-white/[0.05]'
 
                     const speedupColor = isNoiseFloor
-                      ? 'text-gray-500'
+                      ? 'text-[#8FA6B3]'
                       : isWin
-                        ? (vsPrisma.practicallySignificant ? 'text-green-400' : 'text-green-700')
-                        : (vsPrisma.practicallySignificant ? 'text-red-400' : 'text-red-700')
+                        ? (vsPrisma.practicallySignificant ? 'text-[#8FE0BA]' : 'text-[#58A585]')
+                        : (vsPrisma.practicallySignificant ? 'text-[#FF9C87]' : 'text-[#C9624E]')
 
                     const timingColor = isNoiseFloor
-                      ? 'text-gray-500'
-                      : isWin ? 'text-green-400' : 'text-red-400'
+                      ? 'text-[#8FA6B3]'
+                      : isWin ? 'text-[#8FE0BA]' : 'text-[#FF9C87]'
 
                     const sigTooltip = isNoiseFloor
                       ? `Δ = ${fmtMs(absDiff)}ms < ${PRACTICAL_THRESHOLD_MS}ms`
                       : `t=${vsPrisma.tStat}, df=${vsPrisma.df}, ${vsPrisma.pBucket}`
 
                     return (
-                      <tr class={`${rowBg} border-t border-gray-800/50 hover:bg-gray-800/50 transition-colors`}>
-                        <td class="px-4 py-3 font-medium text-gray-200 max-w-[280px] truncate" title={test.name}>
+                      <tr class={`${rowBg} border-t border-white/[0.07] hover:bg-white/[0.08] transition-colors`}>
+                        <td class="px-4 py-3 font-medium text-paper max-w-[280px] truncate" title={test.name}>
                           {test.name}
                         </td>
-                        <td class="px-4 py-3 text-right text-gray-400 tabular-nums whitespace-nowrap" title={`±${fmtMs(prismaCi)}ms (95% CI)`}>
+                        <td class="px-4 py-3 text-right text-[#AFC2CC] tabular-nums whitespace-nowrap" title={`±${fmtMs(prismaCi)}ms (95% CI)`}>
                           {fmtMs(test.prismaMs)}ms
-                          <span class="text-gray-600 text-xs ml-1">±{fmtMs(prismaCi)}</span>
+                          <span class="text-[#6F8896] text-xs ml-1">±{fmtMs(prismaCi)}</span>
                         </td>
                         <td class={`px-4 py-3 text-right tabular-nums whitespace-nowrap ${timingColor}`} title={`±${fmtMs(extendedCi)}ms (95% CI)`}>
                           <span class="font-semibold">{fmtMs(test.extendedMs)}ms</span>
-                          <span class="text-gray-600 text-xs ml-1">±{fmtMs(extendedCi)}</span>
+                          <span class="text-[#6F8896] text-xs ml-1">±{fmtMs(extendedCi)}</span>
                         </td>
                         {p.hasDrizzle && (
-                          <td class="px-4 py-3 text-right text-gray-400 tabular-nums whitespace-nowrap">
+                          <td class="px-4 py-3 text-right text-[#AFC2CC] tabular-nums whitespace-nowrap">
                             {test.drizzleMs > 0 ? `${fmtMs(test.drizzleMs)}ms` : '—'}
                           </td>
                         )}
@@ -299,29 +298,29 @@ const b = t.benchmarks
                             {isNoiseFloor ? '~1.00x' : fmtX(test.speedupVsPrisma)}
                           </span>
                           {p.hasDrizzle && test.speedupVsDrizzle > 0 && !isNoiseFloor && (
-                            <span class={`ml-2 text-xs ${test.speedupVsDrizzle >= 1 ? 'text-blue-400' : 'text-orange-400'}`}>
+                            <span class={`ml-2 text-xs ${test.speedupVsDrizzle >= 1 ? 'text-[#A9C8F0]' : 'text-[#F4B183]'}`}>
                               {fmtX(test.speedupVsDrizzle)} D
                             </span>
                           )}
                         </td>
                         <td class="px-4 py-3 text-center whitespace-nowrap" title={sigTooltip}>
                           {isNoiseFloor ? (
-                            <span class="text-gray-600 text-xs">≈</span>
+                            <span class="text-[#6F8896] text-xs">≈</span>
                           ) : vsPrisma.significant ? (
-                            <span class="text-green-400 font-mono text-xs">{vsPrisma.stars}</span>
+                            <span class="text-[#8FE0BA] font-mono text-xs">{vsPrisma.stars}</span>
                           ) : (
-                            <span class="text-gray-600 text-xs">ns</span>
+                            <span class="text-[#6F8896] text-xs">ns</span>
                           )}
                         </td>
                         <td class="px-4 py-3 text-right tabular-nums whitespace-nowrap">
                           <span
-                            class={highCv ? 'text-yellow-500' : 'text-gray-500'}
+                            class={highCv ? 'text-amber' : 'text-[#8FA6B3]'}
                             title={`Prisma CV: ${test.prismaStats.cv.toFixed(1)}%, prisma-sql CV: ${test.extendedStats.cv.toFixed(1)}%`}
                           >
                             {test.extendedStats.cv.toFixed(1)}%
                           </span>
                         </td>
-                        <td class="px-4 py-3 text-right text-gray-500 tabular-nums">
+                        <td class="px-4 py-3 text-right text-[#8FA6B3] tabular-nums">
                           {test.extendedStats.iterations}
                         </td>
                       </tr>
@@ -331,28 +330,28 @@ const b = t.benchmarks
               </table>
             </div>
 
-            <div class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-gray-500 px-1">
-              <span><span class="text-green-400 font-mono">***</span> {b.legend.p001}</span>
-              <span><span class="text-green-400 font-mono">**</span>&ensp;{b.legend.p01}</span>
-              <span><span class="text-green-400 font-mono">*</span>&ensp;&ensp;{b.legend.p05}</span>
-              <span><span class="text-gray-600">ns</span>&ensp;{b.legend.ns}</span>
-              <span><span class="text-gray-600">≈</span>&ensp;{tpl(b.legend.noiseFloor, { threshold: String(PRACTICAL_THRESHOLD_MS) })}</span>
+            <div class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-[#8FA6B3] px-1">
+              <span><span class="text-[#8FE0BA] font-mono">***</span> {b.legend.p001}</span>
+              <span><span class="text-[#8FE0BA] font-mono">**</span>&ensp;{b.legend.p01}</span>
+              <span><span class="text-[#8FE0BA] font-mono">*</span>&ensp;&ensp;{b.legend.p05}</span>
+              <span><span class="text-[#6F8896]">ns</span>&ensp;{b.legend.ns}</span>
+              <span><span class="text-[#6F8896]">≈</span>&ensp;{tpl(b.legend.noiseFloor, { threshold: String(PRACTICAL_THRESHOLD_MS) })}</span>
               <span>±&ensp;{b.legend.ci}</span>
-              <span><span class="text-yellow-500">CV% &gt; 15%</span> = {b.legend.highVariance}</span>
+              <span><span class="text-amber">CV% &gt; 15%</span> = {b.legend.highVariance}</span>
             </div>
 
-            <div class="mt-4 bg-gray-900/60 border border-gray-800 rounded-lg px-4 py-3 text-sm text-gray-400 flex items-start gap-3">
-              <svg class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="mt-4 bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-[#AFC2CC] flex items-start gap-3">
+              <svg class="w-5 h-5 text-amber flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
               <span>
-                <span class="text-gray-300 font-medium">{b.modeCallout}</span>{' '}
+                <span class="text-paper font-medium">{b.modeCallout}</span>{' '}
                 {b.modeCalloutDetail}
               </span>
             </div>
 
             {p.significantRegressions > 0 && (
-              <div class="mt-4 bg-red-900/20 border border-red-800/30 rounded-lg px-4 py-3 text-sm text-red-400/80">
+              <div class="mt-4 bg-oxide/20 border border-oxide/40 rounded-lg px-4 py-3 text-sm text-[#FFB4A4]">
                 {tpl(b.regressionWarning, { count: String(p.significantRegressions), threshold: String(PRACTICAL_THRESHOLD_MS) })}
               </div>
             )}
@@ -366,7 +365,7 @@ const b = t.benchmarks
         <a
           target="_blank"
           href="https://github.com/multipliedtwice/prisma-sql/tree/main/benchmark-results"
-          class="text-accent hover:text-green-400 underline decoration-2 underline-offset-2 text-sm"
+          class="text-amber hover:text-[#ffd27a] underline decoration-2 underline-offset-2 text-sm"
         >
           {b.viewRawData}
         </a>
@@ -374,13 +373,13 @@ const b = t.benchmarks
     )}
 
     {b.methodology && (
-      <div class="mt-10 max-w-4xl mx-auto bg-gray-900/60 border border-gray-800 rounded-xl px-6 py-5">
-        <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">{b.methodology.title}</h3>
-        <ul class="space-y-2 text-sm text-gray-500">
+      <div class="mt-10 max-w-4xl mx-auto bg-white/[0.05] border border-white/10 rounded-xl px-6 py-5">
+        <h3 class="text-sm font-semibold text-paper  mb-3">{b.methodology.title}</h3>
+        <ul class="space-y-2 text-sm text-[#8FA6B3]">
           {b.methodology.lines.map((line: string) => (
             <li class="flex gap-2">
-              <span class="text-gray-700 mt-0.5">–</span>
-              <span set:html={line.replace(/`([^`]+)`/g, '<code class="bg-gray-800 px-1.5 py-0.5 rounded text-xs text-gray-300">$1</code>')} />
+              <span class="text-[#58717F] mt-0.5">–</span>
+              <span set:html={line.replace(/`([^`]+)`/g, '<code class="bg-white/[0.08] px-1.5 py-0.5 rounded text-xs text-paper">$1</code>')} />
             </li>
           ))}
         </ul>
@@ -394,8 +393,9 @@ const b = t.benchmarks
   document.addEventListener('DOMContentLoaded', initBenchmarkTabs)
 
   function initBenchmarkTabs() {
-    const container = document.querySelector('[data-benchmark-tabs]')
-    if (!container) return
+    const container = document.querySelector<HTMLElement>('[data-benchmark-tabs]')
+    if (!container || container.dataset.ready) return
+    container.dataset.ready = '1'
 
     const tabs = container.querySelectorAll<HTMLButtonElement>('[data-tab]')
     const panels = container.querySelectorAll<HTMLElement>('[data-panel]')
@@ -404,24 +404,26 @@ const b = t.benchmarks
       tab.addEventListener('click', () => {
         const target = tab.getAttribute('data-tab')
         if (!target) return
-
-        tabs.forEach(t => {
-          const isActive = t.getAttribute('data-tab') === target
-          t.setAttribute('aria-selected', String(isActive))
-          t.classList.toggle('bg-accent', isActive)
-          t.classList.toggle('text-white', isActive)
-          t.classList.toggle('shadow-lg', isActive)
-          t.classList.toggle('shadow-green-900/30', isActive)
-          t.classList.toggle('bg-gray-800', !isActive)
-          t.classList.toggle('text-gray-400', !isActive)
-          t.classList.toggle('hover:bg-gray-700', !isActive)
-          t.classList.toggle('hover:text-gray-200', !isActive)
-        })
-
+        tabs.forEach(t => t.setAttribute('aria-selected', String(t.getAttribute('data-tab') === target)))
         panels.forEach(p => {
-          p.classList.toggle('hidden', p.getAttribute('data-panel') !== target)
+          p.hidden = p.getAttribute('data-panel') !== target
         })
       })
     })
   }
 </script>
+
+<style>
+  .benchmark-tab {
+    color: #afc2cc;
+  }
+  .benchmark-tab:hover {
+    color: #eef1ec;
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+  .benchmark-tab[aria-selected='true'] {
+    background: #f2a900;
+    border-color: #f2a900;
+    color: #072536;
+  }
+</style>

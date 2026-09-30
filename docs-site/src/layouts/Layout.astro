@@ -127,9 +127,17 @@ const xDefault = alternateLinks.find((x) => x.code === 'en')?.href
     />
     <link rel='manifest' href={`${base}/site.webmanifest`} />
 
+    <script is:inline>
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('motion')
+      }
+    </script>
+
     <slot name='head' />
   </head>
-  <body class='bg-gray-50'>
+  <body>
+    <div class="scroll-progress" data-progress aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
     <main>
       <slot />
     </main>
@@ -138,6 +146,9 @@ const xDefault = alternateLinks.find((x) => x.code === 'en')?.href
       is:inline
       src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js'
       async></script>
+    <script>
+      import '../scripts/motion'
+    </script>
     <script is:inline>
       if ('loading' in HTMLScriptElement.prototype) {
         document.addEventListener('DOMContentLoaded', function () {

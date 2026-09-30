@@ -1,0 +1,15 @@
+---
+interface Props {
+  text: string
+  offset?: number
+}
+
+const { text, offset = 0 } = Astro.props
+const words = String(text).split(/\s+/).filter(Boolean)
+---
+
+{words.map((word, i) => (
+  <>
+    <span class="sw"><span style={`--wi:${i + offset}`}>{word}</span></span>{i < words.length - 1 && ' '}
+  </>
+))}

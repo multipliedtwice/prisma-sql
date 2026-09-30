@@ -918,5 +918,11 @@
         "code": "prisma-sql-collect-stats \\\n  --output dist/planner.generated.js \\\n  --prisma-client dist/client/index.js"
       }
     ]
+  },
+  "parity": {
+    "title": "What runs faster, and what stays in Prisma",
+    "subtitle": "Every Prisma Client feature we checked, on PostgreSQL and SQLite. Writes stay in Prisma; reads are compiled to SQL where the shape is supported.",
+    "link": "Open the full parity map",
+    "summary": "{accelerated} of {total} checked features are fully accelerated on PostgreSQL. {differs} can return a different result than Prisma; the full map lists each one with the reason."
   }
 }

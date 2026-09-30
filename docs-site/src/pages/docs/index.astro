@@ -96,14 +96,16 @@ export const prisma = extendedPrisma.$extends(
   </div>
 
   <blockquote>
-    Fallback rule: if a query shape cannot be accelerated safely, it falls back to Prisma instead of returning wrong
-    results. Enable <code>debug: true</code> to see when that happens.
+    Fallback rule: when the SQL builder rejects a query shape, the query falls back to Prisma. Enable
+    <code>debug: true</code> to see when that happens. Some shapes are accelerated but can return a different result
+    than Prisma; the <a href={`${base}/docs/parity`}>Prisma parity map</a> lists them.
   </blockquote>
 
   <h2>Next steps</h2>
   <ul>
     <li><a href={`${base}/docs/batch-optimize`}>$batch and @optimize extras</a></li>
     <li><a href={`${base}/docs/planner`}>Cardinality planner and stats collection</a></li>
+    <li><a href={`${base}/docs/parity`}>Prisma parity map</a></li>
     <li><a href={`${base}/docs/verify`}>Verify results match Prisma on your schema</a></li>
   </ul>
 </DocsLayout>

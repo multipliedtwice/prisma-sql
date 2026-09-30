@@ -1,59 +1,198 @@
 ---
+import Split from './Split.astro';
+import { GENERATED_SQL, QUERY_SNIPPET, highlight, highlightLines } from '../lib/code';
+
 interface Props {
   t: any;
 }
 
 const { t } = Astro.props;
+
+const dialects = [
+  { id: 'postgres', label: 'PostgreSQL' },
+  { id: 'sqlite', label: 'SQLite' },
+] as const;
+
+const queryHtml = highlight(QUERY_SNIPPET, 'ts');
+const sqlByDialect = dialects.map((d) => ({
+  ...d,
+  lines: highlightLines(GENERATED_SQL[d.id].sql, 'sql'),
+  params: GENERATED_SQL[d.id].params,
+}));
+const installCommand = 'npm install prisma-sql';
 ---
 
-<section class="relative overflow-hidden bg-gradient-to-br from-gray-900 via-primary to-gray-800 text-white py-12 sm:py-16 lg:py-20">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center max-w-4xl mx-auto">
-      <div class="inline-block bg-accent/10 text-accent px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-semibold mb-4 sm:mb-6">
-        {t.hero.badge}
-      </div>
-      
-      <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 leading-tight px-2">
-        {t.hero.title}<br />
-        <span class="gradient-text">{t.hero.titleHighlight}</span>
-      </h1>
-      
-      <p class="text-base sm:text-lg lg:text-xl text-gray-300 mb-6 sm:mb-8 leading-relaxed px-2">
-        {t.hero.description}<br class="hidden sm:inline" />
-        <strong>{t.hero.descriptionBold}</strong> {t.hero.descriptionSuffix}
-      </p>
-      
-      <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
-        <a href="https://www.npmjs.com/package/prisma-sql" class="w-full sm:w-auto bg-accent hover:bg-green-600 text-white font-bold py-3 sm:py-4 px-6 sm:px-8 rounded-lg text-base sm:text-lg transition text-center">
-          {t.hero.cta1}
-        </a>
-        <a href="https://github.com/multipliedtwice/prisma-sql#readme" class="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white font-bold py-3 sm:py-4 px-6 sm:px-8 rounded-lg text-base sm:text-lg transition border border-white/20 text-center">
-          {t.hero.cta2}
-        </a>
+<section class="relative isolate overflow-hidden border-b border-line" data-spotlight="self">
+  <div class="hero-dots" aria-hidden="true"></div>
+  <div class="page-x pb-14 pt-12 sm:pb-20 sm:pt-16 lg:pt-20">
+    <h1 class="display-1 max-w-[18ch] text-ink" data-split>
+      <Split text={t.hero.title} />{' '}<span class="hero-hl"><Split text={t.hero.titleHighlight} offset={String(t.hero.title).split(/\s+/).length} /></span>
+    </h1>
+
+    <div class="mt-10 grid gap-10 lg:mt-14 lg:grid-cols-12 lg:gap-12">
+      <div class="lg:col-span-5 lg:pt-2" data-reveal style="--d:450">
+        <p class="lede text-ink/85">
+          {t.hero.description}
+          {' '}<strong class="font-semibold text-ink">{t.hero.descriptionBold}</strong>
+          {' '}{t.hero.descriptionSuffix}
+        </p>
+
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <button
+            type="button"
+            class="group inline-flex items-center justify-between gap-4 rounded-full border border-ink bg-paper py-2.5 pe-2.5 ps-5 text-start font-mono text-[0.9rem] text-ink transition-colors hover:bg-white"
+            data-copy={installCommand}
+            aria-label={`Copy: ${installCommand}`}
+          >
+            <span><span class="text-fog">$</span> {installCommand}</span>
+            <span class="rounded-full bg-ink px-3 py-1 font-sans text-xs font-semibold text-paper" data-copy-label>Copy</span>
+          </button>
+          <a href="/prisma-sql/docs" class="btn-solid" data-magnetic>{t.hero.cta1}</a>
+        </div>
+        <p class="sr-only" aria-live="polite" data-copy-status></p>
+
+        <ul class="mt-10 grid grid-cols-2 gap-x-6 gap-y-3 border-t border-line pt-6 text-sm text-fog">
+          {t.hero.trustBadges.map((badge: string) => (
+            <li class="flex items-center gap-2">
+              <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-pine" aria-hidden="true"></span>
+              {badge}
+            </li>
+          ))}
+        </ul>
       </div>
 
-      <div class="mt-8 sm:mt-12 flex flex-wrap justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-gray-400 px-2">
-        {t.hero.trustBadges.map((badge: string) => (
-          <div class="flex items-center gap-2">
-            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-            </svg>
-            <span>{badge}</span>
+      <div class="lg:col-span-7" data-parallax="0.06">
+      <div data-reveal style="--d:650">
+      <figure class="compile" data-compile data-tilt="4" aria-label="A Prisma query and the SQL prisma-sql generates for it">
+        <div class="code-surface overflow-hidden shadow-[0_30px_60px_-30px_rgba(7,37,54,0.55)]">
+          <div class="flex items-center justify-between gap-3 border-b border-white/10 px-5 py-3 text-[0.8rem] text-[#9fb4c0]">
+            <span>Your Prisma call</span>
+            <span class="font-mono">user.findMany</span>
           </div>
-        ))}
-      </div>
-    </div>
-  </div>
+          <pre class="nohighlight px-5 py-4 text-[0.82rem] leading-relaxed sm:text-[0.9rem]" dir="ltr"><code class="nohighlight" set:html={queryHtml} /></pre>
 
-  <div class="max-w-4xl mx-auto px-4 mt-12 sm:mt-16 animate-fade-in">
-    <div class="code-block bg-gray-900 border border-gray-700 overflow-hidden rounded-lg">
-      <div class="bg-gray-800 px-4 py-2 flex items-center space-x-2 border-b border-gray-700">
-        <div class="w-3 h-3 rounded-full bg-red-500"></div>
-        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-        <div class="w-3 h-3 rounded-full bg-green-500"></div>
-        <span class="text-gray-400 text-xs sm:text-sm ml-4 truncate">{t.hero.codeTitle}</span>
+          <div class="flex flex-wrap items-center justify-between gap-3 border-y border-white/10 bg-white/[0.03] px-5 py-2.5">
+            <span class="flex items-center gap-2 text-[0.8rem] text-[#9fb4c0]">
+              <svg class="h-3.5 w-3.5 text-amber" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2v10m0 0-4-4m4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              SQL that prisma-sql runs
+            </span>
+            <div class="flex rounded-full bg-black/25 p-0.5" role="group" aria-label="Database">
+              {dialects.map((d, i) => (
+                <button
+                  type="button"
+                  class="dialect-btn rounded-full px-3.5 py-1.5 text-[0.8rem] font-semibold transition-colors"
+                  data-dialect={d.id}
+                  aria-pressed={i === 0 ? 'true' : 'false'}
+                >
+                  {d.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {sqlByDialect.map((d, i) => (
+            <div data-sql={d.id} hidden={i !== 0}>
+              <pre class="nohighlight sql-lines max-h-[22rem] px-5 py-4 text-[0.76rem] leading-[1.6] sm:text-[0.82rem]" dir="ltr"><code class="nohighlight">{d.lines.map((line, n) => (
+                <span class="sql-line" style={`--i:${n}`} set:html={line || ' '} />
+              ))}</code></pre>
+              <div class="flex items-center justify-between gap-3 border-t border-white/10 px-5 py-2.5 font-mono text-[0.76rem] text-[#9fb4c0]" dir="ltr">
+                <span>params {d.params}</span>
+                <span>1 statement</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <figcaption class="mt-3 text-sm text-fog">
+          Output of <code class="text-ink">createToSQL</code> for a two-model schema, line breaks added.
+        </figcaption>
+      </figure>
       </div>
-      <pre class="p-3 sm:p-4 lg:p-6 overflow-x-auto text-xs sm:text-sm"><code class="language-typescript">{t.hero.codeSnippet}</code></pre>
+      </div>
     </div>
   </div>
 </section>
+
+<style>
+  .sql-line {
+    display: block;
+    white-space: pre;
+  }
+
+  .compile.is-playing .sql-line {
+    animation: sql-in 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: calc(var(--i) * 45ms + 250ms);
+  }
+
+  @keyframes sql-in {
+    from {
+      opacity: 0;
+      transform: translateX(-6px);
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  .dialect-btn {
+    color: #9fb4c0;
+  }
+
+  .dialect-btn[aria-pressed='true'] {
+    background: #f2a900;
+    color: #072536;
+  }
+</style>
+
+<script>
+  function initHero() {
+    const figure = document.querySelector<HTMLElement>('[data-compile]');
+    if (figure && !figure.dataset.ready) {
+      figure.dataset.ready = '1';
+      const play = () => {
+        figure.classList.remove('is-playing');
+        void figure.offsetWidth;
+        figure.classList.add('is-playing');
+      };
+      play();
+
+      const buttons = figure.querySelectorAll<HTMLButtonElement>('[data-dialect]');
+      const panels = figure.querySelectorAll<HTMLElement>('[data-sql]');
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.dialect;
+          buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+          panels.forEach((p) => {
+            p.hidden = p.dataset.sql !== id;
+          });
+          play();
+        });
+      });
+    }
+
+    document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((btn) => {
+      if (btn.dataset.ready) return;
+      btn.dataset.ready = '1';
+      btn.addEventListener('click', async () => {
+        const text = btn.dataset.copy ?? '';
+        const label = btn.querySelector<HTMLElement>('[data-copy-label]');
+        const status = document.querySelector<HTMLElement>('[data-copy-status]');
+        try {
+          await navigator.clipboard.writeText(text);
+          if (label) label.textContent = 'Copied';
+          if (status) status.textContent = `Copied ${text}`;
+        } catch {
+          if (label) label.textContent = 'Select and copy';
+        }
+        window.setTimeout(() => {
+          if (label) label.textContent = 'Copy';
+        }, 1800);
+      });
+    });
+  }
+
+  initHero();
+  document.addEventListener('astro:page-load', initHero);
+</script>
