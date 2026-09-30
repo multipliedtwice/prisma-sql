@@ -1,10 +1,12 @@
 {
   "meta": {
-    "title": "Corrigez les requêtes Prisma lentes : lectures 2–7× plus rapides (jusqu’à 53,5×) | Prisma-SQL",
-    "description": "Prisma est lent ? Accélérez les lectures Prisma lentes de 2–7× sans refactor. Contournez le chemin d’exécution de lecture de Prisma avec une exécution SQL directe sur PostgreSQL et SQLite (jusqu’à 53,5× sur les filtres de relation SQLite). Optimisation prête pour la production pour des workloads Prisma dominés par la lecture.",
+    "title": "Corrigez les requêtes Prisma lentes | prisma-sql",
+    "description": "prisma-sql compile les lectures Prisma prises en charge en SQL et les exécute via postgres.js ou better-sqlite3. Benchmarks sur Prisma v6–v8 avec PostgreSQL et SQLite.",
     "keywords": "slow prisma, prisma slow, prisma performance, fix slow prisma, speed up prisma, prisma optimization, prisma query speed, slow prisma queries, prisma performance issues, make prisma faster, postgresql, sqlite"
   },
-  "header": { "cta": "Corriger Prisma lent →" },
+  "header": {
+    "cta": "Corriger Prisma lent →"
+  },
   "hero": {
     "badge": "🚀 La solution pour Prisma lent",
     "title": "Corrigez les requêtes Prisma lentes",
@@ -285,7 +287,7 @@
   },
   "testing": {
     "meta": {
-      "title": "Méthodologie de test - Prisma-SQL",
+      "title": "Méthodologie de test - prisma-sql",
       "description": "Approche de test complète : 137 tests E2E valident que le SQL généré correspond exactement à la sortie de Prisma",
       "keywords": "prisma testing, sql validation, e2e tests, orm testing, database testing"
     },
@@ -545,7 +547,7 @@
   },
   "sqlPrevention": {
     "meta": {
-      "title": "Prévention de l’injection SQL - Sécurité Prisma-SQL",
+      "title": "Prévention de l’injection SQL - Sécurité prisma-sql",
       "description": "Méthodologie de prévention SQLi via liaison de paramètres, validation basée sur le schéma et 137 tests sécurité (suite actuelle)",
       "keywords": "sql injection prevention, parameterized queries, sql security, database security, prisma security"
     },

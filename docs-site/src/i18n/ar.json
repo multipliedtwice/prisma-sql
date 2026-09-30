@@ -1,10 +1,12 @@
 {
   "meta": {
-    "title": "إصلاح بطء استعلامات Prisma: قراءات أسرع 2–7× (حتى 53.5×) | Prisma-SQL",
-    "description": "هل Prisma بطيء؟ سرّع قراءات Prisma البطيئة بمقدار 2–7× بدون إعادة هيكلة. تجاوز مسار تنفيذ القراءة في Prisma عبر تنفيذ SQL مباشر على PostgreSQL وSQLite (حتى 53.5× على مرشحات العلاقات في SQLite). تحسين جاهز للإنتاج لأحمال Prisma كثيفة القراءة.",
+    "title": "إصلاح بطء استعلامات Prisma | prisma-sql",
+    "description": "يحوّل prisma-sql عمليات القراءة المدعومة في Prisma إلى SQL وينفّذها عبر postgres.js أو better-sqlite3. قياسات الأداء على Prisma v6–v8 مع PostgreSQL وSQLite.",
     "keywords": "slow prisma, prisma slow, prisma performance, fix slow prisma, speed up prisma, prisma optimization, prisma query speed, slow prisma queries, prisma performance issues, make prisma faster, postgresql, sqlite"
   },
-  "header": { "cta": "إصلاح بطء Prisma →" },
+  "header": {
+    "cta": "إصلاح بطء Prisma →"
+  },
   "hero": {
     "badge": "🚀 الحل لمشكلة بطء Prisma",
     "title": "إصلاح استعلامات Prisma البطيئة",
@@ -285,7 +287,7 @@
   },
   "testing": {
     "meta": {
-      "title": "منهجية الاختبار - Prisma-SQL",
+      "title": "منهجية الاختبار - prisma-sql",
       "description": "نهج اختبار شامل: 137 اختبار E2E يضمن أن SQL المُولّد يطابق ناتج Prisma تمامًا",
       "keywords": "prisma testing, sql validation, e2e tests, orm testing, database testing"
     },
@@ -545,7 +547,7 @@
   },
   "sqlPrevention": {
     "meta": {
-      "title": "منع حقن SQL - أمان Prisma-SQL",
+      "title": "منع حقن SQL - أمان prisma-sql",
       "description": "منهجية منع حقن SQL باستخدام ربط المعاملات والتحقق المعتمد على المخطط و137 اختبارًا أمنيًا (المجموعة الحالية)",
       "keywords": "sql injection prevention, parameterized queries, sql security, database security, prisma security"
     },

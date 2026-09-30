@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "修复慢速 Prisma 查询：读取提速 2–7 倍（最高 53.5 倍）| Prisma-SQL",
-    "description": "Prisma 太慢？无需重构即可将 Prisma 读取速度提升 2–7 倍。通过直接 SQL 绕过 Prisma 的读取执行路径，适用于 PostgreSQL 与 SQLite（SQLite 关系过滤最高 53.5 倍）。",
+    "title": "修复慢速 Prisma 查询 | prisma-sql",
+    "description": "prisma-sql 将受支持的 Prisma 读取查询编译为 SQL，并通过 postgres.js 或 better-sqlite3 直接执行。基准测试覆盖 Prisma v6–v8、PostgreSQL 与 SQLite。",
     "keywords": "慢速 prisma, prisma 慢, prisma 性能, 修复慢速 prisma, 加速 prisma, prisma 优化, prisma 查询速度, postgresql, sqlite"
   },
   "header": {
@@ -287,7 +287,7 @@
   },
   "testing": {
     "meta": {
-      "title": "测试方法论 - Prisma-SQL",
+      "title": "测试方法论 - prisma-sql",
       "description": "全面的测试方法：137 个端到端测试确保生成的 SQL 与 Prisma 输出完全匹配",
       "keywords": "prisma 测试, sql 验证, e2e 测试, orm 测试, 数据库测试"
     },
@@ -547,7 +547,7 @@
   },
   "sqlPrevention": {
     "meta": {
-      "title": "SQL 注入防护 - Prisma-SQL 安全",
+      "title": "SQL 注入防护 - prisma-sql 安全",
       "description": "SQL 注入防护方法：参数绑定、基于 Schema 的校验与 137 个安全测试（当前套件）",
       "keywords": "sql 注入防护, 参数化查询, sql 安全, 数据库安全, prisma 安全"
     },

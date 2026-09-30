@@ -1,0 +1,65 @@
+---
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../Header.astro';
+import Hero from '../Hero.astro';
+import Stats from '../Stats.astro';
+import Problem from '../Problem.astro';
+import Performance from '../Performance.astro';
+import Benchmarks from '../Benchmarks.astro';
+import ParityStrip from '../ParityStrip.astro';
+import TestingCallout from '../TestingCallout.astro';
+import HowItWorks from '../HowItWorks.astro';
+import SecurityCallout from '../SecurityCallout.astro';
+import Features from '../Features.astro';
+import Extras from '../Extras.astro';
+import UseCases from '../UseCases.astro';
+import Installation from '../Installation.astro';
+import FAQ from '../FAQ.astro';
+import CTA from '../CTA.astro';
+import Footer from '../Footer.astro';
+
+interface Props {
+  t: any;
+  locale: string;
+}
+
+const { t, locale } = Astro.props;
+
+const pkg = JSON.parse(readFileSync(resolve(process.cwd(), '..', 'package.json'), 'utf-8'));
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareSourceCode',
+  name: 'prisma-sql',
+  description: t.meta.description,
+  url: new URL(locale === 'en' ? '/prisma-sql/' : `/prisma-sql/${locale}/`, Astro.site).toString(),
+  codeRepository: 'https://github.com/multipliedtwice/prisma-sql',
+  programmingLanguage: 'TypeScript',
+  runtimePlatform: 'Node.js',
+  license: `https://spdx.org/licenses/${pkg.license}.html`,
+  version: pkg.version,
+  inLanguage: locale,
+};
+---
+
+<Layout title={t.meta.title} description={t.meta.description} locale={locale} keywords={t.meta.keywords} structuredData={structuredData}>
+  <Header t={t} locale={locale} />
+  <Hero t={t} />
+  <Stats t={t} />
+  <Problem t={t} />
+  <Performance t={t} />
+  <Benchmarks t={t} />
+  <ParityStrip t={t} />
+  <TestingCallout t={t} locale={locale} />
+  <HowItWorks t={t} />
+  <SecurityCallout t={t} locale={locale} />
+  <Features t={t} />
+  {t.extras && <Extras t={t} />}
+  <UseCases t={t} />
+  <Installation t={t} />
+  <FAQ t={t} />
+  <CTA t={t} />
+  <Footer t={t} locale={locale} />
+</Layout>

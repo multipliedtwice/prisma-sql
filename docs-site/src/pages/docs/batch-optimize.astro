@@ -7,7 +7,7 @@ const base = '/prisma-sql';
 <DocsLayout
   title="$batch & @optimize - prisma-sql"
   description="Combine independent reads into one round trip with $batch and prebake hot queries at generate time with @optimize."
-  active={`${base}/docs/batch-optimize`}
+  active={`${base}/docs/batch-optimize/`}
 >
   <h1>$batch and @optimize</h1>
   <p>Extras on top of Prisma's API: capabilities Prisma Client does not have, with the same types and code style.</p>
@@ -102,7 +102,7 @@ model User {
 
   <p>
     <code>@optimize</code> is optional — it only removes the conversion overhead of repeated hot query shapes. See
-    <a href={`${base}/docs/configuration`}>generator configuration</a> for the <code>skipInvalid</code> option if a
+    <a href={`${base}/docs/configuration/`}>generator configuration</a> for the <code>skipInvalid</code> option if a
     directive should be skipped instead of failing generation.
   </p>
 

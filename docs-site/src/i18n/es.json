@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Arregla consultas lentas de Prisma: lecturas 2–7× más rápidas (hasta 53.5×) | Prisma-SQL",
-    "description": "¿Prisma va lento? Acelera lecturas lentas de Prisma 2–7× sin refactors. Evita la ruta de ejecución de lecturas de Prisma con ejecución SQL directa en PostgreSQL y SQLite (hasta 53.5× en filtros de relación de SQLite). Optimización lista para producción para cargas de trabajo de Prisma centradas en lecturas.",
+    "title": "Arregla consultas lentas de Prisma | prisma-sql",
+    "description": "prisma-sql compila las lecturas de Prisma compatibles a SQL y las ejecuta con postgres.js o better-sqlite3. Benchmarks con Prisma v6–v8 en PostgreSQL y SQLite.",
     "keywords": "prisma lento, prisma es lento, rendimiento prisma, arreglar prisma lento, acelerar prisma, optimización prisma, velocidad de consultas prisma, consultas lentas prisma, problemas de rendimiento prisma, hacer prisma más rápido, postgresql, sqlite"
   },
   "header": {
@@ -287,7 +287,7 @@
   },
   "testing": {
     "meta": {
-      "title": "Metodología de pruebas - Prisma-SQL",
+      "title": "Metodología de pruebas - prisma-sql",
       "description": "Enfoque de pruebas integral que valida con 137 pruebas E2E que el SQL generado coincide exactamente con la salida de Prisma",
       "keywords": "pruebas prisma, validación sql, pruebas e2e, pruebas orm, pruebas de base de datos"
     },
@@ -547,7 +547,7 @@
   },
   "sqlPrevention": {
     "meta": {
-      "title": "Prevención de inyección SQL - Seguridad Prisma-SQL",
+      "title": "Prevención de inyección SQL - Seguridad prisma-sql",
       "description": "Metodología de prevención de inyección SQL usando enlace de parámetros, validación basada en esquema y 137 pruebas enfocadas en seguridad (suite actual)",
       "keywords": "prevención de inyección sql, consultas parametrizadas, seguridad sql, seguridad de base de datos, seguridad prisma"
     },

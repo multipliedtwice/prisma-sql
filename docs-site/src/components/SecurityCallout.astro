@@ -8,7 +8,7 @@ interface Props {
 
 const { t, locale } = Astro.props;
 const c = t.sqlPrevention.securityCallout;
-const href = locale === 'en' ? '/prisma-sql/sql-prevention' : `/prisma-sql/${locale}/sql-prevention`;
+const href = locale === 'en' ? '/prisma-sql/sql-prevention/' : `/prisma-sql/${locale}/sql-prevention/`;
 ---
 
 <CalloutRow href={href} badge={c.badge} title={c.title} description={c.description} link={c.link} tone="oxide" />

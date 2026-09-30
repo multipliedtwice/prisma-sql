@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Prisma-SQL: Faster Supported Prisma Reads",
-    "description": "prisma-sql accelerates supported Prisma read queries by generating SQL and executing it directly through postgres.js or better-sqlite3. Current benchmarks compare Prisma v6, v7, and v8 across PostgreSQL and SQLite.",
+    "title": "prisma-sql: Faster Supported Prisma Reads",
+    "description": "prisma-sql compiles supported Prisma reads to SQL and runs them through postgres.js or better-sqlite3. Benchmarked on Prisma v6–v8 with PostgreSQL and SQLite.",
     "keywords": "slow prisma, prisma slow, prisma performance, fix slow prisma, speed up prisma, prisma optimization, prisma query speed, slow prisma queries, prisma performance issues, make prisma faster, postgresql, sqlite"
   },
   "header": {
@@ -287,7 +287,7 @@
   },
   "testing": {
     "meta": {
-      "title": "Testing Methodology - Prisma-SQL",
+      "title": "Testing Methodology - prisma-sql",
       "description": "Supported queries are validated against Prisma across PostgreSQL and SQLite, and benchmark reports compare Prisma v6, v7, v8, Drizzle, and generated SQL.",
       "keywords": "prisma testing, sql validation, e2e tests, orm testing, database testing"
     },
@@ -547,7 +547,7 @@
   },
   "sqlPrevention": {
     "meta": {
-      "title": "SQL Injection Prevention - Prisma-SQL Security",
+      "title": "SQL Injection Prevention - prisma-sql Security",
       "description": "SQL injection prevention methodology using parameter binding, schema-based validation, and the current security-focused test suite",
       "keywords": "sql injection prevention, parameterized queries, sql security, database security, prisma security"
     },

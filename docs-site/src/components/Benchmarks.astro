@@ -196,7 +196,7 @@ const b = t.benchmarks
             >
               <span class="hidden sm:inline">{p.tabLabel}</span>
               <span class="sm:hidden">{p.tabLabelShort}</span>
-              <span class="ml-2 text-xs opacity-70">{p.result.avgSpeedupVsPrisma.toFixed(1)}x</span>
+              <span class="ml-2 text-xs">{p.result.avgSpeedupVsPrisma.toFixed(1)}x</span>
             </button>
           ))}
         </div>
@@ -232,7 +232,7 @@ const b = t.benchmarks
                 )}
               </div>
               {p.result.timestamp && (
-                <span class="text-xs text-[#6F8896] ml-auto">
+                <span class="text-xs text-[#8FA6B3] ml-auto">
                   {new Date(p.result.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                 </span>
               )}
@@ -280,11 +280,11 @@ const b = t.benchmarks
                         </td>
                         <td class="px-4 py-3 text-right text-[#AFC2CC] tabular-nums whitespace-nowrap" title={`±${fmtMs(prismaCi)}ms (95% CI)`}>
                           {fmtMs(test.prismaMs)}ms
-                          <span class="text-[#6F8896] text-xs ml-1">±{fmtMs(prismaCi)}</span>
+                          <span class="text-[#8FA6B3] text-xs ml-1">±{fmtMs(prismaCi)}</span>
                         </td>
                         <td class={`px-4 py-3 text-right tabular-nums whitespace-nowrap ${timingColor}`} title={`±${fmtMs(extendedCi)}ms (95% CI)`}>
                           <span class="font-semibold">{fmtMs(test.extendedMs)}ms</span>
-                          <span class="text-[#6F8896] text-xs ml-1">±{fmtMs(extendedCi)}</span>
+                          <span class="text-[#8FA6B3] text-xs ml-1">±{fmtMs(extendedCi)}</span>
                         </td>
                         {p.hasDrizzle && (
                           <td class="px-4 py-3 text-right text-[#AFC2CC] tabular-nums whitespace-nowrap">
@@ -303,11 +303,11 @@ const b = t.benchmarks
                         </td>
                         <td class="px-4 py-3 text-center whitespace-nowrap" title={sigTooltip}>
                           {isNoiseFloor ? (
-                            <span class="text-[#6F8896] text-xs">≈</span>
+                            <span class="text-[#8FA6B3] text-xs">≈</span>
                           ) : vsPrisma.significant ? (
                             <span class="text-[#9FE3C3] font-mono text-xs">{vsPrisma.stars}</span>
                           ) : (
-                            <span class="text-[#6F8896] text-xs">ns</span>
+                            <span class="text-[#8FA6B3] text-xs">ns</span>
                           )}
                         </td>
                         <td class="px-4 py-3 text-right tabular-nums whitespace-nowrap">
@@ -332,8 +332,8 @@ const b = t.benchmarks
               <span><span class="text-[#9FE3C3] font-mono">***</span> {b.legend.p001}</span>
               <span><span class="text-[#9FE3C3] font-mono">**</span>&ensp;{b.legend.p01}</span>
               <span><span class="text-[#9FE3C3] font-mono">*</span>&ensp;&ensp;{b.legend.p05}</span>
-              <span><span class="text-[#6F8896]">ns</span>&ensp;{b.legend.ns}</span>
-              <span><span class="text-[#6F8896]">≈</span>&ensp;{tpl(b.legend.noiseFloor, { threshold: String(PRACTICAL_THRESHOLD_MS) })}</span>
+              <span><span class="text-[#8FA6B3]">ns</span>&ensp;{b.legend.ns}</span>
+              <span><span class="text-[#8FA6B3]">≈</span>&ensp;{tpl(b.legend.noiseFloor, { threshold: String(PRACTICAL_THRESHOLD_MS) })}</span>
               <span>±&ensp;{b.legend.ci}</span>
               <span><span class="text-amber">CV% &gt; 15%</span> = {b.legend.highVariance}</span>
             </div>
@@ -376,7 +376,7 @@ const b = t.benchmarks
         <ul class="space-y-2 text-sm text-[#8FA6B3]">
           {b.methodology.lines.map((line: string) => (
             <li class="flex gap-2">
-              <span class="text-[#6F8896] mt-0.5">–</span>
+              <span class="text-[#8FA6B3] mt-0.5">–</span>
               <span set:html={line.replace(/`([^`]+)`/g, '<code class="bg-white/[0.08] px-1.5 py-0.5 rounded text-xs text-paper">$1</code>')} />
             </li>
           ))}

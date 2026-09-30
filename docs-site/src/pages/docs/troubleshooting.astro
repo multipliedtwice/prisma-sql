@@ -7,7 +7,7 @@ const base = '/prisma-sql';
 <DocsLayout
   title="Troubleshooting & limits - prisma-sql"
   description="Common problems, debugging tools, edge runtimes and current limitations of prisma-sql."
-  active={`${base}/docs/troubleshooting`}
+  active={`${base}/docs/troubleshooting/`}
 >
   <h1>Troubleshooting & limits</h1>
 
@@ -36,7 +36,7 @@ const base = '/prisma-sql';
   <p>If generated code targets PostgreSQL, do not pass SQLite, and vice versa. Override the dialect in the generator block if needed.</p>
 
   <h3>Results differ from Prisma</h3>
-  <p>Turn on debug logging and compare generated SQL with Prisma query logs, or better, use <a href={`${base}/docs/verify`}>prisma-sql-verify</a>. If behavior differs, open an issue with schema excerpt, query, generated SQL, expected and actual result.</p>
+  <p>Turn on debug logging and compare generated SQL with Prisma query logs, or better, use <a href={`${base}/docs/verify/`}>prisma-sql-verify</a>. If behavior differs, open an issue with schema excerpt, query, generated SQL, expected and actual result.</p>
 
   <h3>Performance worse on a relation-heavy query</h3>
   <ul>

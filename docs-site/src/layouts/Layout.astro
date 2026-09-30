@@ -1,57 +1,36 @@
 ---
 import '../styles/global.css'
+import { BASE, pageFromPath, pagePath, translatedLocales } from '../lib/i18n-coverage.mjs'
 
 interface Props {
   title: string
   description: string
   locale: string
   keywords?: string
+  noindex?: boolean
+  structuredData?: Record<string, unknown>
 }
 
-const { title, description, locale, keywords } = Astro.props
-const canonicalURL = new URL(Astro.url.pathname, Astro.site)
-const ogImage = `${Astro.site}og-image.png`
-const base = '/prisma-sql'
+const { title, description, locale, keywords, noindex = false, structuredData } = Astro.props
 
-const rtlLocales = new Set(['ar', 'ur'])
-const dir = rtlLocales.has(locale) ? 'rtl' : 'ltr'
-
-const locales = ['en', 'es', 'fr', 'pt', 'hi', 'bn', 'ar', 'ur', 'ru', 'zh']
-
-const normalizeBase = (p: string) => {
-  if (p === base) return `${base}/`
-  return p
+const OG_LOCALES: Record<string, string> = {
+  en: 'en_US', es: 'es_ES', fr: 'fr_FR', pt: 'pt_BR', hi: 'hi_IN',
+  bn: 'bn_BD', ar: 'ar_AR', ur: 'ur_PK', ru: 'ru_RU', zh: 'zh_CN',
 }
 
-const stripLocaleFromPath = (pathname: string) => {
-  const path = normalizeBase(pathname)
-  if (!path.startsWith(`${base}/`)) return path
-
-  const afterBase = path.slice(`${base}/`.length)
-  const firstSeg = afterBase.split('/')[0]
-
-  if (locales.includes(firstSeg)) {
-    const rest = afterBase.slice(firstSeg.length)
-    return `${base}${rest || '/'}`
-  }
-
-  return path
-}
-
-const pathWithoutLocale = stripLocaleFromPath(Astro.url.pathname)
-
-const makeLocalizedPath = (code: string) => {
-  if (code === 'en') return pathWithoutLocale
-  const rest = pathWithoutLocale.slice(base.length)
-  return `${base}/${code}${rest}`
-}
-
-const alternateLinks = locales.map((code) => ({
-  code,
-  href: new URL(makeLocalizedPath(code), Astro.site).toString()
-}))
-
-const xDefault = alternateLinks.find((x) => x.code === 'en')?.href
+const absolute = (path: string) => new URL(path, Astro.site).toString()
+const { page } = pageFromPath(Astro.url.pathname)
+const translated = translatedLocales(page)
+const isTranslated = translated.includes(locale)
+const selfPath = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`
+const canonicalURL = absolute(isTranslated ? selfPath : pagePath(page, 'en'))
+const alternateLinks =
+  isTranslated && translated.length > 1
+    ? translated.map((code) => ({ code, href: absolute(pagePath(page, code)) }))
+    : []
+const ogImage = absolute(`${BASE}/og-image.png`)
+const dir = locale === 'ar' || locale === 'ur' ? 'rtl' : 'ltr'
+const base = BASE
 ---
 
 <!doctype html>
@@ -76,44 +55,36 @@ const xDefault = alternateLinks.find((x) => x.code === 'en')?.href
     <meta name='description' content={description} />
     {keywords && <meta name='keywords' content={keywords} />}
     <meta name='author' content='multipliedtwice' />
-    <meta name='robots' content='index, follow' />
+    {!noindex && <meta name='robots' content='index, follow' />}
 
-    <link rel='canonical' href={canonicalURL} />
+    {!noindex && <link rel='canonical' href={canonicalURL} />}
+    {noindex && <meta name='robots' content='noindex, follow' />}
 
     {alternateLinks.map((l) => (
-      <link rel="alternate" hreflang={l.code} href={l.href} />
+      <link rel='alternate' hreflang={l.code} href={l.href} />
     ))}
-    {xDefault && <link rel="alternate" hreflang="x-default" href={xDefault} />}
-
-    <link rel='preconnect' href='https://cdnjs.cloudflare.com' crossorigin />
-    <link rel='dns-prefetch' href='https://cdnjs.cloudflare.com' />
+    {alternateLinks.length > 0 && <link rel='alternate' hreflang='x-default' href={absolute(pagePath(page, 'en'))} />}
 
     <meta property='og:type' content='website' />
+    <meta property='og:site_name' content='prisma-sql' />
+    <meta property='og:locale' content={OG_LOCALES[locale] ?? 'en_US'} />
     <meta property='og:url' content={canonicalURL} />
     <meta property='og:title' content={title} />
     <meta property='og:description' content={description} />
     <meta property='og:image' content={ogImage} />
+    <meta property='og:image:width' content='1200' />
+    <meta property='og:image:height' content='630' />
+    <meta property='og:image:alt' content='prisma-sql: Prisma queries compiled to SQL' />
 
-    <meta property='twitter:card' content='summary_large_image' />
-    <meta property='twitter:url' content={canonicalURL} />
-    <meta property='twitter:title' content={title} />
-    <meta property='twitter:description' content={description} />
-    <meta property='twitter:image' content={ogImage} />
+    <meta name='twitter:card' content='summary_large_image' />
+    <meta name='twitter:title' content={title} />
+    <meta name='twitter:description' content={description} />
+    <meta name='twitter:image' content={ogImage} />
+
+    {structuredData && <script type='application/ld+json' set:html={JSON.stringify(structuredData).replace(/</g, '\\u003c')} />}
 
     <link rel='icon' type='image/x-icon' href={`${base}/favicon.ico`} />
     <link rel='icon' type='image/svg+xml' href={`${base}/favicon.svg`} />
-    <link
-      rel='icon'
-      type='image/png'
-      sizes='16x16'
-      href={`${base}/favicon-16x16.png`}
-    />
-    <link
-      rel='icon'
-      type='image/png'
-      sizes='32x32'
-      href={`${base}/favicon-32x32.png`}
-    />
     <link
       rel='icon'
       type='image/png'

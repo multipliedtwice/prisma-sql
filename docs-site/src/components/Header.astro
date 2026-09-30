@@ -13,8 +13,8 @@ const basePath = locale === 'en' ? root : `${root}${locale}/`;
 const cta = cleanLabel(t.header.cta);
 
 const links = [
-  { href: `${root}docs`, label: 'Docs' },
-  { href: `${root}docs/parity`, label: 'Parity' },
+  { href: `${root}docs/`, label: 'Docs' },
+  { href: `${root}docs/parity/`, label: 'Parity' },
   { href: `${basePath}#benchmarks`, label: 'Benchmarks', wide: true },
 ];
 ---
@@ -53,7 +53,7 @@ const links = [
         </svg>
       </a>
 
-      <a href={`${root}docs`} class="btn-solid ms-1 hidden !px-4 !py-2 !text-sm lg:inline-flex">
+      <a href={`${root}docs/`} class="btn-solid ms-1 hidden !px-4 !py-2 !text-sm lg:inline-flex">
         {cta}
       </a>
     </div>

@@ -34,7 +34,7 @@ const searchText = (r: ParityRow) => `${r.group} ${r.feature} ${r.note} ${r.pris
 <DocsLayout
   title="Prisma parity map - prisma-sql"
   description="Which Prisma Client features prisma-sql accelerates, which fall back to Prisma, and where results can differ, on PostgreSQL and SQLite."
-  active={`${base}/docs/parity`}
+  active={`${base}/docs/parity/`}
 >
   <h1>Prisma parity map</h1>
   <p>
@@ -44,12 +44,12 @@ const searchText = (r: ParityRow) => `${r.group} ${r.feature} ${r.note} ${r.pris
 
   <dl class="not-prose mb-10 mt-8 grid gap-x-8 gap-y-4 sm:grid-cols-2 xl:grid-cols-3">
     {usedStatuses.map((s) => (
-      <div class="flex gap-3">
-        <span class={`st st-${s} mt-1 h-4 w-4 shrink-0 rounded-[3px]`} aria-hidden="true"></span>
-        <div>
-          <dt class="font-semibold text-ink">{STATUS_META[s].label}</dt>
-          <dd class="text-sm text-fog">{STATUS_META[s].description}</dd>
-        </div>
+      <div>
+        <dt class="flex items-center gap-3 font-semibold text-ink">
+          <span class={`st st-${s} h-4 w-4 shrink-0 rounded-[3px]`} aria-hidden="true"></span>
+          {STATUS_META[s].label}
+        </dt>
+        <dd class="ps-7 text-sm text-fog">{STATUS_META[s].description}</dd>
       </div>
     ))}
   </dl>
@@ -134,7 +134,7 @@ const searchText = (r: ParityRow) => `${r.group} ${r.feature} ${r.note} ${r.pris
     <li>Rows marked "inferred from the source" have no test run behind them yet.</li>
     <li>
       Anything marked "Falls back" still returns Prisma's result. Enable <code>debug: true</code> to log fallbacks, and run
-      <a href={`${base}/docs/verify`}>prisma-sql-verify</a> to compare results on your own schema.
+      <a href={`${base}/docs/verify/`}>prisma-sql-verify</a> to compare results on your own schema.
     </li>
   </ul>
 

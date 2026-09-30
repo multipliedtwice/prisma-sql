@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://multipliedtwice.github.io/prisma-sql/sitemap-index.xml

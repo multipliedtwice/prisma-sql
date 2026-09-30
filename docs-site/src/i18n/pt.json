@@ -1,10 +1,12 @@
 {
   "meta": {
-    "title": "Corrija Consultas Prisma Lentas: Leituras 2–7× Mais Rápidas (Até 53,5×) | Prisma-SQL",
-    "description": "O Prisma está lento? Acelere leituras lentas do Prisma em 2–7× sem refatorações. Ignore o caminho de execução de leitura do Prisma com execução direta de SQL em PostgreSQL e SQLite (até 53,5× em filtros de relação no SQLite). Otimização pronta para produção para workloads Prisma com muitas leituras.",
+    "title": "Corrija Consultas Prisma Lentas | prisma-sql",
+    "description": "prisma-sql compila leituras suportadas do Prisma para SQL e as executa com postgres.js ou better-sqlite3. Benchmarks com Prisma v6–v8 em PostgreSQL e SQLite.",
     "keywords": "slow prisma, prisma slow, prisma performance, fix slow prisma, speed up prisma, prisma optimization, prisma query speed, slow prisma queries, prisma performance issues, make prisma faster, postgresql, sqlite"
   },
-  "header": { "cta": "Corrigir Prisma Lento →" },
+  "header": {
+    "cta": "Corrigir Prisma Lento →"
+  },
   "hero": {
     "badge": "🚀 A Solução para Prisma Lento",
     "title": "Corrija Consultas Prisma Lentas",
@@ -285,7 +287,7 @@
   },
   "testing": {
     "meta": {
-      "title": "Metodologia de Testes - Prisma-SQL",
+      "title": "Metodologia de Testes - prisma-sql",
       "description": "Abordagem abrangente: 137 testes E2E garantem que o SQL gerado corresponde exatamente ao output do Prisma",
       "keywords": "prisma testing, sql validation, e2e tests, orm testing, database testing"
     },
@@ -545,7 +547,7 @@
   },
   "sqlPrevention": {
     "meta": {
-      "title": "Prevenção de SQL Injection - Segurança do Prisma-SQL",
+      "title": "Prevenção de SQL Injection - Segurança do prisma-sql",
       "description": "Metodologia de prevenção de SQL injection usando parameter binding, validação baseada em schema e 137 testes focados em segurança (suíte atual)",
       "keywords": "sql injection prevention, parameterized queries, sql security, database security, prisma security"
     },

@@ -1,0 +1,22 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import t from '../i18n/en.json';
+---
+
+<Layout title="Page not found - prisma-sql" description="This page does not exist." locale="en" noindex>
+  <Header t={t} locale="en" />
+  <section class="section">
+    <div class="page-x">
+      <p class="font-mono text-sm text-fog">404</p>
+      <h1 class="display-1 mt-4 max-w-[14ch]">Page not found</h1>
+      <p class="lede mt-6 text-ink/85">The page moved or never existed.</p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="/prisma-sql/" class="btn-solid">Home</a>
+        <a href="/prisma-sql/docs/" class="btn-line">Documentation</a>
+      </div>
+    </div>
+  </section>
+  <Footer t={t} locale="en" />
+</Layout>

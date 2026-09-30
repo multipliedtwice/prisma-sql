@@ -1,10 +1,12 @@
 {
   "meta": {
-    "title": "धीमी Prisma क्वेरी ठीक करें: 2–7× तेज़ रीड्स (53.5× तक) | Prisma-SQL",
-    "description": "क्या Prisma धीमा है? बिना refactor के धीमी Prisma reads को 2–7× तेज़ करें। PostgreSQL और SQLite में direct SQL execution के साथ Prisma की read execution path को bypass करें (SQLite relation filters पर 53.5× तक)। read-heavy Prisma workloads के लिए production-ready optimization।",
+    "title": "धीमी Prisma क्वेरी ठीक करें | prisma-sql",
+    "description": "prisma-sql समर्थित Prisma रीड क्वेरी को SQL में बदलकर postgres.js या better-sqlite3 से चलाता है। PostgreSQL और SQLite पर Prisma v6–v8 के साथ बेंचमार्क किया गया।",
     "keywords": "slow prisma, prisma slow, prisma performance, fix slow prisma, speed up prisma, prisma optimization, prisma query speed, slow prisma queries, prisma performance issues, make prisma faster, postgresql, sqlite"
   },
-  "header": { "cta": "धीमी Prisma ठीक करें →" },
+  "header": {
+    "cta": "धीमी Prisma ठीक करें →"
+  },
   "hero": {
     "badge": "🚀 धीमे Prisma के लिए समाधान",
     "title": "धीमी Prisma क्वेरी ठीक करें",
@@ -285,7 +287,7 @@
   },
   "testing": {
     "meta": {
-      "title": "Testing Methodology - Prisma-SQL",
+      "title": "Testing Methodology - prisma-sql",
       "description": "Comprehensive testing approach validating 137 E2E tests ensure generated SQL matches Prisma output exactly",
       "keywords": "prisma testing, sql validation, e2e tests, orm testing, database testing"
     },
@@ -545,7 +547,7 @@
   },
   "sqlPrevention": {
     "meta": {
-      "title": "SQL Injection Prevention - Prisma-SQL Security",
+      "title": "SQL Injection Prevention - prisma-sql Security",
       "description": "SQL injection prevention methodology using parameter binding, schema-based validation, and 137 security-focused tests (current suite)",
       "keywords": "sql injection prevention, parameterized queries, sql security, database security, prisma security"
     },

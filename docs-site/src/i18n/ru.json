@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Ускорение медленных запросов Prisma: 2–7× быстрее (до 53.5×) | Prisma-SQL",
-    "description": "Prisma работает медленно? Ускорьте чтения в Prisma в 2–7× без рефакторинга. Обходите путь выполнения чтений Prisma с прямым SQL в PostgreSQL и SQLite (до 53.5× на relation filters в SQLite).",
+    "title": "Ускорение медленных запросов Prisma | prisma-sql",
+    "description": "prisma-sql компилирует поддерживаемые чтения Prisma в SQL и выполняет их через postgres.js или better-sqlite3. Бенчмарки: Prisma v6–v8, PostgreSQL и SQLite.",
     "keywords": "медленная prisma, ускорение prisma, производительность prisma, оптимизация prisma, быстрая prisma, postgresql, sqlite"
   },
   "header": {
@@ -287,7 +287,7 @@
   },
   "testing": {
     "meta": {
-      "title": "Методология тестирования - Prisma-SQL",
+      "title": "Методология тестирования - prisma-sql",
       "description": "Комплексный подход к тестированию: 137 E2E-тестов проверяют точное совпадение генерируемого SQL с выводом Prisma",
       "keywords": "prisma тестирование, валидация sql, e2e тесты, тестирование orm, тестирование баз данных"
     },
@@ -547,7 +547,7 @@
   },
   "sqlPrevention": {
     "meta": {
-      "title": "Предотвращение SQL-инъекций - Безопасность Prisma-SQL",
+      "title": "Предотвращение SQL-инъекций - Безопасность prisma-sql",
       "description": "Методология предотвращения SQL-инъекций: привязка параметров, валидация по схеме и 137 тестов безопасности (текущий набор)",
       "keywords": "предотвращение sql-инъекций, параметризованные запросы, безопасность sql, безопасность баз данных, безопасность prisma"
     },
