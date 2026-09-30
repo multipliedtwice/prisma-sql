@@ -34,6 +34,10 @@ import {
 } from '../helpers/benchmark-utils'
 import { normalizeValue } from '../helpers/compare'
 import { withExtensionCapture } from '../helpers/query-capture'
+import {
+  NOT_ARRAY_AND_COUNT_WHERE_CASES,
+  runNotArrayCountWhereCase,
+} from '../helpers/not-array-count-where-cases'
 import { getDatamodel } from '../helpers/datamodel'
 import postgres from 'postgres'
 
@@ -2435,6 +2439,14 @@ describe('Prisma Parity E2E - PostgreSQL', () => {
             }),
         },
       ))
+  })
+
+  describe('NOT arrays and filtered relation counts', () => {
+    for (const parityCase of NOT_ARRAY_AND_COUNT_WHERE_CASES) {
+      it(parityCase.name, () =>
+        runNotArrayCountWhereCase(db, benchmarkResults, parityCase),
+      )
+    }
   })
 
   describe('relation count', () => {

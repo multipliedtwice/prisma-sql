@@ -9,7 +9,6 @@ import { getDatamodel } from '../helpers/datamodel'
 
 const PRISMA_DIR = join(process.cwd(), 'tests', 'prisma')
 const SCHEMA_PATH = join(PRISMA_DIR, 'schema-postgres.prisma')
-const SCHEMA_PATH_V7 = join(PRISMA_DIR, 'schema-postgres-v7.prisma')
 
 function mergeSchema(): void {
   const base = readFileSync(join(PRISMA_DIR, 'base.prisma'), 'utf-8')
@@ -24,15 +23,11 @@ datasource db {
 }`
 
   writeFileSync(SCHEMA_PATH, `${header}\n\n${base}`)
-  writeFileSync(SCHEMA_PATH_V7, `${header}\n\n${base}`)
 }
 
 function cleanupSchema(): void {
   try {
     unlinkSync(SCHEMA_PATH)
-  } catch {}
-  try {
-    unlinkSync(SCHEMA_PATH_V7)
   } catch {}
 }
 

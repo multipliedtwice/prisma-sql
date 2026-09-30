@@ -149,10 +149,6 @@ function formatPositionPostgres(position: number): string {
   return `$${position}`
 }
 
-function formatPositionSqlite(_position: number): string {
-  return '?'
-}
-
 function validateDynamicName(dynamicName: string): string {
   const dn = dynamicName.trim()
   if (dn.length === 0) {
@@ -181,8 +177,7 @@ function createStoreInternal(
   let dirty = true
   let cachedSnapshot: ParamSnapshot | null = null
 
-  const formatPosition =
-    dialect === 'sqlite' ? formatPositionSqlite : formatPositionPostgres
+  const formatPosition = formatPositionPostgres
 
   function ensureMutable(): void {
     if (frozen) {

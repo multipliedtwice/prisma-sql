@@ -33,7 +33,10 @@ import { addAutoScoped } from '../shared/dynamic-params'
 import { expandOrderByInput } from '../shared/order-by-utils'
 import { SqlResult } from '../shared/types'
 import { jsonBuildObject } from '../../sql-builder-dialect'
-import { buildRelationCountSql } from './include-count'
+import {
+  buildRelationCountSql,
+  type RelationCountSelect,
+} from './include-count'
 import { COUNT_SELECT_KEY } from './distinct'
 import { getModelStats } from './strategy-estimator'
 
@@ -302,7 +305,7 @@ function resolveCountSelectFromArgs(args: PrismaQueryArgs): unknown {
 function resolveCountSelectShape(
   raw: unknown,
   model: Model,
-): Record<string, boolean> | null {
+): RelationCountSelect | null {
   if (raw === true) {
     const relationSet = getRelationFieldSet(model)
     if (relationSet.size === 0) return null
@@ -310,8 +313,8 @@ function resolveCountSelectShape(
     for (const name of relationSet) all[name] = true
     return all
   }
-  if (isPlainObject(raw) && 'select' in raw) {
-    return (raw as { select: Record<string, boolean> }).select
+  if (isPlainObject(raw) && isPlainObject(raw.select)) {
+    return raw.select
   }
   return null
 }

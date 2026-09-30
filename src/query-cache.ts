@@ -174,11 +174,14 @@ function buildSQLFull(
   const needsPlaceholderConversion =
     dialect === 'sqlite' && result.sql.includes('$')
   const sqlResult = needsPlaceholderConversion
-    ? pgToSqlitePlaceholders(result.sql, result.params)
-    : { sql: result.sql, params: [...result.params] }
+    ? pgToSqlitePlaceholders(result.sql, result.params, result.paramMappings)
+    : {
+        sql: result.sql,
+        params: [...result.params],
+        paramMappings: result.paramMappings,
+      }
   return {
     ...sqlResult,
-    paramMappings: result.paramMappings,
     requiresReduction: result.requiresReduction,
     includeSpec: result.includeSpec,
     isLateral: result.isLateral,

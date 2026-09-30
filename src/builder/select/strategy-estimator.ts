@@ -201,23 +201,43 @@ function normalizeTakeEstimate(take: number | null): number | undefined {
   return Math.abs(take)
 }
 
+function hasNestedCountSelection(value: unknown): boolean {
+  if (!isPlainObject(value)) return false
+  if (value._count) return true
+
+  for (const key of ['include', 'select'] as const) {
+    const nested = value[key]
+    if (!isPlainObject(nested)) continue
+    if (nested._count) return true
+    for (const child of Object.values(nested)) {
+      if (hasNestedCountSelection(child)) return true
+    }
+  }
+
+  return false
+}
+
+function warnModelStatsUnavailable(): void {
+  if (globalModelStatsWarned) return
+  globalModelStatsWarned = true
+  console.warn(
+    '[prisma-sql] MODEL_STATS missing or incomplete — size-aware guard unavailable; ' +
+      'using conservative shallow-pagination fallback. Run the planner stats ' +
+      'collector against your database to enable size-aware strategy selection.',
+  )
+}
+
 function checkLargeChildGuard(params: {
   includeSpec: Record<string, any>
   model: Model
   schemas: readonly Model[]
   takeValue: number | null
   modelMap?: Map<string, Model>
-}): 'where-in' | null {
+}): 'where-in' | 'stats-unavailable' | null {
   const stats = globalModelStats
   if (!stats || Object.keys(stats).length === 0) {
-    if (!globalModelStatsWarned) {
-      globalModelStatsWarned = true
-      console.warn(
-        '[prisma-sql] MODEL_STATS not loaded — pathological-query guard disabled. ' +
-          'Run the planner stats collector against your database to enable it.',
-      )
-    }
-    return null
+    warnModelStatsUnavailable()
+    return 'stats-unavailable'
   }
 
   const { includeSpec, model, schemas, takeValue, modelMap } = params
@@ -237,6 +257,7 @@ function checkLargeChildGuard(params: {
 
   const narrowedStats: ModelStatsMap = stats
   let fired = false
+  let complete = true
 
   function walk(
     spec: Record<string, any>,
@@ -255,6 +276,14 @@ function checkLargeChildGuard(params: {
       if (rel.isList) {
         const childStats = narrowedStats[rel.relModel.name]
         if (
+          !childStats ||
+          childStats.known === false ||
+          !Number.isFinite(childStats.rowCount) ||
+          childStats.rowCount < 0
+        ) {
+          complete = false
+        }
+        if (
           childStats &&
           childStats.rowCount > strategyStore.largeChildTableRows
         ) {
@@ -270,7 +299,12 @@ function checkLargeChildGuard(params: {
 
   walk(includeSpec, model, 0)
 
-  return fired ? 'where-in' : null
+  if (fired) return 'where-in'
+  if (!complete) {
+    warnModelStatsUnavailable()
+    return 'stats-unavailable'
+  }
+  return null
 }
 
 function buildCostTree(
@@ -335,6 +369,93 @@ function anyChildHasWhere(nodes: RelationCostNode[]): boolean {
     if (n.hasChildWhere) return true
   }
   return false
+}
+
+function hasOnlyToOneDescendants(nodes: RelationCostNode[]): boolean {
+  return nodes.every((node) =>
+    node.children.every(
+      (child) =>
+        !child.isList && hasOnlyToOneDescendants(child.children),
+    ),
+  )
+}
+
+function maxRelationFilterDepth(
+  value: unknown,
+  model: Model,
+  schemas: readonly Model[],
+  modelMap?: Map<string, Model>,
+  depth: number = 0,
+): number {
+  if (Array.isArray(value)) {
+    return value.reduce(
+      (max, entry) =>
+        Math.max(
+          max,
+          maxRelationFilterDepth(entry, model, schemas, modelMap, depth),
+        ),
+      depth,
+    )
+  }
+  if (!isPlainObject(value)) return depth
+
+  const fields = getFieldIndices(model).relationFields
+  let maxDepth = depth
+
+  for (const [key, nested] of Object.entries(value)) {
+    if (key === 'AND' || key === 'OR' || key === 'NOT') {
+      maxDepth = Math.max(
+        maxDepth,
+        maxRelationFilterDepth(nested, model, schemas, modelMap, depth),
+      )
+      continue
+    }
+
+    const field = fields.get(key)
+    if (!field?.relatedModel) continue
+
+    const relatedModel = modelMap
+      ? modelMap.get(field.relatedModel)
+      : schemas.find((candidate) => candidate.name === field.relatedModel)
+    if (!relatedModel) continue
+
+    const relationDepth = depth + 1
+    maxDepth = Math.max(maxDepth, relationDepth)
+    if (!isPlainObject(nested)) continue
+
+    const relationFilter = nested
+    const wrappers = ['some', 'every', 'none', 'is', 'isNot'] as const
+    let wrapped = false
+    for (const wrapper of wrappers) {
+      if (!(wrapper in relationFilter)) continue
+      wrapped = true
+      maxDepth = Math.max(
+        maxDepth,
+        maxRelationFilterDepth(
+          relationFilter[wrapper],
+          relatedModel,
+          schemas,
+          modelMap,
+          relationDepth,
+        ),
+      )
+    }
+
+    if (!wrapped) {
+      maxDepth = Math.max(
+        maxDepth,
+        maxRelationFilterDepth(
+          nested,
+          relatedModel,
+          schemas,
+          modelMap,
+          relationDepth,
+        ),
+      )
+    }
+  }
+
+  return maxDepth
 }
 
 function computeWhereInCost(
@@ -546,8 +667,69 @@ export function pickIncludeStrategy(params: {
 
   const costTree = buildCostTree(includeSpec, model, schemas, 0, modelMap)
   const treeDepth = maxDepthFromTree(costTree)
+  const rootTakeEstimate = normalizeTakeEstimate(takeValue)
+
+  if (
+    params.dialect !== 'sqlite' &&
+    hasChildPagination &&
+    treeDepth >= 3 &&
+    rootTakeEstimate !== undefined &&
+    rootTakeEstimate <= 2 &&
+    Object.values(includeSpec).some(hasNestedCountSelection) &&
+    maxRelationFilterDepth(args?.where, model, schemas, modelMap) >= 3
+  ) {
+    if (debug)
+      console.log(
+        `  [strategy] ${model.name}: deep bounded include + counts + deep root relation filter → where-in`,
+      )
+    return 'where-in'
+  }
+
+  if (
+    params.dialect !== 'sqlite' &&
+    guardResult === 'stats-unavailable' &&
+    hasChildPagination &&
+    treeDepth === 1
+  ) {
+    if (debug)
+      console.log(
+        `  [strategy] ${model.name}: shallow child pagination + no MODEL_STATS → where-in`,
+      )
+    return 'where-in'
+  }
 
   if (hasChildPagination && treeDepth >= 2) {
+    // At depth 2, where-in wins when another list can be batched after the
+    // per-parent slice. If every descendant is to-one, correlated avoids
+    // transferring every child before that slice. Both small-table choices
+    // require complete stats; the large-child guard above keeps precedence.
+    // Depth >= 3 and SQLite retain correlated except for the narrow deep-filter
+    // guard above.
+    if (
+      params.dialect !== 'sqlite' &&
+      guardResult === null &&
+      treeDepth === 2 &&
+      hasOnlyToOneDescendants(costTree) &&
+      !Object.values(includeSpec).some(hasNestedCountSelection)
+    ) {
+      if (debug)
+        console.log(
+          `  [strategy] ${model.name}: bounded list + to-one descendants → correlated`,
+        )
+      return 'correlated'
+    }
+    if (
+      params.dialect !== 'sqlite' &&
+      guardResult === null &&
+      treeDepth === 2 &&
+      !Object.values(includeSpec).some(hasNestedCountSelection)
+    ) {
+      if (debug)
+        console.log(
+          `  [strategy] ${model.name}: childPagination + depth=2 + known stats → where-in`,
+        )
+      return 'where-in'
+    }
     if (debug)
       console.log(
         `  [strategy] ${model.name}: childPagination + depth=${treeDepth} ≥ 2 → correlated`,
@@ -559,22 +741,6 @@ export function pickIncludeStrategy(params: {
     if (debug)
       console.log(
         `  [strategy] ${model.name}: depth=${treeDepth} ≥ 2 + no childPagination → where-in (empirical)`,
-      )
-    return 'where-in'
-  }
-
-  if (hasChildPagination && treeDepth === 1) {
-    if (anyChildHasWhere(costTree)) {
-      if (debug)
-        console.log(
-          `  [strategy] ${model.name}: childPagination + depth=1 + childWhere → where-in`,
-        )
-      return 'where-in'
-    }
-
-    if (debug)
-      console.log(
-        `  [strategy] ${model.name}: childPagination + depth=1 → where-in`,
       )
     return 'where-in'
   }

@@ -3,7 +3,10 @@ import { buildOrderBy, readSkipTake, parseOrderByValue } from '../pagination'
 import { buildWhereClause } from '../where'
 import { jsonAgg, jsonBuildObject, SqlDialect } from '../../sql-builder-dialect'
 import { buildRelationSelect } from './fields'
-import { buildRelationCountSql } from './include-count'
+import {
+  buildRelationCountSql,
+  type RelationCountSelect,
+} from './include-count'
 import { Model, PrismaQueryArgs, Field } from '../../types'
 import { createAliasGenerator } from '../shared/alias-generator'
 import { SQL_TEMPLATES, SQL_SEPARATORS, LIMITS } from '../shared/constants'
@@ -357,7 +360,7 @@ function buildNestedToOneSelects(
 
 function extractCountSelectFromRelArgs(
   relArgs: unknown,
-): Record<string, boolean> | null {
+): RelationCountSelect | null {
   if (!isPlainObject(relArgs)) return null
   const obj = relArgs as Record<string, unknown>
 
@@ -365,8 +368,8 @@ function extractCountSelectFromRelArgs(
     const sel = obj.select as Record<string, unknown>
     const countRaw = sel['_count']
     if (countRaw) {
-      if (isPlainObject(countRaw) && 'select' in countRaw) {
-        return (countRaw as { select: Record<string, boolean> }).select
+      if (isPlainObject(countRaw) && isPlainObject(countRaw.select)) {
+        return countRaw.select
       }
       return null
     }
@@ -376,8 +379,8 @@ function extractCountSelectFromRelArgs(
     const inc = obj.include as Record<string, unknown>
     const countRaw = inc['_count']
     if (countRaw) {
-      if (isPlainObject(countRaw) && 'select' in countRaw) {
-        return (countRaw as { select: Record<string, boolean> }).select
+      if (isPlainObject(countRaw) && isPlainObject(countRaw.select)) {
+        return countRaw.select
       }
       return null
     }
@@ -441,6 +444,7 @@ function buildSelectWithNestedIncludes(
       ctx.params,
       ctx.dialect,
       ctx.schemaByName,
+      ctx.aliasGen,
     )
     if (!countBuild.jsonPairs) return baseSelect
     countJoins.push(...countBuild.joins)

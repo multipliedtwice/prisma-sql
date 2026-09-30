@@ -34,6 +34,10 @@ import {
 } from '../helpers/benchmark-utils'
 import Database from 'better-sqlite3'
 import { withExtensionCapture } from '../helpers/query-capture'
+import {
+  NOT_ARRAY_AND_COUNT_WHERE_CASES,
+  runNotArrayCountWhereCase,
+} from '../helpers/not-array-count-where-cases'
 
 const SHOULD_OUTPUT_JSON = process.env.BENCHMARK_JSON_OUTPUT === '1'
 const PRISMA_VERSION = parseInt(process.env.PRISMA_VERSION || '6', 10)
@@ -1782,6 +1786,14 @@ describe('Prisma Parity E2E - SQLite', () => {
       ))
   })
 
+  describe('NOT arrays and filtered relation counts', () => {
+    for (const parityCase of NOT_ARRAY_AND_COUNT_WHERE_CASES) {
+      it(parityCase.name, () =>
+        runNotArrayCountWhereCase(db, benchmarkResults, parityCase),
+      )
+    }
+  })
+
   describe('relation count', () => {
     it('_count in select', () =>
       runParityTest(
@@ -2040,7 +2052,7 @@ describe('Prisma Parity E2E - SQLite', () => {
       )
     })
 
-    it.skip('count with Date objects', () => {
+    it('count with Date objects', () => {
       const yesterday = new Date()
       yesterday.setDate(yesterday.getDate() - 1)
       yesterday.setHours(0, 0, 0, 0)

@@ -480,32 +480,38 @@ export async function runParityTest<T>(
         options.iterations ??
         (estimatedPrismaMs > 200 ? 5 : estimatedPrismaMs > 50 ? 10 : 50)
 
-      for (let w = 0; w < 3; w++) {
-        await extendedQuery()
-        await prismaQuery()
-        if (options.drizzleQuery) await options.drizzleQuery()
-      }
-
       const extendedMeasurements: number[] = []
-      for (let i = 0; i < iterations; i++) {
-        const start = performance.now()
-        await extendedQuery()
-        extendedMeasurements.push(performance.now() - start)
-      }
-
       const prismaMeasurements: number[] = []
-      for (let i = 0; i < iterations; i++) {
-        const start = performance.now()
-        await prismaQuery()
-        prismaMeasurements.push(performance.now() - start)
+      const drizzleMeasurements: number[] = []
+
+      const runners: Array<{
+        measurements: number[]
+        run: () => Promise<unknown>
+      }> = [
+        { measurements: extendedMeasurements, run: extendedQuery },
+        { measurements: prismaMeasurements, run: prismaQuery },
+      ]
+      if (options.drizzleQuery) {
+        runners.push({
+          measurements: drizzleMeasurements,
+          run: options.drizzleQuery,
+        })
       }
 
-      const drizzleMeasurements: number[] = []
-      if (options.drizzleQuery) {
-        for (let i = 0; i < iterations; i++) {
+      for (let w = 0; w < 3; w++) {
+        for (const runner of runners) await runner.run()
+      }
+
+      // Interleave competitors per iteration with deterministic rotation of the
+      // first runner. Measuring all runners close together each iteration
+      // removes the run-order drift of measuring N of one then N of the next.
+      for (let i = 0; i < iterations; i++) {
+        const offset = i % runners.length
+        for (let k = 0; k < runners.length; k++) {
+          const runner = runners[(offset + k) % runners.length]
           const start = performance.now()
-          await options.drizzleQuery()
-          drizzleMeasurements.push(performance.now() - start)
+          await runner.run()
+          runner.measurements.push(performance.now() - start)
         }
       }
 
@@ -516,9 +522,11 @@ export async function runParityTest<T>(
           ? calculateStats(drizzleMeasurements)
           : undefined
 
-      const prismaMs = prismaStats.mean
-      const extendedMs = extendedStats.mean
-      const drizzleMs = drizzleStats?.mean ?? 0
+      // Median is the robust central measure used for regression classification
+      // and speedups: it resists the load-spike outliers that skew the mean.
+      const prismaMs = prismaStats.median
+      const extendedMs = extendedStats.median
+      const drizzleMs = drizzleStats?.median ?? 0
 
       const speedupVsPrisma = prismaMs / extendedMs
       const speedupVsDrizzle = drizzleMs > 0 ? drizzleMs / extendedMs : 0

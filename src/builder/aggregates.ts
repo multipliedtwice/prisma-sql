@@ -239,13 +239,9 @@ function buildSimpleComparison(
 }
 
 function negateClauses(subClauses: string[]): string {
-  if (subClauses.length === 1) return SQL_TEMPLATES.NOT + ' ' + subClauses[0]
-  return (
-    SQL_TEMPLATES.NOT +
-    ' (' +
-    subClauses.join(SQL_SEPARATORS.CONDITION_AND) +
-    ')'
-  )
+  const negated = subClauses.map((c) => SQL_TEMPLATES.NOT + ' ' + c)
+  if (negated.length === 1) return negated[0]
+  return '(' + negated.join(SQL_SEPARATORS.CONDITION_AND) + ')'
 }
 
 function combineLogical(key: LogicalKey, subClauses: string[]): string {

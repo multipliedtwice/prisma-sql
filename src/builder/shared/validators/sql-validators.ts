@@ -214,6 +214,10 @@ export function validateParamConsistencyByDialect(
   }
 
   if (dialect === 'sqlite') {
+    if (scanDollarPlaceholders(sql, params.length).sawAny) {
+      validateParamConsistency(sql, params)
+      return
+    }
     validateQuestionMarkConsistency(sql, params)
     return
   }

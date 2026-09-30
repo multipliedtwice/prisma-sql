@@ -20,18 +20,21 @@
  *
  *
  * ═══════════════════════════════════════════════════════════
- * BENCHMARK WINNERS (24 scenarios, all sub-30ms on small data)
+ * HISTORICAL BENCHMARK WINNERS (24 scenarios, all sub-30ms on small data)
  * ═══════════════════════════════════════════════════════════
  *
- * where-in   (12 wins): include posts, depth-1 mid/high/wide/unbound,
- *                       depth-2, depth-2 wide/unbound, depth-3/4 unbound,
+ * where-in   (13 wins): include posts, depth-1 mid/high/wide/unbound,
+ *                       depth-2 paginated/wide/unbound, depth-3/4 unbound,
  *                       include+where, findUnique depth-2, complex nested
  *
- * correlated (8 wins):  include 3/4 levels, depth-2/3/4 paginated,
+ * correlated (7 wins):  include 3/4 levels, depth-3/4 paginated,
  *                       select+include, depth-1 low-fan, ultra deep
  *
  * flat-join  (4 wins):  include profile, include+select nested,
  *                       depth-2 high-fan, findFirst depth-2
+ *
+ * where-in also wins depth-2 paginated after slicing retained children before
+ * resolving nested segments.
  *
  * Margins are tight on small data (<2ms differences). At scale the picker
  * needs more than this benchmark gives — see the large-child guard below.
@@ -69,7 +72,8 @@
  * Both override-able via setStrategyConfig({ ... }).
  *
  * When MODEL_STATS is empty (generator run without DB connection), the
- * guard logs a one-time warning and is inactive. Existing behavior preserved.
+ * guard logs a one-time warning. PostgreSQL shallow child pagination falls
+ * back to where-in because child-table size is unknown.
  *
  *
  * ═══════════════════════════════════════════════════════════
@@ -80,13 +84,17 @@
  *   ──────┼──────────────────┼──────────────────┼─────────────────────────
  *     1   |       no         |       no         | where-in (cost)
  *     1   |       no         |       yes        | where-in (guard)
- *     1   |       yes        |       no         | where-in
+ *     1   |       yes        |       no         | cost model with stats;
+ *         |                  |                  | where-in without stats
  *     1   |       yes        |       yes        | where-in (guard) ← fixes
  *                                                              the production
  *                                                              26s case
  *    ≥2   |       no         |       no         | where-in (empirical)
  *    ≥2   |       no         |       yes        | where-in (guard)
- *    ≥2   |       yes        |       no         | correlated (rule)
+ *     2   |       yes        |       no         | correlated when all nested
+ *         |                  |                  | relations are to-one;
+ *         |                  |                  | where-in otherwise
+ *    ≥3   |       yes        |       no         | correlated (rule)
  *    ≥2   |       yes        |       yes        | where-in (guard overrides)
  *
  * Tradeoff in the last row: where-in adds D roundtrips. If a good FK
@@ -103,16 +111,21 @@
  *  1. canFlatJoin + all-one-to-one          → flat-join
  *  2. singleParent + canFlatJoin + depth≤2  → flat-join
  *  3. large-child guard fires               → where-in
- *  4. childPagination + depth ≥ 2           → correlated
- *  5. no childPagination + depth ≥ 2        → where-in
- *  6. childPagination + depth=1 + childWhere → where-in
- *  7. childPagination + depth=1             → where-in
- *      (note: the old `selectNarrowing → fallback` rule was deleted;
- *       it caused the user's 26s production case and won a 0.49ms
- *       benchmark scenario at best)
- *  8. depth=1 + childWhere                  → where-in
- *  9. costC < costW                         → correlated
- * 10. else                                  → where-in
+ *  4. PostgreSQL + childPagination + depth=2
+ *     + complete MODEL_STATS + only nested
+ *       to-one relations                     → correlated
+ *  5. PostgreSQL + childPagination + depth=2
+ *     + complete MODEL_STATS                 → where-in
+ *  6. PostgreSQL + root take≤2 + include depth≥3
+ *     + nested count + relation-filter depth≥3
+ *                                            → where-in
+ *  7. childPagination + depth ≥ 2            → correlated
+ *  8. no childPagination + depth ≥ 2         → where-in
+ *  9. PostgreSQL depth=1 + childPagination
+ *     + no MODEL_STATS                      → where-in
+ * 10. depth=1 + childWhere                  → where-in
+ * 11. costC < costW                         → correlated
+ * 12. else                                  → where-in
  *
  *
  * ═══════════════════════════════════════════════════════════

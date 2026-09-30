@@ -89,9 +89,11 @@ export async function executePostgresQuery(
     const config = buildLateralReducerConfig(model, lateralMeta)
     const results: any[] = []
 
-    await client.unsafe(sql, normalizedParams).forEach((row: any) => {
-      results.push(row)
-    })
+    await client
+      .unsafe(sql, normalizedParams, { prepare: true })
+      .forEach((row: any) => {
+        results.push(row)
+      })
 
     return reduceLateralRows(results, config)
   }
@@ -100,9 +102,11 @@ export async function executePostgresQuery(
     const config = buildReducerConfig(model, includeSpec, allModels)
     const reducer = createStreamingReducer(config)
 
-    await client.unsafe(sql, normalizedParams).forEach((row: any) => {
-      reducer.processRow(row)
-    })
+    await client
+      .unsafe(sql, normalizedParams, { prepare: true })
+      .forEach((row: any) => {
+        reducer.processRow(row)
+      })
 
     return reducer.getResults()
   }
@@ -111,15 +115,19 @@ export async function executePostgresQuery(
   const results: any[] = []
 
   if (rowTransformer) {
-    await client.unsafe(sql, normalizedParams).forEach((row: any) => {
-      results.push(rowTransformer(row))
-    })
+    await client
+      .unsafe(sql, normalizedParams, { prepare: true })
+      .forEach((row: any) => {
+        results.push(rowTransformer(row))
+      })
     return results
   }
 
-  await client.unsafe(sql, normalizedParams).forEach((row: any) => {
-    results.push(row)
-  })
+  await client
+    .unsafe(sql, normalizedParams, { prepare: true })
+    .forEach((row: any) => {
+      results.push(row)
+    })
 
   return results
 }

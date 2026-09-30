@@ -1,27 +1,35 @@
 import { Model, Field } from '../../types'
 import { SqlDialect } from '../../sql-builder-dialect'
 import { SQL_SEPARATORS } from '../shared/constants'
-import { sqlStringLiteral } from '../shared/sql-utils'
+import { quoteColumn, sqlStringLiteral } from '../shared/sql-utils'
 import { ParamStore } from '../shared/param-store'
 import { createAliasGenerator } from '../shared/alias-generator'
+import { AliasGenerator } from '../shared/types'
 import { isValidRelationField } from '../joins'
-import { isNotNullish } from '../shared/validators/type-guards'
+import { isNotNullish, isPlainObject } from '../shared/validators/type-guards'
+import { isValidWhereClause } from '../shared/validators/sql-validators'
 import {
   getRelationFieldSet,
   getFieldIndices,
 } from '../shared/model-field-cache'
 import { resolveRelationKeys } from '../shared/relation-key-utils'
 import { getRelationTableReference } from './include-join'
+import { buildWhereClause } from '../where'
 import {
-  fkColumnName,
-  buildFkSelectList,
-  buildFkPartitionBy,
   buildFkJoinCondition,
+  buildFkPartitionBy,
+  buildFkSelectList,
 } from '../shared/fk-join-utils'
+import { getModelStats, getStrategyConfig } from './strategy-estimator'
 
-const COUNT_COLUMN = '__cnt'
 const COUNT_SUBQUERY_PREFIX = '__tp_cnt_'
 const COUNT_JOIN_PREFIX = '__tp_cnt_j_'
+const COUNT_COLUMN = '__cnt'
+
+export type RelationCountSelect = Record<string, unknown>
+export type ParentKeySubqueryBuilder = (
+  parentKeys: readonly string[],
+) => string | null
 
 interface RelationCountBuild {
   joins: string[]
@@ -75,41 +83,89 @@ function resolveCountRelationOrThrow(
   return { field, relModel }
 }
 
-function subqueryForCount(args: {
-  dialect: SqlDialect
-  relTable: string
+function readCountWhere(value: unknown): Record<string, unknown> | null {
+  if (!isPlainObject(value)) return null
+  const where = value.where
+  if (!isPlainObject(where) || Object.keys(where).length === 0) return null
+  return where
+}
+
+function nextAliasAvoiding(
+  aliasGen: AliasGenerator,
+  base: string,
+  forbidden: Set<string>,
+): string {
+  let alias = aliasGen.next(base)
+  while (forbidden.has(alias)) alias = aliasGen.next(base)
+  return alias
+}
+
+function buildCountSubquery(args: {
   countAlias: string
   relModel: Model
-  relKeyFields: string[]
+  childKeys: string[]
+  parentKeySubquery: string | null
+  where: Record<string, unknown> | null
+  schemas: readonly Model[]
+  params: ParamStore
+  dialect: SqlDialect
+  aliasGen: AliasGenerator
 }): string {
+  const relTable = getRelationTableReference(args.relModel, args.dialect)
   const selectKeys = buildFkSelectList(
     args.countAlias,
     args.relModel,
-    args.relKeyFields,
+    args.childKeys,
   )
-
   const groupByKeys = buildFkPartitionBy(
     args.countAlias,
     args.relModel,
-    args.relKeyFields,
+    args.childKeys,
   )
+
+  const conditions: string[] = []
+  if (args.parentKeySubquery) {
+    const childKeySql = args.childKeys
+      .map(
+        (childKey) =>
+          `${args.countAlias}.${quoteColumn(args.relModel, childKey)}`,
+      )
+      .join(SQL_SEPARATORS.FIELD_LIST)
+    const childKeyExpr =
+      args.childKeys.length === 1 ? childKeySql : `(${childKeySql})`
+    conditions.push(`${childKeyExpr} IN (${args.parentKeySubquery})`)
+  }
+
+  let whereJoins = ''
+  if (args.where) {
+    const whereResult = buildWhereClause(args.where, {
+      alias: args.countAlias,
+      model: args.relModel,
+      schemaModels: args.schemas,
+      params: args.params,
+      isSubquery: true,
+      aliasGen: args.aliasGen,
+      dialect: args.dialect,
+    })
+    if (whereResult.joins.length > 0) {
+      whereJoins = ' ' + whereResult.joins.join(' ')
+    }
+    if (isValidWhereClause(whereResult.clause)) {
+      conditions.push(`(${whereResult.clause})`)
+    }
+  }
+
+  const whereClause =
+    conditions.length > 0
+      ? ` WHERE ${conditions.join(SQL_SEPARATORS.CONDITION_AND)}`
+      : ''
 
   const cntExpr =
     args.dialect === 'postgres'
       ? `COUNT(*)::int AS ${COUNT_COLUMN}`
       : `COUNT(*) AS ${COUNT_COLUMN}`
 
-  return `(SELECT ${selectKeys}${SQL_SEPARATORS.FIELD_LIST}${cntExpr} FROM ${args.relTable} ${args.countAlias} GROUP BY ${groupByKeys})`
-}
-
-function nextAliasAvoiding(
-  aliasGen: ReturnType<typeof createAliasGenerator>,
-  base: string,
-  forbidden: Set<string>,
-): string {
-  let a = aliasGen.next(base)
-  while (forbidden.has(a)) a = aliasGen.next(base)
-  return a
+  return `(SELECT ${selectKeys}${SQL_SEPARATORS.FIELD_LIST}${cntExpr} FROM ${relTable} ${args.countAlias}${whereJoins}${whereClause} GROUP BY ${groupByKeys})`
 }
 
 function buildCountJoinAndPair(args: {
@@ -118,13 +174,14 @@ function buildCountJoinAndPair(args: {
   relModel: Model
   parentModel: Model
   parentAlias: string
+  where: Record<string, unknown> | null
+  schemas: readonly Model[]
+  params: ParamStore
   dialect: SqlDialect
-  aliasGen: ReturnType<typeof createAliasGenerator>
+  aliasGen: AliasGenerator
+  parentKeySubqueryBuilder?: ParentKeySubqueryBuilder
 }): { joinSql: string; pairSql: string } {
-  const relTable = getRelationTableReference(args.relModel, args.dialect)
-  const { childKeys: relKeyFields, parentKeys: parentKeyFields } =
-    resolveRelationKeys(args.field, 'count')
-
+  const { childKeys, parentKeys } = resolveRelationKeys(args.field, 'count')
   const forbidden = new Set<string>([args.parentAlias])
 
   const countAlias = nextAliasAvoiding(
@@ -134,12 +191,28 @@ function buildCountJoinAndPair(args: {
   )
   forbidden.add(countAlias)
 
-  const subquery = subqueryForCount({
-    dialect: args.dialect,
-    relTable,
+  const childStats = getModelStats()?.[args.relModel.name]
+  const largeChildThreshold = getStrategyConfig().largeChildTableRows
+  const shouldRestrictToParentPage =
+    !childStats ||
+    childStats.known === false ||
+    !Number.isFinite(childStats.rowCount) ||
+    childStats.rowCount < 0 ||
+    childStats.rowCount > largeChildThreshold
+
+  const subquery = buildCountSubquery({
     countAlias,
     relModel: args.relModel,
-    relKeyFields,
+    childKeys,
+    parentKeySubquery:
+      (shouldRestrictToParentPage
+        ? args.parentKeySubqueryBuilder?.(parentKeys)
+        : null) ?? null,
+    where: args.where,
+    schemas: args.schemas,
+    params: args.params,
+    dialect: args.dialect,
+    aliasGen: args.aliasGen,
   })
 
   const joinAlias = nextAliasAvoiding(
@@ -147,12 +220,11 @@ function buildCountJoinAndPair(args: {
     `${COUNT_JOIN_PREFIX}${args.relName}`,
     forbidden,
   )
-
   const leftJoinOn = buildFkJoinCondition(
     joinAlias,
     args.parentAlias,
     args.parentModel,
-    parentKeyFields,
+    parentKeys,
   )
 
   return {
@@ -162,17 +234,18 @@ function buildCountJoinAndPair(args: {
 }
 
 export function buildRelationCountSql(
-  countSelect: Record<string, boolean>,
+  countSelect: RelationCountSelect,
   model: Model,
   schemas: readonly Model[],
   parentAlias: string,
-  _params: ParamStore,
+  params: ParamStore,
   dialect: SqlDialect,
   modelMap?: Map<string, Model>,
+  aliasGen: AliasGenerator = createAliasGenerator(),
+  parentKeySubqueryBuilder?: ParentKeySubqueryBuilder,
 ): RelationCountBuild {
   const joins: string[] = []
   const pairs: string[] = []
-  const aliasGen = createAliasGenerator()
 
   const schemaByName =
     modelMap ?? new Map<string, Model>(schemas.map((m) => [m.name, m]))
@@ -187,8 +260,12 @@ export function buildRelationCountSql(
       relModel: resolved.relModel,
       parentModel: model,
       parentAlias,
+      where: readCountWhere(shouldCount),
+      schemas,
+      params,
       dialect,
       aliasGen,
+      parentKeySubqueryBuilder,
     })
 
     joins.push(built.joinSql)

@@ -1,6 +1,6 @@
 import type { PrismaQueryArgs } from '../../types'
 import { SQL_TEMPLATES, SQL_SEPARATORS } from '../shared/constants'
-import { quote } from '../shared/sql-utils'
+import { quote, quoteColumn } from '../shared/sql-utils'
 import { SelectQuerySpec, SqlResult } from '../shared/types'
 import {
   validateSelectQuery,
@@ -14,7 +14,10 @@ import {
 } from '../shared/validators/type-guards'
 import { addAutoScoped } from '../shared/dynamic-params'
 import { jsonBuildObject } from '../../sql-builder-dialect'
-import { buildRelationCountSql } from './include-count'
+import {
+  buildRelationCountSql,
+  type RelationCountSelect,
+} from './include-count'
 import { emptyJsonArray } from './include-join'
 
 import { getRelationFieldSet } from '../shared/model-field-cache'
@@ -75,7 +78,7 @@ function finalizeSql(
 function resolveCountSelect(
   countSelectRaw: unknown,
   model: SelectQuerySpec['model'],
-): Record<string, boolean> | null {
+): RelationCountSelect | null {
   if (countSelectRaw === true) {
     const relationSet = getRelationFieldSet(model)
     if (relationSet.size === 0) return null
@@ -86,11 +89,62 @@ function resolveCountSelect(
     return allRelations
   }
 
-  if (isPlainObject(countSelectRaw) && 'select' in countSelectRaw) {
-    return (countSelectRaw as { select: Record<string, boolean> }).select
+  if (isPlainObject(countSelectRaw) && isPlainObject(countSelectRaw.select)) {
+    return countSelectRaw.select
   }
 
   return null
+}
+
+function parentFilterIsExpensive(spec: SelectQuerySpec): boolean {
+  if (isNonEmptyArray(spec.whereJoins)) return true
+  const wc = spec.whereClause
+  return (
+    isNonEmptyString(wc) &&
+    wc !== ALWAYS_TRUE_CONDITION &&
+    /\bSELECT\b/i.test(wc)
+  )
+}
+
+function buildBoundedParentKeySubquery(
+  spec: SelectQuerySpec,
+  parentKeys: readonly string[],
+): string | null {
+  const bounded =
+    spec.method === 'findUnique' ||
+    spec.method === 'findFirst' ||
+    isNotNullish(spec.pagination.take)
+
+  if (
+    !bounded ||
+    spec.cursorCte ||
+    hasAnyDistinct(spec) ||
+    parentFilterIsExpensive(spec)
+  )
+    return null
+
+  const selectKeys = parentKeys
+    .map(
+      (parentKey) =>
+        `${spec.from.alias}.${quoteColumn(spec.model, parentKey)}`,
+    )
+    .join(SQL_SEPARATORS.FIELD_LIST)
+  const parts = [
+    SQL_TEMPLATES.SELECT,
+    selectKeys,
+    SQL_TEMPLATES.FROM,
+    spec.from.table,
+    spec.from.alias,
+  ]
+
+  pushJoinGroups(parts, spec.whereJoins)
+  pushWhere(parts, buildConditions(spec.whereClause, spec.cursorClause))
+
+  if (isNonEmptyString(spec.orderBy)) {
+    parts.push(SQL_TEMPLATES.ORDER_BY, spec.orderBy)
+  }
+
+  return appendPagination(parts.join(' '), spec)
 }
 
 function buildIncludeColumns(spec: SelectQuerySpec): {
@@ -119,6 +173,9 @@ function buildIncludeColumns(spec: SelectQuerySpec): {
         from.alias,
         params,
         dialect,
+        undefined,
+        undefined,
+        (parentKeys) => buildBoundedParentKeySubquery(spec, parentKeys),
       )
       if (countBuild.jsonPairs) {
         countCols =

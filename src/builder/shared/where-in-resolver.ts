@@ -6,6 +6,7 @@ import { buildReducerConfig, reduceFlatRows } from '../select/reducer'
 import {
   buildParentKeyIndex,
   needsPerParentPagination,
+  applyPerParentSlice,
   stitchChildrenToParents,
   buildChildArgs,
   ensureFkInSelect,
@@ -62,14 +63,19 @@ async function resolveWithPrerendered(
     children = reduceFlatRows(children, pre.reducerConfig)
   }
 
-  if (pre.nestedSegments.length > 0 && children.length > 0) {
-    for (const child of children) {
+  const perParentPaginated = needsPerParentPagination(segment)
+  const retained = perParentPaginated
+    ? applyPerParentSlice(children, segment)
+    : children
+
+  if (pre.nestedSegments.length > 0 && retained.length > 0) {
+    for (const child of retained) {
       initRelationPlaceholders(child, pre.nestedSegments)
     }
 
     await resolveSegments(
       pre.nestedSegments,
-      children,
+      retained,
       allModels,
       modelMap,
       dialect,
@@ -78,7 +84,7 @@ async function resolveWithPrerendered(
     )
 
     if (pre.injectedParentKeys.length > 0) {
-      for (const child of children) {
+      for (const child of retained) {
         for (const key of pre.injectedParentKeys) {
           delete child[key]
         }
@@ -90,10 +96,10 @@ async function resolveWithPrerendered(
     parentRows,
     segment.parentKeyFieldNames,
   )
-  stitchChildrenToParents(children, segment, parentKeyIndex)
+  stitchChildrenToParents(retained, segment, parentKeyIndex, perParentPaginated)
 
   if (pre.needsStripFk) {
-    for (const child of children) {
+    for (const child of retained) {
       for (const fk of segment.fkFieldNames) {
         delete child[fk]
       }
@@ -177,7 +183,8 @@ export async function resolveSingleSegment(
   const allChildren: any[] = []
   let needsStripFk = false
   let addedPkField: string | null = null
-  let injectedKeysFromLastBatch: string[] = []
+  let nestedSegments: WhereInSegment[] = []
+  let nestedInjectedKeys: string[] = []
 
   for (let i = 0; i < uniqueTuples.length; i += batchSize) {
     const batch = uniqueTuples.slice(i, i + batchSize)
@@ -250,29 +257,39 @@ export async function resolveSingleSegment(
       batchChildren = reduceFlatRows(batchChildren, config)
     }
 
-    if (childPlan.whereInSegments.length > 0 && batchChildren.length > 0) {
-      for (const child of batchChildren) {
-        initRelationPlaceholders(child, childPlan.whereInSegments)
-      }
-      await resolveSegments(
-        childPlan.whereInSegments,
-        batchChildren,
-        allModels,
-        modelMap,
-        dialect,
-        execute,
-        depth + 1,
-      )
-      injectedKeysFromLastBatch = childPlan.injectedParentKeys
+    if (childPlan.whereInSegments.length > 0) {
+      nestedSegments = childPlan.whereInSegments
+      nestedInjectedKeys = childPlan.injectedParentKeys
     }
 
     allChildren.push(...batchChildren)
   }
 
-  if (injectedKeysFromLastBatch.length > 0) {
-    for (const child of allChildren) {
-      for (const key of injectedKeysFromLastBatch) {
-        delete child[key]
+  // Per-parent pagination is applied in SQL by stripping take/skip and slicing
+  // here. Slice BEFORE resolving nested relations so descendants are batched
+  // only for the retained children, not the over-fetched superset.
+  const retained = stripPagination
+    ? applyPerParentSlice(allChildren, segment)
+    : allChildren
+
+  if (nestedSegments.length > 0 && retained.length > 0) {
+    for (const child of retained) {
+      initRelationPlaceholders(child, nestedSegments)
+    }
+    await resolveSegments(
+      nestedSegments,
+      retained,
+      allModels,
+      modelMap,
+      dialect,
+      execute,
+      depth + 1,
+    )
+    if (nestedInjectedKeys.length > 0) {
+      for (const child of retained) {
+        for (const key of nestedInjectedKeys) {
+          delete child[key]
+        }
       }
     }
   }
@@ -282,10 +299,10 @@ export async function resolveSingleSegment(
     segment.parentKeyFieldNames,
   )
 
-  stitchChildrenToParents(allChildren, segment, parentKeyIndex)
+  stitchChildrenToParents(retained, segment, parentKeyIndex, stripPagination)
 
   if (needsStripFk) {
-    for (const child of allChildren) {
+    for (const child of retained) {
       for (const fk of segment.fkFieldNames) {
         delete child[fk]
       }
@@ -293,7 +310,7 @@ export async function resolveSingleSegment(
   }
 
   if (addedPkField) {
-    for (const child of allChildren) {
+    for (const child of retained) {
       delete child[addedPkField]
     }
   }

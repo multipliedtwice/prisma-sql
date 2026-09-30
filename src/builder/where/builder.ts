@@ -259,8 +259,9 @@ function buildLogicalClause(
   if (clauses.length === 0) return DEFAULT_WHERE_CLAUSE
 
   if (operator === 'NOT') {
-    if (clauses.length === 1) return `${SQL_TEMPLATES.NOT} ${clauses[0]}`
-    return `${SQL_TEMPLATES.NOT} (${clauses.join(SQL_SEPARATORS.CONDITION_AND)})`
+    const negated = clauses.map((c) => `${SQL_TEMPLATES.NOT} ${c}`)
+    if (negated.length === 1) return negated[0]
+    return `(${negated.join(SQL_SEPARATORS.CONDITION_AND)})`
   }
 
   const joined = clauses.join(` ${operator} `)

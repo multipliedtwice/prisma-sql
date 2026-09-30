@@ -64,11 +64,20 @@ const root: Model = {
 const child: Model = {
   name: 'Child',
   tableName: 'children',
-  fields: [scalar('id', true), relation('grands', 'Grand', true)],
+  fields: [
+    scalar('id', true),
+    relation('grands', 'Grand', true),
+    relation('profile', 'Profile', false),
+  ],
 }
 const grand: Model = {
   name: 'Grand',
   tableName: 'grands',
+  fields: [scalar('id', true), relation('greats', 'Great', true)],
+}
+const great: Model = {
+  name: 'Great',
+  tableName: 'greats',
   fields: [scalar('id', true)],
 }
 const profile: Model = {
@@ -76,7 +85,7 @@ const profile: Model = {
   tableName: 'profiles',
   fields: [scalar('id', true)],
 }
-const schemas = [root, child, grand, profile]
+const schemas = [root, child, grand, great, profile]
 
 function pick(overrides: Partial<Parameters<typeof pickIncludeStrategy>[0]>) {
   return pickIncludeStrategy({
@@ -100,6 +109,7 @@ beforeEach(() => {
     Root: { rowCount: 10, tableName: 'roots' },
     Child: { rowCount: 10, tableName: 'children' },
     Grand: { rowCount: 10, tableName: 'grands' },
+    Great: { rowCount: 10, tableName: 'greats' },
   })
 })
 
@@ -121,8 +131,133 @@ describe('include strategy decisions', () => {
     expect(pick({ hasChildPagination: false })).toBe('where-in')
   })
 
-  it('keeps deep child pagination correlated', () => {
-    expect(pick({ hasChildPagination: true })).toBe('correlated')
+  it('routes deep bounded child pagination to where-in when stats are known', () => {
+    expect(
+      pick({
+        includeSpec: { children: { include: { grands: true }, take: 5 } },
+        hasChildPagination: true,
+      }),
+    ).toBe('where-in')
+  })
+
+  it('uses correlated pagination when descendants are only to-one', () => {
+    expect(
+      pick({
+        includeSpec: {
+          children: { include: { profile: true }, take: 5 },
+        },
+        hasChildPagination: true,
+      }),
+    ).toBe('correlated')
+  })
+
+  it('keeps the large-child guard for paginated lists with to-one descendants', () => {
+    setModelStats({
+      Root: { rowCount: 10, tableName: 'roots' },
+      Child: { rowCount: 100_001, tableName: 'children' },
+      Profile: { rowCount: 10, tableName: 'profiles' },
+    })
+
+    expect(
+      pick({
+        includeSpec: {
+          children: { include: { profile: true }, take: 5 },
+        },
+        hasChildPagination: true,
+      }),
+    ).toBe('where-in')
+  })
+
+  it('keeps deep bounded child pagination correlated on SQLite', () => {
+    expect(
+      pick({
+        includeSpec: { children: { include: { grands: true }, take: 5 } },
+        hasChildPagination: true,
+        dialect: 'sqlite',
+      }),
+    ).toBe('correlated')
+  })
+
+  it('keeps depth-three bounded child pagination correlated', () => {
+    expect(
+      pick({
+        includeSpec: {
+          children: {
+            take: 5,
+            include: {
+              grands: { include: { greats: true } },
+              _count: { select: { grands: true } },
+            },
+          },
+        },
+        hasChildPagination: true,
+      }),
+    ).toBe('correlated')
+  })
+
+  it('uses where-in for a tiny root page with deep relation filtering', () => {
+    expect(
+      pick({
+        includeSpec: {
+          children: {
+            take: 5,
+            include: {
+              grands: { include: { greats: true } },
+              _count: { select: { grands: true } },
+            },
+          },
+        },
+        args: {
+          where: {
+            children: {
+              some: {
+                grands: { some: { greats: { some: { id: 1 } } } },
+              },
+            },
+          },
+          take: 2,
+        },
+        takeValue: 2,
+        hasChildPagination: true,
+      }),
+    ).toBe('where-in')
+  })
+
+  it('keeps deep pagination correlated when the root relation filter is shallow', () => {
+    expect(
+      pick({
+        includeSpec: {
+          children: {
+            take: 5,
+            include: {
+              grands: { include: { greats: true } },
+              _count: { select: { grands: true } },
+            },
+          },
+        },
+        args: { where: { children: { some: { id: 1 } } }, take: 2 },
+        takeValue: 2,
+        hasChildPagination: true,
+      }),
+    ).toBe('correlated')
+  })
+
+  it('keeps depth-two pagination with nested counts correlated', () => {
+    expect(
+      pick({
+        includeSpec: {
+          children: {
+            take: 5,
+            select: {
+              id: true,
+              _count: { select: { grands: true } },
+              grands: true,
+            },
+          },
+        },
+        hasChildPagination: true,
+      }),
+    ).toBe('correlated')
   })
 
   it('keeps shallow child pagination with a where clause on where-in', () => {
@@ -134,6 +269,15 @@ describe('include strategy decisions', () => {
         hasChildPagination: true,
       }),
     ).toBe('where-in')
+  })
+
+  it('lets the cost model choose correlated for shallow bounded children', () => {
+    expect(
+      pick({
+        includeSpec: { children: { take: 3 } },
+        hasChildPagination: true,
+      }),
+    ).toBe('correlated')
   })
 
   it('uses flat join for one-to-one includes', () => {
@@ -159,12 +303,27 @@ describe('include strategy decisions', () => {
       Root: { rowCount: 10, tableName: 'roots' },
       Child: { rowCount: 100_001, tableName: 'children' },
       Grand: { rowCount: 10, tableName: 'grands' },
+      Great: { rowCount: 10, tableName: 'greats' },
     })
 
     expect(pick({ hasChildPagination: true })).toBe('where-in')
   })
 
-  it('keeps the guard inactive without model stats', () => {
+  it('uses where-in for shallow pagination without model stats', () => {
+    const warning = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    setModelStats({})
+
+    expect(
+      pick({
+        includeSpec: { children: { take: 5 } },
+        hasChildPagination: true,
+      }),
+    ).toBe('where-in')
+    expect(warning).toHaveBeenCalledOnce()
+    warning.mockRestore()
+  })
+
+  it('keeps deep bounded includes correlated without model stats', () => {
     const warning = vi.spyOn(console, 'warn').mockImplementation(() => {})
     setModelStats({})
 
@@ -173,13 +332,31 @@ describe('include strategy decisions', () => {
     warning.mockRestore()
   })
 
+  it('uses where-in when shallow child model stats are incomplete', () => {
+    const warning = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    setModelStats({ Root: { rowCount: 10, tableName: 'roots' } })
+
+    expect(
+      pick({
+        includeSpec: { children: { take: 5 } },
+        hasChildPagination: true,
+      }),
+    ).toBe('where-in')
+    expect(warning).toHaveBeenCalledOnce()
+    warning.mockRestore()
+  })
+
   it('does not suggest unsupported stats collection for SQLite', () => {
     const warning = vi.spyOn(console, 'warn').mockImplementation(() => {})
     setModelStats({})
 
-    expect(pick({ dialect: 'sqlite', hasChildPagination: true })).toBe(
-      'correlated',
-    )
+    expect(
+      pick({
+        dialect: 'sqlite',
+        includeSpec: { children: { take: 5 } },
+        hasChildPagination: true,
+      }),
+    ).toBe('correlated')
     expect(warning).not.toHaveBeenCalled()
     warning.mockRestore()
   })

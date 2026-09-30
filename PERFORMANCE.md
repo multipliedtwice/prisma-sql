@@ -77,19 +77,25 @@ costC = R + parentCount * sum(root node costs)
 2. Can flat + root all one-to-one + no blocking root args -> `F`.
 3. `findFirst`/`findUnique` + can flat + depth <= 2 + no blocking root args -> `F`.
 4. Large-child guard -> `W`.
-5. Child pagination + depth >= 2 -> `C`.
-6. No child pagination + depth >= 2 -> `W` empirical safety override.
-7. Child pagination + depth 1 -> `W`; child `where` stays `W`.
-8. Depth 1 + child `where` -> `W`.
-9. Otherwise compare `costC < costW`; if true `C`, else `W`.
+5. PostgreSQL + child pagination + depth == 2 + known `MODEL_STATS` + no nested `_count`: use `C` when every descendant below the paginated list is to-one; otherwise use `W`.
+6. PostgreSQL + root `take <= 2` + include depth >= 3 + nested `_count` + root relation-filter depth >= 3 -> `W`.
+7. Else child pagination + depth >= 2 -> `C`.
+8. No child pagination + depth >= 2 -> `W` empirical safety override.
+9. PostgreSQL depth 1 + child pagination + no `MODEL_STATS` -> `W`.
+10. Depth 1 + child `where` -> `W`.
+11. Otherwise compare `costC < costW`; if true `C`, else `W`.
 
 Blocking root args: cursor, non-empty distinct, include/select `_count`.
 
 PostgreSQL implements `F`, `W`, `C`. SQLite picker compares segmented `W` with direct correlated JSON query `C`; flat capability passed false. Same formulas/defaults, but local SQLite roundtrips have no network cost. Current deep bounded choice retained by focused same-seed evidence: v7 four-shape candidate mean `0.478-0.684ms`, old segmented mean `2.525-2.937ms` on same machine/run setup. Full matrix must confirm.
 
-Why step 6 bypasses cost: collected seed stats near fan-out 1 made model choose `C`, but same-environment v7 check made depth-2 `10.037ms` and depth-3 unbound `64.608ms`. Restored `W`; historical `613be07` also records `W` wins for unbounded depth 2/3/4. Formula misses repeated correlated JSON work here.
+Why step 8 bypasses cost: collected seed stats near fan-out 1 made model choose `C`, but same-environment v7 check made depth-2 `10.037ms` and depth-3 unbound `64.608ms`. Restored `W`; historical `613be07` also records `W` wins for unbounded depth 2/3/4. Formula misses repeated correlated JSON work here.
 
-Why step 5 stays `C`: temporary `W` comparison made v7 depth-2/3/4 paginated `4.636/8.036/7.632ms`. `C` comparison made them `1.519/1.308/1.026ms`. Keep bounded deep correlated despite Prisma-relative variance.
+Why step 5 splits on shape and depth: the where-in resolver slices per-parent pagination BEFORE resolving nested relations, so descendants are batched only for retained children instead of the over-fetched superset. Same-seed interleaved v7 medians make depth-2 paginated lists with nested lists favor `W 3.10ms` over `C 3.70ms` (Prisma `2.77ms`), because two bounded round trips cost less than correlated JSON nesting. Paginated lists whose descendants are all to-one are different: `W` transfers every child before slicing, including duplicated to-one payload. A focused v7 A/B measured `C 0.693ms` versus `W 1.628ms`, so this narrow shape uses `C`. Nested `_count` stays `C`; grouped count work at every segmented level erased the `W` win. At depth 3/4 the extra per-level round trips and compounding intermediate fetches lose: `W 2.64/3.98ms` vs `C 2.50/2.87ms`, so depth >= 3 stays `C`. `W` at depth 2 requires known `MODEL_STATS`, since it strips the per-parent SQL LIMIT and slices in memory (missing stats -> `C`, which keeps a bounded SQL LIMIT). The large-child guard still runs first and overrides the to-one-descendant rule. SQLite keeps `C` (in-process, no roundtrip cost).
+
+Why step 6 exists: a tiny root page behind a deep relational filter can return no parents. `W` runs the selective parent query first and skips every child segment for an empty result. `C` still makes PostgreSQL plan the entire nested JSON/count statement. Keep this narrow: deep pagination normally favors `C`.
+
+Shallow bounded child, no child `where`: PostgreSQL needs `MODEL_STATS` before cost model can choose `C`. No stats -> `W`. SQLite has no planner stats and still uses cost model. Large-child guard stays first. Small `select + include` can use `C`; huge child stays `W`.
 
 ## Large-child guard
 
@@ -101,7 +107,15 @@ else min(root MODEL_STATS.rowCount, 50) when known
 else 50
 ```
 
-Walk every nested to-many. If parent estimate `< 1000` and any child model row count `> 100_000`, choose `W`. Missing/empty `MODEL_STATS`: guard inactive, one warning. This override stays before paginated/cost rules.
+Walk every nested to-many. If parent estimate `< 1000` and any child model row count `> 100_000`, choose `W`. Missing/incomplete `MODEL_STATS`: size check unavailable, one warning, PostgreSQL shallow pagination uses `W`. This override stays before paginated/cost rules.
+
+## Relation count scan bounds
+
+Known small child table (`MODEL_STATS.rowCount <= largeChildTableRows`): one grouped `_count` scan. No repeated parent-page subquery.
+
+Large, missing, or invalid child stats + simple bounded parent query: grouped `_count` scan restricted to page parent keys.
+
+Cursor, distinct, joined parent filter, subquery parent filter: no parent-key duplication. Count stays correct. Child scan can cover full table. Optimization incomplete for these shapes.
 
 Why: correlated query took about 26s in reported production shape with multi-GB child table. Index knowledge absent. Bounded `W` safer. Operator with verified indexes may raise `largeChildTableRows` explicitly.
 
@@ -132,7 +146,9 @@ From `readme.md` before `766a591`:
 
 - Keep postgres.js query `.forEach(...)` in generated and shared runtime paths.
 - Not cosmetic array iteration. Driver decodes each row into callback instead of buffering query result.
+- Direct read queries use postgres.js prepared statements. Segmented `W` child and parent-stream queries stay unprepared: focused v7 deep-unbounded runs showed preparation adding multi-ms overhead to the dynamic multi-statement path, while preparation removed the repeated scalar Date-range regression.
 - Where-in parent stream starts chunk resolution while more parent rows arrive. Keeps pipeline overlap.
+- Single-column where-in keys use type-tagged scalar keys instead of JSON serialization, and unpaginated stitching attaches children in one pass instead of grouping them twice.
 - Progressive reducer depends on ordered parent-key transitions. Preserve SQL order and callback order.
 - Do not replace with `await client.unsafe(...)`, `.then`, or array `.forEach`. That buffers first and loses overlap/memory bound.
 

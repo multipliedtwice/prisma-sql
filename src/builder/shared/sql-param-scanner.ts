@@ -1,3 +1,4 @@
+import type { ParamMap } from '@dee-wan/schema-parser'
 import {
   extractParameterNumber,
   readDollarTag,
@@ -256,19 +257,38 @@ export function reindexPlaceholders(
 export function pgToSqlitePlaceholders(
   sql: string,
   params: readonly unknown[],
-): { sql: string; params: unknown[] } {
+  paramMappings?: readonly ParamMap[],
+): { sql: string; params: unknown[]; paramMappings?: ParamMap[] } {
   const reordered: unknown[] = []
+  const mappingByIndex = paramMappings
+    ? new Map(paramMappings.map((m) => [m.index, m]))
+    : null
+  const reorderedMappings: ParamMap[] = []
 
   const converted = scanSqlPlaceholders(
     sql,
     (oldIndex) => {
       reordered.push(params[oldIndex - 1])
+      if (mappingByIndex) {
+        const mapping = mappingByIndex.get(oldIndex)
+        if (!mapping) {
+          throw new Error(
+            `CRITICAL: No mapping found for parameter $${oldIndex}`,
+          )
+        }
+        reorderedMappings.push({
+          ...mapping,
+          index: reorderedMappings.length + 1,
+        })
+      }
       return '?'
     },
     { pgAware: false, strictPlaceholders: false },
   )
 
-  return { sql: converted, params: reordered }
+  return mappingByIndex
+    ? { sql: converted, params: reordered, paramMappings: reorderedMappings }
+    : { sql: converted, params: reordered }
 }
 
 export function containsPlaceholder(sql: string): boolean {

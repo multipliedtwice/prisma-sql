@@ -30,6 +30,14 @@ export function maxTuplesPerBatch(
 }
 
 export function compositeKey(values: readonly unknown[]): string {
+  if (values.length === 1) {
+    const value = values[0]
+    if (typeof value === 'string') return `s:${value}`
+    if (typeof value === 'number') return `n:${value}`
+    if (typeof value === 'bigint') return `b:${value}`
+    if (typeof value === 'boolean') return value ? 't:' : 'f:'
+    if (value instanceof Date) return `d:${value.getTime()}`
+  }
   return JSON.stringify(values.map(toKeyPart))
 }
 
@@ -120,11 +128,66 @@ export function applyPerParentPagination(
   return groupedChildren.slice(start, end)
 }
 
+export function applyPerParentSlice(
+  children: any[],
+  segment: WhereInSegment,
+): any[] {
+  const grouped = new Map<string, any[]>()
+  const order: string[] = []
+  for (const child of children) {
+    const t = extractTupleSafe(child, segment.fkFieldNames)
+    if (t === null) continue
+    const key = compositeKey(t)
+    let arr = grouped.get(key)
+    if (!arr) {
+      arr = []
+      grouped.set(key, arr)
+      order.push(key)
+    }
+    arr.push(child)
+  }
+
+  const retained: any[] = []
+  for (const key of order) {
+    const sliced = applyPerParentPagination(
+      grouped.get(key)!,
+      segment.perParentSkip || 0,
+      segment.perParentTake,
+    )
+    for (const child of sliced) retained.push(child)
+  }
+  return retained
+}
+
 export function stitchChildrenToParents(
   children: any[],
   segment: WhereInSegment,
   parentKeyIndex: Map<string, any[]>,
+  alreadySliced = false,
 ): void {
+  const perParentPaginated = !alreadySliced && needsPerParentPagination(segment)
+
+  if (!perParentPaginated) {
+    for (const child of children) {
+      const tuple = extractTupleSafe(child, segment.fkFieldNames)
+      if (tuple === null) continue
+      const matchingParents = parentKeyIndex.get(compositeKey(tuple))
+      if (!matchingParents) continue
+
+      for (const parent of matchingParents) {
+        if (segment.isList) {
+          if (!Array.isArray(parent[segment.relationName])) {
+            parent[segment.relationName] = []
+          }
+          parent[segment.relationName].push(child)
+        } else if (parent[segment.relationName] == null) {
+          parent[segment.relationName] = child
+        }
+      }
+    }
+    return
+  }
+
   const grouped = new Map<string, any[]>()
   for (const child of children) {
     const t = extractTupleSafe(child, segment.fkFieldNames)
@@ -137,8 +200,6 @@ export function stitchChildrenToParents(
     }
     arr.push(child)
   }
-
-  const perParentPaginated = needsPerParentPagination(segment)
 
   for (const [fkKey, groupedChildren] of grouped) {
     const matchingParents = parentKeyIndex.get(fkKey)

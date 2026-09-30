@@ -19,7 +19,7 @@ import { PrismaMethod } from './types'
 import { isPlainObject } from './builder/shared/validators/type-guards'
 import { SqlResult } from './builder/shared/types'
 import { LateralRelationMeta } from './builder/select/lateral-join'
-import { scanSqlPlaceholders } from './builder/shared/sql-param-scanner'
+import { pgToSqlitePlaceholders } from './builder/shared/sql-param-scanner'
 
 export interface SQLDirective {
   method: PrismaMethod
@@ -143,29 +143,13 @@ function normalizeSqlAndMappingsForDialect(
 ): { sql: string; paramMappings: readonly ParamMap[] } {
   if (dialect !== 'sqlite') return { sql, paramMappings }
 
-  const byIndex = new Map<number, ParamMap>()
-  for (const m of paramMappings) byIndex.set(m.index, m)
-
-  const expandedMappings: ParamMap[] = []
-
-  const normalizedSql = scanSqlPlaceholders(
+  const converted = pgToSqlitePlaceholders(
     sql,
-    (oldIndex) => {
-      const originalMapping = byIndex.get(oldIndex)
-      if (!originalMapping) {
-        throw new Error(`CRITICAL: No mapping found for parameter $${oldIndex}`)
-      }
-      expandedMappings.push({
-        index: expandedMappings.length + 1,
-        value: originalMapping.value,
-        dynamicName: originalMapping.dynamicName,
-      })
-      return '?'
-    },
-    { pgAware: false, strictPlaceholders: false },
+    paramMappings.map((m) => m.value),
+    paramMappings,
   )
 
-  return { sql: normalizedSql, paramMappings: expandedMappings }
+  return { sql: converted.sql, paramMappings: converted.paramMappings ?? [] }
 }
 
 function buildParamsFromMappings(mappings: readonly ParamMap[]): {

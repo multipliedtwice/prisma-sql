@@ -10,7 +10,7 @@ import { assertSafeAlias } from './shared/sql-utils'
 interface BuildWhereOptions {
   alias: string
   model: Model
-  schemaModels?: Model[]
+  schemaModels?: readonly Model[]
   path?: string[]
   params?: ParamStore
   isSubquery?: boolean

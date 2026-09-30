@@ -47,7 +47,7 @@ async function measureAsync<T>(
   return { result, time }
 }
 
-describe.skip('Batch Multi-Query E2E - PostgreSQL', () => {
+describe('Batch Multi-Query E2E - PostgreSQL', () => {
   beforeAll(async () => {
     const extensionPath = '../generated/extension-postgres-v6'
     const generatedExtension = await import(extensionPath)
