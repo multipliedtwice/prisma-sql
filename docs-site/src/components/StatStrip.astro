@@ -4,10 +4,11 @@ interface Props {
 }
 
 const { items } = Astro.props;
+const chars = Math.max(4, ...items.map((item) => [...item.value].length));
 ---
 
 <section class="border-b border-line bg-paper-2/60">
-  <dl class="page-x grid grid-cols-2 lg:grid-cols-4">
+  <dl class="stat-row page-x grid grid-cols-2 lg:grid-cols-4" style={`--chars:${chars}`}>
     {items.map((item, i) => (
       <div
         class:list={[
@@ -19,7 +20,7 @@ const { items } = Astro.props;
         ]}
       >
         <dt class="text-sm font-semibold text-ink">{item.label}</dt>
-        <dd class="num mt-2 text-[clamp(2.2rem,4.2vw,3.4rem)] font-extrabold leading-none tracking-tight text-ink">{item.value}</dd>
+        <dd class="stat-value num mt-2 font-extrabold leading-none tracking-tight text-ink">{item.value}</dd>
         {item.note && <dd class="mt-2 text-sm text-fog">{item.note}</dd>}
       </div>
     ))}

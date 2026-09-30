@@ -592,3 +592,19 @@ pre::-webkit-scrollbar-thumb {
 .header-hidden [data-under-header] {
   top: 0;
 }
+
+.stat-row {
+  --cols: 2;
+  container-type: inline-size;
+}
+
+@media (min-width: 1024px) {
+  .stat-row {
+    --cols: 4;
+  }
+}
+
+.stat-value {
+  font-size: min(3.4rem, calc((100cqi / var(--cols) - 2rem) / var(--chars) * 1.5));
+  overflow-wrap: anywhere;
+}
