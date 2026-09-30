@@ -1,0 +1,133 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const base = '/prisma-to-sql';
+---
+
+<DocsLayout
+  title="Cardinality planner - prisma-sql"
+  description="How the planner chooses between flat joins, correlated subqueries and where-in segmented loading, and how to collect relation stats."
+  active={`${base}/docs/planner`}
+>
+  <h1>Cardinality planner</h1>
+  <p>
+    The planner decides how relation-heavy reads are executed. The fastest strategy depends on cardinality, not just
+    query shape: a <code>profile</code> include behaves very differently from <code>posts.comments.likes</code>.
+  </p>
+
+  <h2>Strategies</h2>
+  <ul>
+    <li><strong>flat joins</strong> — low-depth includes with predictable fan-out</li>
+    <li><strong>correlated subqueries</strong> — small bounded child includes</li>
+    <li><strong>where-in segmented loading</strong> — large to-many includes: fetch parents, then
+      <code>WHERE fk IN (...)</code> batches, stitched in memory. Composite foreign keys use row-value tuple IN.</li>
+  </ul>
+  <p>A naive join strategy can explode row counts on deep trees (<code>User → Posts → Comments → Likes</code>). The planner keeps read amplification under control while preserving Prisma-compatible result shapes.</p>
+
+  <h2>Planner stats</h2>
+  <p>
+    During generation, prisma-sql can collect artifacts into <code>planner.generated.ts</code>:
+    <code>RELATION_STATS</code>, <code>MODEL_STATS</code>, <code>ROUNDTRIP_ROW_EQUIVALENT</code>, <code>JSON_ROW_FACTOR</code>.
+  </p>
+  <p>
+    <code>MODEL_STATS</code> powers the large to-many include guard: when a child table is large and the parent result is
+    estimated small, queries switch to where-in segmented loading instead of correlated per-parent subqueries.
+  </p>
+  <blockquote>
+    Without stats (or with <code>known: false</code>) the guard is inactive for that model. Queries still work correctly,
+    but relation-heavy reads may not pick the optimal strategy.
+  </blockquote>
+
+  <h2>Best setup</h2>
+  <h3>1) Model real cardinality</h3>
+  <p><code>@unique</code> on one-to-one foreign keys tells the planner the relation is bounded; indexes on one-to-many foreign keys make segmented loading cheap.</p>
+  <pre><code>{`model Profile {
+  id     Int  @id @default(autoincrement())
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id])
+}`}</code></pre>
+
+  <h3>2) Index every foreign key used in includes and relation filters</h3>
+  <pre><code>{`model Comment {
+  id        Int      @id @default(autoincrement())
+  postId    Int
+  createdAt DateTime @default(now())
+  published Boolean  @default(false)
+
+  post Post @relation(fields: [postId], references: [id])
+
+  @@index([postId])
+  @@index([postId, createdAt])
+  @@index([postId, published])
+}`}</code></pre>
+
+  <h3>3) Prefer deterministic nested ordering</h3>
+  <pre><code>{`const users = await prisma.user.findMany({
+  include: {
+    posts: {
+      orderBy: { createdAt: 'desc' },
+      take: 5,
+    },
+  },
+})`}</code></pre>
+
+  <blockquote>
+    Unbounded nested includes are supported — capping with take is a product decision, not a correctness requirement.
+  </blockquote>
+
+  <h2 id="deployment">Deployment without database access at build time</h2>
+  <p>Skip collection during build:</p>
+  <pre><code>{`PRISMA_SQL_SKIP_PLANNER=true npx prisma generate`}</code></pre>
+  <p>Collect after deployment, when the database is reachable:</p>
+  <pre><code>{`npx prisma-sql-collect-stats \\
+  --output dist/prisma/generated/sql/planner.generated.js \\
+  --prisma-client dist/prisma/generated/client/index.js`}</code></pre>
+  <p>Load collected stats at runtime:</p>
+  <pre><code>{`import { loadExternalPlannerStats } from 'prisma-sql'
+
+if (loadExternalPlannerStats('/data/planner-stats/planner.generated.js')) {
+  console.log('stats loaded')
+}`}</code></pre>
+
+  <h3>Incremental collection</h3>
+  <ul>
+    <li>freshness window: skip if existing file is younger than <code>PRISMA_SQL_STATS_MAX_AGE_MS</code> (default 24h)</li>
+    <li><strong>fast mode</strong> (default): PostgreSQL catalog statistics, falls back to precise mode if stale</li>
+    <li><strong>precise mode</strong>: full relation cardinality queries via <code>PRISMA_SQL_STATS_MODE=precise</code></li>
+    <li>slow edges reuse cached stats (<code>PRISMA_SQL_SLOW_EDGE_MS</code>) and re-measure after <code>PRISMA_SQL_STALE_EDGE_HOURS</code></li>
+    <li>per-edge timeout via <code>PRISMA_SQL_EDGE_TIMEOUT_MS</code>; total timeout via <code>PRISMA_SQL_PLANNER_TIMEOUT_MS</code></li>
+  </ul>
+  <p>
+    By default collection does not run <code>ANALYZE</code>. Set <code>PRISMA_SQL_ANALYZE=1</code> to refresh PostgreSQL
+    catalog statistics during collection — avoid it where generation should not mutate database state.
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Variable</th><th>Default</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>PRISMA_SQL_SKIP_PLANNER</code></td><td>false</td><td>Skip stats collection during generate</td></tr>
+      <tr><td><code>PRISMA_SQL_ANALYZE</code></td><td>unset</td><td>Set to 1 to run ANALYZE during collection</td></tr>
+      <tr><td><code>PRISMA_SQL_STATS_MAX_AGE_MS</code></td><td>86400000</td><td>Skip collection if existing stats younger than this</td></tr>
+      <tr><td><code>PRISMA_SQL_STATS_MODE</code></td><td>fast</td><td>fast = catalog stats, precise = full cardinality queries</td></tr>
+      <tr><td><code>PRISMA_SQL_SLOW_EDGE_MS</code></td><td>10000</td><td>Reuse cached stats for edges slower than this</td></tr>
+      <tr><td><code>PRISMA_SQL_EDGE_TIMEOUT_MS</code></td><td>30000</td><td>Timeout for one relation edge query</td></tr>
+      <tr><td><code>PRISMA_SQL_STALE_EDGE_HOURS</code></td><td>168</td><td>Re-measure slow edges after this age</td></tr>
+      <tr><td><code>PRISMA_SQL_PLANNER_TIMEOUT_MS</code></td><td>15000</td><td>Total timeout for collection during generate</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Verify the planner helps</h2>
+  <pre><code>{`const prisma = basePrisma.$extends(
+  speedExtension({
+    postgres: sql,
+    debug: true,
+    onQuery: (info) => {
+      console.log(info.model, info.method, info.duration + 'ms')
+      console.log(info.sql)
+    },
+  }),
+)`}</code></pre>
+  <p>Healthy signs: small parent pages stay small in latency; bounded child includes stay predictable; high-fanout includes avoid correlated per-parent scans.</p>
+</DocsLayout>

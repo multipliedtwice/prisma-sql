@@ -1,0 +1,136 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const base = '/prisma-to-sql';
+---
+
+<DocsLayout
+  title="Query examples - prisma-sql"
+  description="Filters, relation filters, include trees, pagination, cursor pagination, aggregates and groupBy with prisma-sql."
+  active={`${base}/docs/queries`}
+>
+  <h1>Query examples</h1>
+  <p>All examples use the standard Prisma API. prisma-sql converts supported shapes to SQL; everything else falls back to Prisma.</p>
+
+  <h2>Filters</h2>
+  <pre><code>{`{ age: { gt: 18, lte: 65 } }
+{ status: { in: ['ACTIVE', 'PENDING'] } }
+{ status: { notIn: ['DELETED'] } }
+
+{ email: { contains: '@example.com' } }
+{ email: { startsWith: 'user' } }
+{ email: { endsWith: '.com' } }
+{ email: { contains: 'EXAMPLE', mode: 'insensitive' } }
+
+{ AND: [{ status: 'ACTIVE' }, { verified: true }] }
+{ OR: [{ role: 'ADMIN' }, { role: 'MODERATOR' }] }
+{ NOT: { status: 'DELETED' } }
+
+{ deletedAt: null }
+{ deletedAt: { not: null } }`}</code></pre>
+
+  <h2>Relations</h2>
+  <pre><code>{`{
+  include: {
+    posts: true,
+    profile: true,
+  },
+}`}</code></pre>
+  <p>Nested includes support <code>where</code>, <code>orderBy</code> and <code>take</code>:</p>
+  <pre><code>{`{
+  include: {
+    posts: {
+      where: { published: true },
+      orderBy: { createdAt: 'desc' },
+      take: 5,
+      include: {
+        comments: true,
+      },
+    },
+  },
+}`}</code></pre>
+
+  <h3>Relation list filters</h3>
+  <pre><code>{`{ where: { posts: { some: { published: true } } } }
+{ where: { posts: { every: { published: true } } } }
+{ where: { posts: { none: { published: false } } } }`}</code></pre>
+
+  <h2>Pagination and ordering</h2>
+  <pre><code>{`{
+  take: 10,
+  skip: 20,
+  orderBy: { createdAt: 'desc' },
+}
+
+{
+  cursor: { id: 100 },
+  skip: 1,
+  take: 10,
+  orderBy: { id: 'asc' },
+}
+
+{
+  orderBy: [
+    { status: 'asc' },
+    { priority: 'desc' },
+    { createdAt: 'desc' },
+  ],
+}`}</code></pre>
+
+  <h3>Composite cursor pagination</h3>
+  <p>Use an <code>orderBy</code> that starts with the cursor fields in the same order. This matches keyset pagination expectations and avoids unstable page boundaries.</p>
+  <pre><code>{`{
+  cursor: { tenantId: 10, id: 500 },
+  skip: 1,
+  take: 20,
+  orderBy: [
+    { tenantId: 'asc' },
+    { id: 'asc' },
+  ],
+}`}</code></pre>
+
+  <h3>Optional relation null ordering</h3>
+  <p>
+    A required scalar reached through an optional to-one relation can use <code>{'{ sort, nulls }'}</code>, because the
+    relation's <code>LEFT JOIN</code> makes the SQL expression nullable. Queries using this form execute through
+    prisma-sql; if acceleration fails they return an explicit "prisma-sql cannot fall back" error instead of forwarding
+    input Prisma would reject.
+  </p>
+  <pre><code>{`await prisma.jobAd.findMany({
+  orderBy: {
+    boost: {
+      boostedUntil: { sort: 'desc', nulls: 'last' },
+    },
+  },
+})`}</code></pre>
+
+  <h2>Aggregates</h2>
+  <pre><code>{`await prisma.user.count({
+  where: { status: 'ACTIVE' },
+})
+
+await prisma.task.aggregate({
+  where: { status: 'DONE' },
+  _count: { _all: true },
+  _sum: { estimatedHours: true },
+  _avg: { estimatedHours: true },
+  _min: { startedAt: true },
+  _max: { completedAt: true },
+})`}</code></pre>
+  <p>
+    Aggregate values are mapped back to Prisma-style types — <code>Decimal</code>, <code>BigInt</code>,
+    <code>DateTime</code> and <code>_count</code> keep their expected value types.
+  </p>
+
+  <h2>groupBy</h2>
+  <pre><code>{`await prisma.task.groupBy({
+  by: ['status', 'priority'],
+  _count: { _all: true },
+  _avg: { estimatedHours: true },
+  having: {
+    status: {
+      _count: { gte: 5 },
+    },
+  },
+})`}</code></pre>
+</DocsLayout>

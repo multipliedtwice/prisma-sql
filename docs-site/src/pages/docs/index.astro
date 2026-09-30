@@ -1,0 +1,109 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const base = '/prisma-to-sql';
+---
+
+<DocsLayout
+  title="Getting started - prisma-sql"
+  description="Install prisma-sql, add the generator, extend Prisma Client. Same API, same types, faster reads."
+  active={`${base}/docs`}
+>
+  <h1>Getting started</h1>
+  <p>
+    <code>prisma-sql</code> accelerates Prisma <strong>read</strong> queries by skipping Prisma's read execution path and
+    running generated SQL directly through a database-native client. Prisma stays the source of truth for schema,
+    migrations, generated types, writes, and fallback.
+  </p>
+
+  <h2>Installation</h2>
+  <pre><code>{`npm install prisma-sql postgres   # PostgreSQL
+npm install prisma-sql better-sqlite3   # SQLite`}</code></pre>
+
+  <h2>1) Add the generator</h2>
+  <pre><code>{`generator client {
+  provider = "prisma-client"
+}
+
+generator sql {
+  provider = "prisma-sql-generator"
+}`}</code></pre>
+
+  <h2>2) Generate</h2>
+  <pre><code>{`npx prisma generate`}</code></pre>
+  <p>
+    This emits <code>./generated/sql/index.ts</code> (the extension) and <code>./generated/sql/planner.generated.ts</code>
+    (relation and model statistics used by the strategy planner).
+  </p>
+
+  <h2>3) Extend Prisma</h2>
+  <h3>PostgreSQL</h3>
+  <pre><code>{`import { PrismaClient } from '@prisma/client'
+import { speedExtension, type SpeedClient } from './generated/sql'
+import postgres from 'postgres'
+
+const sql = postgres(process.env.DATABASE_URL!)
+const basePrisma = new PrismaClient()
+
+export const prisma = basePrisma.$extends(
+  speedExtension({ postgres: sql }),
+) as SpeedClient<typeof basePrisma>`}</code></pre>
+
+  <h3>SQLite</h3>
+  <pre><code>{`import { speedExtension, type SpeedClient } from './generated/sql'
+import Database from 'better-sqlite3'
+
+const db = new Database('./data.db')
+const basePrisma = new PrismaClient()
+
+export const prisma = basePrisma.$extends(
+  speedExtension({ sqlite: db }),
+) as SpeedClient<typeof basePrisma>`}</code></pre>
+
+  <h3>With existing extensions</h3>
+  <p>Apply <code>speedExtension</code> last so it sees the final query surface.</p>
+  <pre><code>{`const extendedPrisma = basePrisma
+  .$extends(myCustomExtension)
+  .$extends(anotherExtension)
+
+export const prisma = extendedPrisma.$extends(
+  speedExtension({ postgres: sql }),
+) as SpeedClient<typeof extendedPrisma>`}</code></pre>
+
+  <h2>What gets accelerated</h2>
+  <div class="grid sm:grid-cols-2 gap-4 mb-4">
+    <div class="rounded-xl border border-green-200 bg-green-50/50 p-4">
+      <p class="font-semibold text-green-800 mb-2">Accelerated reads</p>
+      <ul class="!mb-0">
+        <li><code>findMany</code></li>
+        <li><code>findFirst</code></li>
+        <li><code>findUnique</code></li>
+        <li><code>count</code></li>
+        <li><code>aggregate</code></li>
+        <li><code>groupBy</code></li>
+        <li><code>$batch</code> (PostgreSQL)</li>
+      </ul>
+    </div>
+    <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
+      <p class="font-semibold text-gray-700 mb-2">Runs through Prisma as before</p>
+      <ul class="!mb-0">
+        <li><code>create</code>, <code>update</code>, <code>delete</code>, <code>upsert</code></li>
+        <li><code>createMany</code>, <code>updateMany</code>, <code>deleteMany</code></li>
+        <li>full-text <code>search</code></li>
+        <li>embedded/composite document types</li>
+      </ul>
+    </div>
+  </div>
+
+  <blockquote>
+    Fallback rule: if a query shape cannot be accelerated safely, it falls back to Prisma instead of returning wrong
+    results. Enable <code>debug: true</code> to see when that happens.
+  </blockquote>
+
+  <h2>Next steps</h2>
+  <ul>
+    <li><a href={`${base}/docs/batch-optimize`}>$batch and @optimize extras</a></li>
+    <li><a href={`${base}/docs/planner`}>Cardinality planner and stats collection</a></li>
+    <li><a href={`${base}/docs/verify`}>Verify results match Prisma on your schema</a></li>
+  </ul>
+</DocsLayout>

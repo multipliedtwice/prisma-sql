@@ -24,7 +24,8 @@ tests/prisma/schema-sqlite-v7.prisma
 tests/prisma/schema-sqlite-v8.prisma
 tests/prisma/schema-sqlite.prisma
 tests/prisma/schema.prisma
-docs
+docs/*
+!docs/.nojekyll
 docs-site/node_modules/
 docs-site/node_modules
 docs-site/dist/

@@ -1,0 +1,65 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const base = '/prisma-to-sql';
+---
+
+<DocsLayout
+  title="Verify parity - prisma-sql"
+  description="Run the same read queries through Prisma and prisma-sql against one database and diff the results before adopting."
+  active={`${base}/docs/verify`}
+>
+  <h1>Verify parity</h1>
+  <p>
+    <code>prisma-sql-verify</code> runs the same read queries through plain Prisma and through the speed extension on the
+    same database, then diffs the results — including value types (<code>DateTime</code>, <code>BigInt</code>,
+    <code>Decimal</code>) and nested include shapes. Use it before adopting and after upgrades.
+  </p>
+
+  <h2>Usage</h2>
+  <pre><code>{`npx prisma-sql-verify \\
+  --corpus queries.jsonl \\
+  --generated ./generated/sql \\
+  --client @prisma/client \\
+  --sqlite ./data.db
+
+# or PostgreSQL
+npx prisma-sql-verify \\
+  --corpus queries.jsonl \\
+  --generated ./generated/sql \\
+  --client ./dist/prisma/generated/client/index.js \\
+  --postgres-url $DATABASE_URL`}</code></pre>
+
+  <h2>Corpus format</h2>
+  <p>One JSON object per line. Only supported read methods are allowed.</p>
+  <pre><code>{`{"model":"user","method":"findMany","args":{"take":5}}
+{"model":"user","method":"findFirst","args":{"include":{"posts":true},"orderBy":{"id":"asc"}}}
+{"model":"user","method":"count","args":{"where":{"status":"ACTIVE"}}}
+{"model":"user","method":"aggregate","args":{"_count":true,"_avg":{"age":true}}}`}</code></pre>
+
+  <h2>Flags</h2>
+  <table>
+    <thead><tr><th>Flag</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>--corpus</code></td><td>Path to the JSONL corpus file (required)</td></tr>
+      <tr><td><code>--generated</code></td><td>Generated SQL module or directory exporting speedExtension (required). Under tsx, a directory with index.ts works too.</td></tr>
+      <tr><td><code>--client</code></td><td>Module path or package name exporting PrismaClient (required)</td></tr>
+      <tr><td><code>--sqlite</code></td><td>SQLite database file to verify against</td></tr>
+      <tr><td><code>--postgres-url</code></td><td>PostgreSQL connection string (falls back to DATABASE_URL)</td></tr>
+      <tr><td><code>--client-init</code></td><td>JSON string passed to the PrismaClient constructor. When omitted, prisma-sql-verify auto-builds a driver adapter for Prisma 7 clients (@prisma/adapter-better-sqlite3 / @prisma/adapter-pg must be installed).</td></tr>
+      <tr><td><code>--verbose</code></td><td>Print passing queries too</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Exit codes and output</h2>
+  <ul>
+    <li><code>0</code> — every query matches Prisma</li>
+    <li><code>1</code> — at least one mismatch; each mismatch prints the diff paths, e.g.
+      <code>$.assignedTasks[0].dueDate: prisma=... extended=...</code>, ready to paste into an issue</li>
+    <li><code>2</code> — usage or setup error</li>
+  </ul>
+  <blockquote>
+    Tip: build your corpus from real application queries. A corpus of realistic shapes is worth more than a large
+    synthetic one.
+  </blockquote>
+</DocsLayout>

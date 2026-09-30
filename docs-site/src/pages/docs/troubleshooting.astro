@@ -1,0 +1,99 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const base = '/prisma-to-sql';
+---
+
+<DocsLayout
+  title="Troubleshooting & limits - prisma-sql"
+  description="Common problems, debugging tools, edge runtimes and current limitations of prisma-sql."
+  active={`${base}/docs/troubleshooting`}
+>
+  <h1>Troubleshooting & limits</h1>
+
+  <h2>Debug logging</h2>
+  <pre><code>{`const prisma = basePrisma.$extends(
+  speedExtension({ postgres: sql, debug: true }),
+)`}</code></pre>
+
+  <h2>Performance hook</h2>
+  <pre><code>{`speedExtension({
+  postgres: sql,
+  onQuery: (info) => {
+    console.log(info.model + '.' + info.method + ': ' + info.duration + 'ms')
+    console.log('prebaked=' + info.prebaked)
+  },
+})
+
+// info: { model, method, sql, params, duration, prebaked }`}</code></pre>
+
+  <h2>Common problems</h2>
+  <h3>speedExtension requires postgres or sqlite client</h3>
+  <p>Pass a database-native client to the generated extension:</p>
+  <pre><code>{`const prisma = new PrismaClient().$extends(speedExtension({ postgres: sql }))`}</code></pre>
+
+  <h3>Generated dialect mismatch</h3>
+  <p>If generated code targets PostgreSQL, do not pass SQLite, and vice versa. Override the dialect in the generator block if needed.</p>
+
+  <h3>Results differ from Prisma</h3>
+  <p>Turn on debug logging and compare generated SQL with Prisma query logs, or better, use <a href={`${base}/docs/verify`}>prisma-sql-verify</a>. If behavior differs, open an issue with schema excerpt, query, generated SQL, expected and actual result.</p>
+
+  <h3>Performance worse on a relation-heavy query</h3>
+  <ul>
+    <li>missing foreign-key indexes</li>
+    <li>missing <code>MODEL_STATS</code> (planner stats not collected)</li>
+    <li>stale PostgreSQL catalog stats — refresh with <code>PRISMA_SQL_ANALYZE=1 npx prisma generate</code></li>
+    <li>high-fanout relation trees without bounds</li>
+    <li>unstable or missing orderBy</li>
+    <li>unrelated heavy branches that should be split into $batch</li>
+  </ul>
+
+  <h3>Large include still uses the wrong strategy</h3>
+  <ul>
+    <li><code>planner.generated.ts</code> has empty <code>MODEL_STATS</code> or the model is <code>known: false</code></li>
+    <li><code>largeChildTableRows</code> set too high or <code>smallParentCountThreshold</code> set too low</li>
+    <li>check debug logs for where-in segmented loading on the relation</li>
+  </ul>
+
+  <h3>SQLite tuple-IN error</h3>
+  <p>Composite foreign-key where-in requires SQLite 3.15+. Upgrade SQLite if row-value tuple IN fails.</p>
+
+  <h3>Connection pool exhaustion</h3>
+  <pre><code>{`const sql = postgres(process.env.DATABASE_URL!, { max: 50 })`}</code></pre>
+
+  <h2>Edge runtimes</h2>
+  <h3>Vercel Edge</h3>
+  <p>The extension works like on Node: pass a postgres.js client and export <code>{`config = { runtime: 'edge' }`}</code>.</p>
+  <h3>Cloudflare Workers</h3>
+  <p>
+    Workers can use the standalone SQL generation API instead of the full extension:
+  </p>
+  <pre><code>{`import { createToSQL } from 'prisma-sql'
+import { MODELS } from './generated/sql'
+
+const toSQL = createToSQL(MODELS, 'sqlite')
+
+const { sql, params } = toSQL('User', 'findMany', {
+  where: { status: 'ACTIVE' },
+})`}</code></pre>
+
+  <h2>Current limitations</h2>
+  <h3>Partially supported</h3>
+  <ul>
+    <li>basic array operators</li>
+    <li>basic JSON path filtering</li>
+    <li>composite foreign-key includes through tuple-IN in the where-in path</li>
+  </ul>
+  <h3>Not yet supported (fall back to Prisma)</h3>
+  <ul>
+    <li>writes</li>
+    <li>full-text search</li>
+    <li>composite/document-style embedded types</li>
+    <li>vendor-specific extensions not modeled by the SQL builder</li>
+    <li>some advanced groupBy edge cases</li>
+  </ul>
+  <h3>Streaming</h3>
+  <p><code>findManyStream</code> cannot stream queries that require segmented where-in include loading. Use regular findMany for those, or select scalar columns only.</p>
+  <h3>$batch</h3>
+  <p>PostgreSQL only, not transactional.</p>
+</DocsLayout>

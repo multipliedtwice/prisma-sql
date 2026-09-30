@@ -1,0 +1,113 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const base = '/prisma-to-sql';
+---
+
+<DocsLayout
+  title="$batch & @optimize - prisma-sql"
+  description="Combine independent reads into one round trip with $batch and prebake hot queries at generate time with @optimize."
+  active={`${base}/docs/batch-optimize`}
+>
+  <h1>$batch and @optimize</h1>
+  <p>Extras on top of Prisma's API: capabilities Prisma Client does not have, with the same types and code style.</p>
+
+  <h2 id="batch">$batch</h2>
+  <p><code>$batch</code> runs multiple independent read queries in one PostgreSQL round trip.</p>
+  <pre><code>{`const dashboard = await prisma.$batch((batch) => ({
+  totalUsers: batch.user.count(),
+  activeUsers: batch.user.count({
+    where: { status: 'ACTIVE' },
+  }),
+  recentProjects: batch.project.findMany({
+    take: 5,
+    orderBy: { createdAt: 'desc' },
+    include: { organization: true },
+  }),
+  taskStats: batch.task.aggregate({
+    _count: true,
+    _avg: { estimatedHours: true },
+    where: { status: 'IN_PROGRESS' },
+  }),
+}))`}</code></pre>
+
+  <h3>Rules</h3>
+  <p>Do not <code>await</code> inside the callback.</p>
+  <pre><code>{`// Incorrect
+await prisma.$batch(async (batch) => ({
+  users: await batch.user.findMany(),
+}))
+
+// Correct
+await prisma.$batch((batch) => ({
+  users: batch.user.findMany(),
+}))`}</code></pre>
+
+  <h3>Best use cases</h3>
+  <ul>
+    <li>dashboards</li>
+    <li>analytics summaries</li>
+    <li>counts + page data</li>
+    <li>multiple independent aggregates</li>
+    <li>splitting unrelated heavy reads instead of one massive include tree</li>
+  </ul>
+
+  <blockquote>
+    Limitations: PostgreSQL only. Queries are independent and not transactional. Use <code>$transaction</code> when you
+    need transactional guarantees.
+  </blockquote>
+
+  <h2 id="optimize">@optimize</h2>
+  <p>
+    For the hottest query shapes you can prebake SQL at generate time. Matching runtime shapes execute the baked SQL
+    directly; non-matching shapes use normal runtime generation.
+  </p>
+
+  <h3>Basic prebaked query</h3>
+  <pre><code>{`/// @optimize {
+///   "method": "findMany",
+///   "query": {
+///     "where": { "status": "ACTIVE" }
+///   }
+/// }
+model User {
+  id     Int    @id
+  status String
+}`}</code></pre>
+
+  <h3>Dynamic parameters</h3>
+  <p>Values prefixed with <code>$</code> become bind parameters at runtime.</p>
+  <pre><code>{`/// @optimize {
+///   "method": "findMany",
+///   "query": {
+///     "where": { "status": "$status" },
+///     "skip": "$skip",
+///     "take": "$take"
+///   }
+/// }`}</code></pre>
+
+  <h3>Nested include</h3>
+  <pre><code>{`/// @optimize {
+///   "method": "findMany",
+///   "query": {
+///     "include": {
+///       "posts": {
+///         "where": { "published": true },
+///         "orderBy": { "createdAt": "desc" },
+///         "take": 5
+///       }
+///     }
+///   }
+/// }`}</code></pre>
+
+  <p>
+    <code>@optimize</code> is optional — it only removes the conversion overhead of repeated hot query shapes. See
+    <a href={`${base}/docs/configuration`}>generator configuration</a> for the <code>skipInvalid</code> option if a
+    directive should be skipped instead of failing generation.
+  </p>
+
+  <p>
+    Do you need <code>@optimize</code>? No. Runtime generation already covers every supported shape; prebaking is a
+    micro-optimization for your hottest endpoints.
+  </p>
+</DocsLayout>

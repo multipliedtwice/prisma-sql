@@ -1,0 +1,116 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const base = '/prisma-to-sql';
+---
+
+<DocsLayout
+  title="Configuration - prisma-sql"
+  description="Generator fields, extension limits and strategy cost-model parameters, plus the programmatic tuning API."
+  active={`${base}/docs/configuration`}
+>
+  <h1>Configuration</h1>
+  <p>
+    Tuning is optional. Defaults work without any configuration; knobs exist for schemas that need different safety
+    boundaries or cost assumptions.
+  </p>
+
+  <h2>Generator configuration</h2>
+  <pre><code>{`generator sql {
+  provider   = "prisma-sql-generator"
+  dialect    = "postgres"
+  output     = "./generated/sql"
+  skipInvalid = "true"
+}`}</code></pre>
+  <table>
+    <thead><tr><th>Field</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>provider</code></td><td>required</td><td>Use <code>prisma-sql-generator</code></td></tr>
+      <tr><td><code>dialect</code></td><td>inferred when possible</td><td><code>postgres</code> or <code>sqlite</code></td></tr>
+      <tr><td><code>output</code></td><td><code>./generated/sql</code></td><td>Generated SQL client output path</td></tr>
+      <tr><td><code>skipInvalid</code></td><td>false</td><td>Skip invalid @optimize directives instead of failing generation</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Extension config</h2>
+  <p>Pass <code>limits</code> and/or <code>strategy</code> directly to <code>speedExtension</code>. Both accept partial objects.</p>
+  <pre><code>{`const db = prisma.$extends(
+  speedExtension({
+    postgres: sql,
+    limits: {
+      MAX_INCLUDES_PER_LEVEL: 20,
+      MAX_INCLUDE_DEPTH: 8,
+    },
+    strategy: {
+      defaultFanOut: 5,
+      roundtripRowEquivalent: 40,
+    },
+  }),
+)`}</code></pre>
+
+  <h2>Programmatic API</h2>
+  <pre><code>{`import {
+  setLimits, getLimits, resetLimits,
+  setStrategyConfig, getStrategyConfig,
+  rebuildQueryCache,
+} from 'prisma-sql'
+
+setLimits({ MAX_INCLUDES_PER_LEVEL: 25 })
+rebuildQueryCache()   // required after changing QUERY_CACHE_SIZE
+setStrategyConfig({ correlatedBoundedFactor: 0.3 })
+resetLimits()`}</code></pre>
+
+  <h2 id="limits">Query builder limits</h2>
+  <table>
+    <thead><tr><th>Key</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>MAX_INCLUDE_DEPTH</code></td><td>5</td><td>Max depth of nested include/select relations</td></tr>
+      <tr><td><code>MAX_INCLUDES_PER_LEVEL</code></td><td>10</td><td>Max relations included at one nesting level</td></tr>
+      <tr><td><code>MAX_TOTAL_SUBQUERIES</code></td><td>100</td><td>Total correlated subqueries allowed across the tree</td></tr>
+      <tr><td><code>MAX_SELF_REFERENTIAL_DEPTH</code></td><td>2</td><td>Max times a model can appear in its own include chain</td></tr>
+      <tr><td><code>MAX_QUERY_DEPTH</code></td><td>50</td><td>Max nesting depth for WHERE clauses</td></tr>
+      <tr><td><code>MAX_NOT_DEPTH</code></td><td>50</td><td>Max nesting depth for NOT composition</td></tr>
+      <tr><td><code>MAX_HAVING_DEPTH</code></td><td>50</td><td>Max nesting depth for HAVING clauses</td></tr>
+      <tr><td><code>MAX_NESTED_JOIN_DEPTH</code></td><td>10</td><td>Max depth for join-based relation traversal</td></tr>
+      <tr><td><code>MAX_RELATION_ORDER_BY_DEPTH</code></td><td>10</td><td>Max depth for relation orderBy resolution</td></tr>
+      <tr><td><code>MAX_WHERE_IN_RECURSIVE_DEPTH</code></td><td>10</td><td>Max recursion depth for where-in segment resolution</td></tr>
+      <tr><td><code>MAX_ARRAY_SIZE</code></td><td>10000</td><td>Max elements in array params such as in / hasSome</td></tr>
+      <tr><td><code>MAX_STRING_LENGTH</code></td><td>10000</td><td>Max string length for LIKE and JSON string operators</td></tr>
+      <tr><td><code>MAX_LIMIT_OFFSET</code></td><td>2147483647</td><td>PostgreSQL engine limit for LIMIT / OFFSET</td></tr>
+      <tr><td><code>MIN_NEGATIVE_TAKE</code></td><td>-10000</td><td>Minimum allowed negative take value</td></tr>
+      <tr><td><code>MAX_ALIAS_COUNTER_THRESHOLD</code></td><td>1000</td><td>Safety threshold before alias counter overflow</td></tr>
+      <tr><td><code>QUERY_CACHE_SIZE</code></td><td>1000</td><td>Max entries in the SQL query cache (call rebuildQueryCache after changing)</td></tr>
+      <tr><td><code>STMT_CACHE_SIZE</code></td><td>1000</td><td>Max entries in the SQLite prepared statement cache per client</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="strategy">Strategy cost-model parameters</h2>
+  <p>These control how the planner chooses between query strategies.</p>
+  <table>
+    <thead><tr><th>Key</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>roundtripRowEquivalent</code></td><td>73</td><td>Cost in row-equivalents of one extra database roundtrip. Lower favors multi-roundtrip strategies.</td></tr>
+      <tr><td><code>jsonRowFactor</code></td><td>1.5</td><td>Multiplier for JSON aggregation overhead per row</td></tr>
+      <tr><td><code>correlatedBoundedFactor</code></td><td>0.5</td><td>Cost factor for correlated subqueries when the child has LIMIT</td></tr>
+      <tr><td><code>correlatedUnboundedFactor</code></td><td>3.0</td><td>Cost factor for correlated subqueries when the child is unbounded</td></tr>
+      <tr><td><code>correlatedWherePenalty</code></td><td>3.0</td><td>Extra cost when a child relation has where inside a correlated subquery</td></tr>
+      <tr><td><code>defaultFanOut</code></td><td>10</td><td>Assumed average children per parent without stats</td></tr>
+      <tr><td><code>defaultParentCount</code></td><td>50</td><td>Assumed parent row count when take is not specified</td></tr>
+      <tr><td><code>dynamicTakeEstimate</code></td><td>10</td><td>Assumed take value when actual value is a runtime parameter</td></tr>
+      <tr><td><code>singleParentMaxFlatJoinDepth</code></td><td>2</td><td>Max include depth allowing flat-join for findFirst/findUnique</td></tr>
+      <tr><td><code>minStatsCoverage</code></td><td>0.1</td><td>Minimum relation stats coverage to trust collected data</td></tr>
+      <tr><td><code>largeChildTableRows</code></td><td>100000</td><td>Child table threshold for the large to-many include guard</td></tr>
+      <tr><td><code>smallParentCountThreshold</code></td><td>1000</td><td>Parent estimate threshold for the large to-many include guard</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Tuning examples</h3>
+  <pre><code>{`// low-latency local database
+speedExtension({ postgres: sql, strategy: { roundtripRowEquivalent: 20 } })
+
+// remote database with high latency
+speedExtension({ postgres: sql, strategy: { roundtripRowEquivalent: 200 } })
+
+// large child tables that are well indexed
+speedExtension({ postgres: sql, strategy: { largeChildTableRows: 500000 } })`}</code></pre>
+</DocsLayout>
