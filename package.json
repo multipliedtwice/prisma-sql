@@ -60,12 +60,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/multipliedtwice/prisma-to-sql.git"
+    "url": "https://github.com/multipliedtwice/prisma-sql.git"
   },
   "bugs": {
-    "url": "https://github.com/multipliedtwice/prisma-to-sql/issues"
+    "url": "https://github.com/multipliedtwice/prisma-sql/issues"
   },
-  "homepage": "https://github.com/multipliedtwice/prisma-to-sql#readme",
+  "homepage": "https://github.com/multipliedtwice/prisma-sql#readme",
   "author": "multipliedtwice <multipliedtwice@gmail.com>",
   "license": "MIT",
   "dependencies": {

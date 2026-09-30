@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap'
 
 export default defineConfig({
   site: 'https://multipliedtwice.github.io',
-  base: '/prisma-to-sql',
+  base: '/prisma-sql',
   outDir: '../docs',
   integrations: [tailwind(), sitemap()],
   i18n: {

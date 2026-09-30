@@ -1,11 +1,11 @@
 # prisma-sql
 
-[![CI](https://github.com/multipliedtwice/prisma-to-sql/actions/workflows/release.yml/badge.svg)](https://github.com/multipliedtwice/prisma-to-sql/actions/workflows/release.yml)
-[![codecov](https://codecov.io/gh/multipliedtwice/prisma-to-sql/graph/badge.svg)](https://codecov.io/gh/multipliedtwice/prisma-to-sql)
+[![CI](https://github.com/multipliedtwice/prisma-sql/actions/workflows/release.yml/badge.svg)](https://github.com/multipliedtwice/prisma-sql/actions/workflows/release.yml)
+[![codecov](https://codecov.io/gh/multipliedtwice/prisma-sql/graph/badge.svg)](https://codecov.io/gh/multipliedtwice/prisma-sql)
 [![npm](https://img.shields.io/npm/v/prisma-sql.svg)](https://www.npmjs.com/package/prisma-sql)
 [![license](https://img.shields.io/npm/l/prisma-sql.svg)](LICENSE)
 
-[Docs](https://multipliedtwice.github.io/prisma-to-sql/) ·
+[Docs](https://multipliedtwice.github.io/prisma-sql/) ·
 [Benchmarks](#benchmarks) ·
 [npm](https://www.npmjs.com/package/prisma-sql) ·
 [Performance notes](PERFORMANCE.md) ·
@@ -1101,7 +1101,10 @@ const controller = {
     const db = await shardRegistry.bindingFor(tenantId) // throws when unroutable
     return {
       async execute(sql, params) {
-        const result = await db.prepare(sql).bind(...params).all()
+        const result = await db
+          .prepare(sql)
+          .bind(...params)
+          .all()
         if (!result.success) throw new Error('shard read failed')
         return result.results
       },
@@ -1323,7 +1326,7 @@ Current checked-in comparisons cover:
 - Prisma v7 (7.10.0) on PostgreSQL and SQLite
 - Prisma v8 (8.1.0-dev.1) on PostgreSQL and SQLite
 
-Open the [detailed benchmark table](https://multipliedtwice.github.io/prisma-to-sql/#benchmarks) for per-query timings, confidence intervals, Drizzle comparison, and the 1ms practical-significance threshold.
+Open the [detailed benchmark table](https://multipliedtwice.github.io/prisma-sql/#benchmarks) for per-query timings, confidence intervals, Drizzle comparison, and the 1ms practical-significance threshold.
 
 ## Troubleshooting
 
@@ -1521,7 +1524,7 @@ Exit code 0 means all queries match, including value types (`DateTime`, `BigInt`
 ## Development
 
 ```bash
-git clone https://github.com/multipliedtwice/prisma-to-sql
+git clone https://github.com/multipliedtwice/prisma-sql
 cd prisma-sql
 npm install
 npm run build
@@ -1537,5 +1540,5 @@ MIT
 ## Links
 
 - [NPM Package](https://www.npmjs.com/package/prisma-sql)
-- [GitHub Repository](https://github.com/multipliedtwice/prisma-to-sql)
-- [Issue Tracker](https://github.com/multipliedtwice/prisma-to-sql/issues)
+- [GitHub Repository](https://github.com/multipliedtwice/prisma-sql)
+- [Issue Tracker](https://github.com/multipliedtwice/prisma-sql/issues)

@@ -11,7 +11,7 @@ const rtlLocales = new Set(['ar', 'ur']);
 const isRTL = rtlLocales.has(locale);
 
 const makePath = (code: string) => {
-  const base = '/prisma-to-sql';
+  const base = '/prisma-sql';
   if (code === 'en') return `${base}/`;
   return `${base}/${code}/`;
 };
