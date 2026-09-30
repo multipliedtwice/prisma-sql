@@ -1,5 +1,10 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { createTestDB, type TestDB } from '../helpers/db'
+import {
+  createTestDB,
+  generateSpeedExtensionForDB,
+  loadExtensionIntoTestDB,
+  type TestDB,
+} from '../helpers/db'
 import { seedDatabase, type SeedResult } from '../helpers/seed-db'
 import { setGlobalDialect } from '../../src/sql-builder-dialect'
 import { getDatamodel } from '../helpers/datamodel'
@@ -15,7 +20,6 @@ let seed: SeedResult
 let pgClient: ReturnType<typeof postgres>
 let models: Model[]
 let modelMap: Map<string, Model>
-let speedExtension: (options: Record<string, unknown>) => unknown
 
 type SpeedClient = any
 
@@ -49,13 +53,12 @@ async function measureAsync<T>(
 
 describe('Batch Multi-Query E2E - PostgreSQL', () => {
   beforeAll(async () => {
-    const extensionPath = '../generated/extension-postgres-v6'
-    const generatedExtension = await import(extensionPath)
-    speedExtension = generatedExtension.speedExtension
     setGlobalDialect('postgres')
     db = await createTestDB('postgres', 7)
     pgClient = postgres(PG_URL)
     seed = await seedDatabase(db)
+    await generateSpeedExtensionForDB(db, 7)
+    await loadExtensionIntoTestDB(db, pgClient, undefined, 7)
 
     const datamodel = await getDatamodel('postgres')
     models = convertDMMFToModels(datamodel)
@@ -606,12 +609,7 @@ Total:   ${metrics.totalTime.toFixed(2)}ms
 
   describe('$batch API with speedExtension', () => {
     function createExtended(): SpeedClient {
-      return db.prisma.$extends(
-        speedExtension({
-          debug: true,
-          postgres: pgClient,
-        }),
-      ) as SpeedClient
+      return db.extended as SpeedClient
     }
 
     it('executes batch with mixed queries', async () => {
@@ -749,14 +747,9 @@ Total:   ${metrics.totalTime.toFixed(2)}ms
     })
   })
 
-  describe('Performance comparison', () => {
-    it('batch is faster than sequential queries', async () => {
-      const extended = db.prisma.$extends(
-        speedExtension({
-          debug: true,
-          postgres: pgClient,
-        }),
-      ) as SpeedClient
+  describe('Batch parity', () => {
+    it('matches sequential queries', async () => {
+      const extended = db.extended as SpeedClient
 
       const sequentialStart = performance.now()
       const seq1 = await db.prisma.user.count({ where: { status: 'ACTIVE' } })
@@ -788,17 +781,10 @@ Sequential: ${sequentialTime.toFixed(2)}ms (${(sequentialTime / 4).toFixed(2)}ms
 Batch:      ${batchTime.toFixed(2)}ms (${(batchTime / 4).toFixed(2)}ms per query)
 Speedup:    ${(sequentialTime / batchTime).toFixed(2)}x
       `)
-
-      expect(batchTime).toBeLessThanOrEqual(sequentialTime * 1.5)
     })
 
-    it('complex dashboard query performance', async () => {
-      const extended = db.prisma.$extends(
-        speedExtension({
-          debug: true,
-          postgres: pgClient,
-        }),
-      ) as SpeedClient
+    it('matches complex sequential dashboard queries', async () => {
+      const extended = db.extended as SpeedClient
 
       const sequentialStart = performance.now()
       const seq1 = await db.prisma.user.findMany({

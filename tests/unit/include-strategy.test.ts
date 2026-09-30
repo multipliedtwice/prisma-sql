@@ -1,9 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Model } from '../../src/types'
 import {
+  getModelStats,
+  getRelationStats,
+  getStrategyConfig,
   pickIncludeStrategy,
+  setJsonRowFactor,
   setModelStats,
   setRelationStats,
+  setRoundtripRowEquivalent,
   setStrategyConfig,
 } from '../../src/builder/select/strategy-estimator'
 
@@ -114,6 +119,30 @@ beforeEach(() => {
 })
 
 describe('include strategy decisions', () => {
+  it('exposes frozen config and planner-stat snapshots', () => {
+    const relationStats = {
+      Root: {
+        children: { avg: 2, p95: 3, p99: 4, max: 5, coverage: 1 },
+      },
+    }
+    const modelStats = {
+      Root: { rowCount: 10, tableName: 'roots' },
+    }
+
+    setRelationStats(relationStats)
+    setModelStats(modelStats)
+    setRoundtripRowEquivalent(91)
+    setJsonRowFactor(2)
+
+    expect(getRelationStats()).toBe(relationStats)
+    expect(getModelStats()).toBe(modelStats)
+    expect(getStrategyConfig()).toMatchObject({
+      roundtripRowEquivalent: 91,
+      jsonRowFactor: 2,
+    })
+    expect(Object.isFrozen(getStrategyConfig())).toBe(true)
+  })
+
   it('keeps deep unpaginated includes on the empirical where-in guard', () => {
     setRelationStats({
       Root: {
@@ -236,6 +265,98 @@ describe('include strategy decisions', () => {
           },
         },
         args: { where: { children: { some: { id: 1 } } }, take: 2 },
+        takeValue: 2,
+        hasChildPagination: true,
+      }),
+    ).toBe('correlated')
+  })
+
+  it('finds deep relation filters inside logical arrays', () => {
+    expect(
+      pick({
+        includeSpec: {
+          children: {
+            take: 5,
+            include: {
+              grands: { include: { greats: true } },
+              _count: { select: { grands: true } },
+            },
+          },
+        },
+        args: {
+          where: {
+            OR: [
+              { id: 1 },
+              {
+                children: {
+                  some: {
+                    AND: [
+                      {
+                        grands: {
+                          some: { greats: { some: { id: 1 } } },
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          },
+          take: 2,
+        },
+        takeValue: 2,
+        hasChildPagination: true,
+      }),
+    ).toBe('where-in')
+  })
+
+  it('keeps deep filtered pagination correlated for larger root pages', () => {
+    expect(
+      pick({
+        includeSpec: {
+          children: {
+            take: 5,
+            include: {
+              grands: { include: { greats: true } },
+              _count: { select: { grands: true } },
+            },
+          },
+        },
+        args: {
+          where: {
+            children: {
+              some: {
+                grands: { some: { greats: { some: { id: 1 } } } },
+              },
+            },
+          },
+          take: 3,
+        },
+        takeValue: 3,
+        hasChildPagination: true,
+      }),
+    ).toBe('correlated')
+  })
+
+  it('keeps deep filtered pagination correlated without nested counts', () => {
+    expect(
+      pick({
+        includeSpec: {
+          children: {
+            take: 5,
+            include: { grands: { include: { greats: true } } },
+          },
+        },
+        args: {
+          where: {
+            children: {
+              some: {
+                grands: { some: { greats: { some: { id: 1 } } } },
+              },
+            },
+          },
+          take: 2,
+        },
         takeValue: 2,
         hasChildPagination: true,
       }),

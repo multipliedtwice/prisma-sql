@@ -30,6 +30,13 @@ const SQLITE_DB_PATH = path.join(process.cwd(), 'tests', 'prisma', 'db.sqlite')
 const SQLITE_URL = `file:${SQLITE_DB_PATH}`
 const PRISMA_VERSION = parsePrismaVersion(process.env.PRISMA_VERSION)
 
+function shouldPrepareTestDatabase(): boolean {
+  return (
+    process.env.CI !== 'true' ||
+    process.env.PRISMA_SQL_PREPARE_TEST_DATABASE === '1'
+  )
+}
+
 async function resetBenchmarkDatabase(
   dialect: 'postgres' | 'sqlite',
 ): Promise<void> {
@@ -156,7 +163,7 @@ async function generatePrismaClient(
     const genCmd = `node ${prismaPath} generate --schema=${schemaPath}`
     await execAsync(genCmd, { env })
 
-    if (process.env.CI !== 'true') {
+    if (shouldPrepareTestDatabase()) {
       await resetBenchmarkDatabase(dialect)
       if (dialect === 'sqlite') {
         await applySqliteSchemaFromDiff(prismaPath, schemaPath, 6, null, env)
@@ -178,7 +185,7 @@ async function generatePrismaClient(
     const genCmd = `node ${prismaPath} generate --config=${configFile}`
     await execAsync(genCmd, { env })
 
-    if (process.env.CI !== 'true') {
+    if (shouldPrepareTestDatabase()) {
       await resetBenchmarkDatabase(dialect)
       if (dialect === 'sqlite') {
         await applySqliteSchemaFromDiff(
@@ -472,8 +479,9 @@ export async function loadExtensionIntoTestDB(
   db: TestDB,
   pgClient?: postgres.Sql,
   sqliteClient?: Database.Database,
+  version?: PrismaVersion,
 ): Promise<void> {
-  const prismaVersion = PRISMA_VERSION
+  const prismaVersion = version ?? PRISMA_VERSION
 
   if (db.dialect === 'postgres') {
     if (!pgClient) throw new Error('pgClient required for postgres')
