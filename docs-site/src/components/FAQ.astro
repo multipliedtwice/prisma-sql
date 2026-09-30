@@ -1,5 +1,4 @@
 ---
-import Split from './Split.astro';
 interface Props {
   t: any;
 }
@@ -10,11 +9,11 @@ const { t } = Astro.props;
 <section class="border-b border-line py-20 sm:py-28" id="faq">
   <div class="page-x grid gap-10 lg:grid-cols-12">
     <div class="lg:col-span-4">
-      <h2 class="display-2" data-split><Split text={t.faq.title} /></h2>
-      <p class="mt-5 text-lg text-fog" data-reveal style="--d:300">{t.faq.subtitle}</p>
+      <h2 class="display-2">{t.faq.title}</h2>
+      <p class="mt-5 text-lg text-fog">{t.faq.subtitle}</p>
     </div>
 
-    <div class="border-b border-line lg:col-span-8" data-stagger>
+    <div class="border-b border-line lg:col-span-8">
       {t.faq.questions.map((item: any) => (
         <details class="group border-t border-line">
           <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-lg font-semibold text-ink [&::-webkit-details-marker]:hidden">

@@ -7,7 +7,7 @@ const { t } = Astro.props;
 ---
 
 <section class="border-b border-line bg-paper-2/60">
-  <dl class="page-x grid grid-cols-2 lg:grid-cols-4" data-stagger>
+  <dl class="page-x grid grid-cols-2 lg:grid-cols-4">
     {t.stats.map((stat: any, i: number) => (
       <div
         class:list={[
@@ -19,7 +19,7 @@ const { t } = Astro.props;
         ]}
       >
         <dt class="text-sm font-semibold text-ink">{stat.label}</dt>
-        <dd data-count class="num mt-2 text-[clamp(2.4rem,4.6vw,3.75rem)] font-bold leading-none tracking-tight text-ink" style="font-stretch: 78%">
+        <dd class="num mt-2 text-[clamp(2.4rem,4.6vw,3.75rem)] font-bold leading-none tracking-tight text-ink">
           {stat.value}
         </dd>
         <dd class="mt-2 text-sm text-fog">{stat.subtitle}</dd>

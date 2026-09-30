@@ -1,4 +1,4 @@
-@import '@fontsource-variable/bricolage-grotesque/standard.css';
+@import '@fontsource-variable/schibsted-grotesk/wght.css';
 @import '@fontsource-variable/jetbrains-mono/index.css';
 
 @tailwind base;
@@ -16,7 +16,6 @@
     @apply bg-paper text-ink font-sans antialiased;
     font-size: 1.0625rem;
     line-height: 1.55;
-    font-stretch: 100%;
   }
 
   ::selection {
@@ -48,27 +47,24 @@
   }
 
   .display-1 {
-    font-size: clamp(2.9rem, 7.4vw, 7rem);
-    line-height: 0.88;
-    font-weight: 760;
-    font-stretch: 76%;
-    letter-spacing: -0.035em;
+    font-size: clamp(2.6rem, 6.4vw, 6rem);
+    line-height: 0.94;
+    font-weight: 800;
+    letter-spacing: -0.04em;
   }
 
   .display-2 {
-    font-size: clamp(2.25rem, 5.4vw, 4.5rem);
-    line-height: 0.95;
-    font-weight: 720;
-    font-stretch: 80%;
-    letter-spacing: -0.028em;
+    font-size: clamp(2.1rem, 4.6vw, 3.9rem);
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: -0.035em;
   }
 
   .display-3 {
-    font-size: clamp(1.5rem, 2.6vw, 2.125rem);
-    line-height: 1.05;
-    font-weight: 680;
-    font-stretch: 86%;
-    letter-spacing: -0.015em;
+    font-size: clamp(1.4rem, 2.3vw, 1.875rem);
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.02em;
   }
 
   .lede {
@@ -96,7 +92,6 @@
 
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-base font-semibold transition-colors duration-150;
-    font-stretch: 92%;
   }
 
   .btn-solid {
@@ -317,30 +312,6 @@ pre::-webkit-scrollbar-thumb {
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.scroll-progress {
-  position: fixed;
-  inset: 0 0 auto 0;
-  z-index: 70;
-  height: 3px;
-  background: #f2a900;
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-  pointer-events: none;
-}
-
-[dir='rtl'] .scroll-progress {
-  transform-origin: 100% 50%;
-}
-
-.grain {
-  position: fixed;
-  inset: 0;
-  z-index: 65;
-  pointer-events: none;
-  opacity: 0.07;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.03 0 0 0 0 0.15 0 0 0 0 0.21 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
 [data-header] {
   transition:
     transform 450ms var(--ease-out),
@@ -353,77 +324,6 @@ pre::-webkit-scrollbar-thumb {
 
 [data-header].is-hidden {
   transform: translateY(-100%);
-}
-
-.sw {
-  display: inline-block;
-  overflow: hidden;
-  vertical-align: top;
-  padding-bottom: 0.12em;
-  margin-bottom: -0.12em;
-}
-
-.sw > span {
-  display: inline-block;
-}
-
-.motion [data-split] .sw > span {
-  transform: translateY(105%) rotate(4deg);
-  transform-origin: 0 100%;
-  transition: transform 1100ms var(--ease-out);
-  transition-delay: calc(var(--wi, 0) * 55ms);
-}
-
-.motion [data-split].is-in .sw > span {
-  transform: none;
-}
-
-.hero-hl .sw > span {
-  -webkit-text-stroke: 1.5px currentColor;
-}
-
-.motion .hero-hl .sw > span {
-  color: transparent;
-  background: linear-gradient(90deg, #0c344b 50%, transparent 50%);
-  background-size: 205% 100%;
-  background-position: 100% 0;
-  -webkit-background-clip: text;
-  background-clip: text;
-  transition:
-    transform 1100ms var(--ease-out) calc(var(--wi, 0) * 55ms),
-    background-position 1400ms var(--ease-out) calc(var(--wi, 0) * 90ms + 900ms);
-}
-
-.motion .is-in .hero-hl .sw > span {
-  background-position: 0 0;
-}
-
-.motion [data-reveal] {
-  opacity: 0;
-  transform: translate3d(0, 28px, 0);
-  transition:
-    opacity 900ms var(--ease-out),
-    transform 1100ms var(--ease-out);
-  transition-delay: calc(var(--d, 0) * 1ms);
-}
-
-.motion [data-reveal].is-in {
-  opacity: 1;
-  transform: none;
-}
-
-.motion [data-stagger] > * {
-  opacity: 0;
-  transform: translate3d(0, 24px, 0);
-  transition:
-    opacity 800ms var(--ease-out),
-    transform 1000ms var(--ease-out);
-  transition-delay: calc(var(--si, 0) * 80ms + var(--d, 0) * 1ms);
-}
-
-.motion [data-stagger].is-in > * {
-  opacity: 1;
-  transform: none;
 }
 
 .motion [data-tiles] .st {
@@ -452,93 +352,12 @@ pre::-webkit-scrollbar-thumb {
   transform: none;
 }
 
-[data-parallax] {
-  transform: translate3d(0, var(--py, 0), 0);
-}
-
-[data-tilt] {
-  transform: perspective(1200px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-  transition: transform 500ms var(--ease-out);
-  transform-style: preserve-3d;
-}
-
-[data-magnetic] {
-  transition:
-    transform 500ms var(--ease-out),
-    background-color 150ms,
-    color 150ms;
-  will-change: transform;
-}
-
-.spot {
-  position: relative;
-  isolation: isolate;
-}
-
-.spot::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 400ms ease;
-  background: radial-gradient(22rem circle at var(--mx, 50%) var(--my, 50%), rgba(242, 169, 0, 0.14), transparent 65%);
-}
-
-[data-spotlight]:hover .spot::before,
-.spot[data-spotlight]:hover::before {
-  opacity: 1;
-}
-
-.hero-dots {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image: radial-gradient(rgba(12, 52, 75, 0.35) 1px, transparent 1.4px);
-  background-size: 22px 22px;
-  -webkit-mask-image: radial-gradient(28rem circle at var(--mx, 70%) var(--my, 30%), #000 0%, rgba(0, 0, 0, 0.15) 55%, transparent 80%);
-  mask-image: radial-gradient(28rem circle at var(--mx, 70%) var(--my, 30%), #000 0%, rgba(0, 0, 0, 0.15) 55%, transparent 80%);
-}
-
-.marquee-word {
-  font-size: clamp(2.75rem, 7vw, 6.5rem);
-  line-height: 1;
-  font-weight: 740;
-  font-stretch: 78%;
-  letter-spacing: -0.03em;
-  color: #0c344b;
-  white-space: nowrap;
-}
-
-.marquee-word.is-outline {
-  color: transparent;
-  -webkit-text-stroke: 1.5px #0c344b;
-}
-
-.marquee-dot {
-  display: inline-block;
-  width: 0.7rem;
-  height: 0.7rem;
-  margin: 0 clamp(1.25rem, 3vw, 2.5rem);
-  border-radius: 999px;
-  background: #f2a900;
-}
-
 .step-num {
-  transition:
-    color 500ms ease,
-    transform 700ms var(--ease-out);
+  transition: color 500ms ease;
 }
 
 [data-steps] > li.is-active .step-num {
   color: #f2a900;
-  transform: translateX(0.15em);
-}
-
-[data-steps] > li h3 {
-  transition: color 400ms ease;
 }
 
 .timeline::before,
@@ -562,15 +381,4 @@ pre::-webkit-scrollbar-thumb {
   .timeline::after {
     display: none;
   }
-}
-
-.footer-mark {
-  font-size: clamp(4rem, 19.5vw, 17.5rem);
-  line-height: 0.8;
-  font-weight: 780;
-  font-stretch: 75%;
-  letter-spacing: -0.045em;
-  white-space: nowrap;
-  color: #0f3a52;
-  transform: translate3d(0, calc((1 - var(--p, 1)) * 45%), 0);
 }

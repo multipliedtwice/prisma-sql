@@ -24,7 +24,7 @@ export default {
       },
       fontFamily: {
         sans: [
-          '"Bricolage Grotesque Variable"',
+          '"Schibsted Grotesk Variable"',
           'ui-sans-serif',
           'system-ui',
           '-apple-system',

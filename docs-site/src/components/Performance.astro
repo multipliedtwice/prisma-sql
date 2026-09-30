@@ -1,5 +1,4 @@
 ---
-import Split from './Split.astro';
 import {
   dialectLabel,
   loadBenchmarkResults,
@@ -53,8 +52,8 @@ const hasBenchmarkData = cards.length > 0
 <section class="border-b border-line py-20 sm:py-28" id="speed">
   <div class="page-x">
     <div class="section-head">
-      <h2 class="display-2" data-split><Split text={t.performance.title} /></h2>
-      <p class="text-lg" data-reveal style="--d:300">{t.performance.subtitle}</p>
+      <h2 class="display-2">{t.performance.title}</h2>
+      <p class="text-lg">{t.performance.subtitle}</p>
     </div>
 
     {!hasBenchmarkData && <p class="text-fog">No benchmark JSON files found.</p>}
@@ -85,7 +84,7 @@ const hasBenchmarkData = cards.length > 0
                         style={`width: ${row.width}%`}
                       ></div>
                     </div>
-                    <span data-count class="num w-[5.5ch] text-end text-2xl font-bold leading-none text-ink" style="font-stretch: 80%">
+                    <span class="num w-[5.5ch] text-end text-2xl font-bold leading-none text-ink">
                       {row.speedup}
                     </span>
                   </div>

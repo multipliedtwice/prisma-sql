@@ -1,5 +1,4 @@
 ---
-import Split from './Split.astro';
 import en from '../i18n/en.json';
 import {
   PARITY_ROWS,
@@ -38,8 +37,8 @@ const tileLabel = (feature: string, status: ParityStatus, db: string) =>
 <section class="border-b border-line py-20 sm:py-28" id="parity">
   <div class="page-x">
     <div class="section-head">
-      <h2 class="display-2" data-split><Split text={copy.title} /></h2>
-      <p class="text-lg" data-reveal style="--d:300">{copy.subtitle}</p>
+      <h2 class="display-2">{copy.title}</h2>
+      <p class="text-lg">{copy.subtitle}</p>
     </div>
 
     <div class="overflow-x-auto pb-2" dir="ltr" role="img" aria-label="Status of each checked Prisma Client feature on PostgreSQL and SQLite, grouped by area. Counts are in the table below.">
@@ -74,8 +73,8 @@ const tileLabel = (feature: string, status: ParityStatus, db: string) =>
       </div>
     </div>
 
-    <div class="mt-12 grid gap-10 lg:grid-cols-12" data-reveal>
-      <p class="text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-snug text-ink lg:col-span-5" style="font-stretch: 90%">
+    <div class="mt-12 grid gap-10 lg:grid-cols-12">
+      <p class="text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-snug text-ink lg:col-span-5">
         {summary}
       </p>
       <table class="w-full text-sm lg:col-span-7">

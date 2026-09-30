@@ -1,5 +1,4 @@
 ---
-import Split from './Split.astro';
 interface Props {
   t: any;
 }
@@ -11,8 +10,8 @@ const p = t.problem;
 <section class="border-b border-line py-20 sm:py-28">
   <div class="page-x">
     <div class="section-head">
-      <h2 class="display-2" data-split><Split text={p.title} /></h2>
-      <p class="text-lg" data-reveal style="--d:300">{p.subtitle}</p>
+      <h2 class="display-2">{p.title}</h2>
+      <p class="text-lg">{p.subtitle}</p>
     </div>
 
     <div class="grid gap-12 lg:grid-cols-12 lg:gap-10">
@@ -29,26 +28,23 @@ const p = t.problem;
       <ol class="timeline relative lg:col-span-8 lg:ms-6" data-scrub data-scrub-start="0.6">
         {p.history.map((item: any) => (
           <li class="grid gap-2 border-t border-line py-6 sm:grid-cols-[11rem_1fr] sm:gap-8">
-            <h4 class="font-bold text-ink" style="font-stretch: 84%">{item.period}</h4>
+            <h4 class="font-bold text-ink">{item.period}</h4>
             <p class="max-w-[62ch] text-ink/80">{item.description}</p>
           </li>
         ))}
       </ol>
     </div>
 
-    <div class="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-3" data-reveal data-spotlight>
+    <div class="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-3">
       {p.technical.map((item: any) => (
-        <article class="spot bg-paper p-6 sm:p-8">
-          <svg class="h-6 w-6 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d={item.iconPath}></path>
-          </svg>
-          <h3 class="mt-5 text-lg font-semibold text-ink">{item.title}</h3>
+        <article class="bg-paper p-6 sm:p-8">
+          <h3 class="text-lg font-semibold text-ink">{item.title}</h3>
           <p class="mt-2 text-fog">{item.description}</p>
         </article>
       ))}
     </div>
 
-    <p data-reveal class="mt-14 max-w-[46ch] text-[clamp(1.35rem,2.4vw,1.9rem)] font-medium leading-snug text-ink" style="font-stretch: 90%">
+    <p class="mt-14 max-w-[46ch] text-[clamp(1.35rem,2.4vw,1.9rem)] font-medium leading-snug text-ink">
       {p.conclusion}
     </p>
   </div>

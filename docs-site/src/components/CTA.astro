@@ -1,6 +1,5 @@
 ---
 import { cleanLabel } from '../lib/text'
-import Split from './Split.astro'
 
 interface Props {
   t: any
@@ -12,14 +11,14 @@ const { t } = Astro.props
 <section class="bg-amber py-20 text-ink-deep sm:py-28">
   <div class="page-x grid gap-10 lg:grid-cols-12 lg:items-end">
     <div class="lg:col-span-8">
-      <h2 class="display-1 !text-[clamp(2.75rem,6.4vw,6rem)]" data-split><Split text={t.cta.title} /></h2>
-      <p class="lede mt-6 text-ink-deep/80" data-reveal style="--d:400">{t.cta.subtitle}</p>
+      <h2 class="display-1 !text-[clamp(2.75rem,6.4vw,6rem)]">{t.cta.title}</h2>
+      <p class="lede mt-6 text-ink-deep/80">{t.cta.subtitle}</p>
     </div>
-    <div class="flex flex-col gap-3 sm:flex-row lg:col-span-4 lg:flex-col lg:items-stretch" data-reveal style="--d:600">
-      <a href="https://www.npmjs.com/package/prisma-sql" class="btn bg-ink-deep text-paper hover:bg-ink" data-magnetic="0.2">
+    <div class="flex flex-col gap-3 sm:flex-row lg:col-span-4 lg:flex-col lg:items-stretch">
+      <a href="https://www.npmjs.com/package/prisma-sql" class="btn bg-ink-deep text-paper hover:bg-ink">
         {cleanLabel(t.cta.button1)}
       </a>
-      <a href="https://github.com/multipliedtwice/prisma-sql" class="btn border border-ink-deep hover:bg-ink-deep hover:text-paper" data-magnetic="0.2">
+      <a href="https://github.com/multipliedtwice/prisma-sql" class="btn border border-ink-deep hover:bg-ink-deep hover:text-paper">
         {cleanLabel(t.cta.button2)}
       </a>
     </div>

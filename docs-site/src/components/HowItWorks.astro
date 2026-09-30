@@ -1,5 +1,4 @@
 ---
-import Split from './Split.astro';
 interface Props {
   t: any;
 }
@@ -11,15 +10,15 @@ const h = t.howItWorks;
 <section class="border-b border-line py-20 sm:py-28" id="how">
   <div class="page-x">
     <div class="section-head">
-      <h2 class="display-2" data-split><Split text={h.title} /></h2>
-      <p class="text-lg" data-reveal style="--d:300">{h.subtitle}</p>
+      <h2 class="display-2">{h.title}</h2>
+      <p class="text-lg">{h.subtitle}</p>
     </div>
 
     <div class="grid gap-12 lg:grid-cols-12 lg:gap-10">
       <ol class="lg:col-span-7" data-steps>
         {h.steps.map((step: any, index: number) => (
           <li class="grid grid-cols-[3.5rem_1fr] gap-4 border-t border-line py-7 sm:grid-cols-[5rem_1fr]">
-            <span class="step-num num text-5xl font-bold leading-none text-ink/25 sm:text-6xl" style="font-stretch: 75%" aria-hidden="true">
+            <span class="step-num num text-5xl font-bold leading-none text-ink/25 sm:text-6xl" aria-hidden="true">
               {index + 1}
             </span>
             <div>
@@ -31,7 +30,7 @@ const h = t.howItWorks;
       </ol>
 
       <div class="lg:col-span-5">
-        <div class="code-surface lg:sticky lg:top-24" data-reveal>
+        <div class="code-surface lg:sticky lg:top-24">
           <pre class="p-5 text-[0.85rem] leading-relaxed sm:p-6" dir="ltr"><code class="language-typescript">{h.codeExample}</code></pre>
         </div>
       </div>

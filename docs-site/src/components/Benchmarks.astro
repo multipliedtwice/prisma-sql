@@ -1,5 +1,4 @@
 ---
-import Split from './Split.astro';
 import {
   dialectLabel,
   loadBenchmarkResults,
@@ -156,13 +155,12 @@ const processed: ProcessedResult[] = results.map(r => {
 const hasData = processed.length > 0
 const b = t.benchmarks
 ---
-import Split from './Split.astro';
 
 <section class="border-b border-line bg-ink-deep py-20 text-[#D6E3E8] sm:py-28" id="benchmarks">
   <div class="page-x">
     <div class="section-head !mb-10">
-      <h2 class="display-2 text-paper" data-split><Split text={b.title} /></h2>
-      <div class="lg:col-span-5 self-end" data-reveal style="--d:300">
+      <h2 class="display-2 text-paper">{b.title}</h2>
+      <div class="lg:col-span-5 self-end">
       <p class="text-lg text-[#AFC2CC]">{b.subtitle}</p>
       <p class="text-sm text-[#8FA6B3] mt-3">
         <Fragment set:html={
@@ -186,7 +184,7 @@ import Split from './Split.astro';
     )}
 
     {hasData && (
-      <div data-benchmark-tabs data-reveal>
+      <div data-benchmark-tabs>
         <div class="flex flex-wrap gap-2 mb-8" role="tablist">
           {processed.map((p, i) => (
             <button

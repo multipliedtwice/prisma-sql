@@ -1,4 +1,6 @@
 ---
+import QueryStrip from './QueryStrip.astro';
+
 interface Props {
   t: any;
   locale: string;
@@ -37,11 +39,15 @@ const externalLinks = [
 ];
 ---
 
-<footer class="overflow-hidden bg-ink-deep pt-16 text-[#B7C9D2] sm:pt-20">
+<footer class="bg-ink-deep py-16 text-[#B7C9D2] sm:py-20">
   <div class="page-x">
+    <div class="mb-16 border-b border-white/10 pb-12 sm:mb-20">
+      <QueryStrip />
+    </div>
+
     <div class="grid gap-12 md:grid-cols-12">
       <div class="md:col-span-5">
-        <p class="text-3xl font-bold text-paper" style="font-stretch: 80%">prisma-sql</p>
+        <p class="text-3xl font-bold text-paper">prisma-sql</p>
         <p class="mt-3 max-w-[36ch]">{t.footer.tagline}</p>
       </div>
 
@@ -80,8 +86,5 @@ const externalLinks = [
     </div>
 
     <p class="mt-16 border-t border-white/10 pt-6 text-sm text-[#8FA6B3]">{t.footer.copyright}</p>
-  </div>
-  <div class="page-x mt-10 select-none" dir="ltr" aria-hidden="true" data-scrub data-scrub-start="1" data-scrub-span="0.9">
-    <p class="footer-mark">prisma-sql</p>
   </div>
 </footer>

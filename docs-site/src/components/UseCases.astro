@@ -1,5 +1,4 @@
 ---
-import Split from './Split.astro';
 import { cleanLabel } from '../lib/text';
 
 interface Props {
@@ -13,11 +12,11 @@ const u = t.useCases;
 <section class="border-b border-line bg-paper-2/60 py-20 sm:py-28">
   <div class="page-x">
     <div class="section-head">
-      <h2 class="display-2" data-split><Split text={u.title} /></h2>
-      <p class="text-lg" data-reveal style="--d:300">{u.subtitle}</p>
+      <h2 class="display-2">{u.title}</h2>
+      <p class="text-lg">{u.subtitle}</p>
     </div>
 
-    <div class="grid gap-x-10 md:grid-cols-2" data-stagger>
+    <div class="grid gap-x-10 md:grid-cols-2">
       {u.cases.map((useCase: any) => (
         <article class="border-t-2 border-ink py-8">
           <h3 class="display-3">{cleanLabel(useCase.title)}</h3>

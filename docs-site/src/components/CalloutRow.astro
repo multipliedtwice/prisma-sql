@@ -14,7 +14,7 @@ const { href, badge, title, description, link, tone = 'ink' } = Astro.props;
 ---
 
 <section class="border-b border-line">
-  <a href={href} data-reveal class="group page-x grid items-center gap-6 py-10 sm:py-12 md:grid-cols-12">
+  <a href={href} class="group page-x grid items-center gap-6 py-10 sm:py-12 md:grid-cols-12">
     <span
       class:list={[
         'inline-flex w-fit rounded-full px-3 py-1 text-xs font-semibold md:col-span-2',
@@ -29,7 +29,7 @@ const { href, badge, title, description, link, tone = 'ink' } = Astro.props;
     </span>
     <span class="flex items-center gap-3 font-semibold text-ink md:col-span-3 md:justify-end">
       {cleanLabel(link)}
-      <span class="grid h-11 w-11 place-items-center rounded-full border border-ink transition-[background-color,color,transform] duration-500 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 group-hover:bg-ink group-hover:text-paper" aria-hidden="true">
+      <span class="grid h-11 w-11 place-items-center rounded-full border border-ink transition-colors group-hover:bg-ink group-hover:text-paper" aria-hidden="true">
         <svg class="h-4 w-4 rtl:-scale-x-100" viewBox="0 0 16 16" fill="none"><path d="M3 8h10m0 0L9 4m4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </span>
     </span>

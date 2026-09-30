@@ -1,0 +1,50 @@
+---
+import {
+  dialectLabel,
+  loadBenchmarkResults,
+  prismaVersionLabel,
+  type BenchmarkDialect,
+} from '../lib/benchmark-data'
+
+const results = loadBenchmarkResults()
+const dialects: BenchmarkDialect[] = ['postgres', 'sqlite']
+
+const lanes = dialects.flatMap((dialect) => {
+  const latest = results
+    .filter((r) => r.dialect === dialect)
+    .sort((a, b) => b.version - a.version)[0]
+  return latest ? [{ label: dialectLabel(dialect), version: prismaVersionLabel(latest.version), tests: latest.tests }] : []
+})
+
+const names = [...new Set(lanes.flatMap((lane) => lane.tests.map((test) => test.name)))]
+
+const payload = {
+  names,
+  lanes: lanes.map((lane) => {
+    const byName = new Map(lane.tests.map((test) => [test.name, test.speedupVsPrisma]))
+    return { label: lane.label, version: lane.version, values: names.map((name) => byName.get(name) ?? null) }
+  }),
+}
+
+const idleCaption = `Each bar is one query shape from the latest run. Up is faster than Prisma, down is slower, log scale.`
+---
+
+{names.length > 0 && (
+  <figure class="query-strip" data-query-strip data-caption={idleCaption}>
+    <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+      <p class="font-semibold text-paper">Every benchmarked query, {names.length} shapes</p>
+      <p class="text-sm text-[#8FA6B3]">{lanes.map((lane) => `${lane.label}: ${lane.version}`).join(' · ')}</p>
+    </div>
+    <div class="relative mt-5">
+      <canvas class="block h-[15rem] w-full sm:h-[17rem]" aria-hidden="true" data-query-canvas></canvas>
+      <script type="application/json" data-query-data set:html={JSON.stringify(payload).replace(/</g, "\\u003c")} />
+    </div>
+    <figcaption class="num mt-3 min-h-[3rem] font-mono text-[0.8rem] leading-relaxed text-[#B7C9D2] sm:min-h-[1.5rem]" data-query-caption>
+      {idleCaption}
+    </figcaption>
+  </figure>
+)}
+
+<script>
+  import '../scripts/query-strip'
+</script>

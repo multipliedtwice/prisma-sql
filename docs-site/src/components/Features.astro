@@ -1,5 +1,4 @@
 ---
-import Split from './Split.astro';
 interface Props {
   t: any;
 }
@@ -11,17 +10,14 @@ const f = t.features;
 <section class="border-b border-line bg-ink py-20 text-paper sm:py-28">
   <div class="page-x">
     <div class="section-head">
-      <h2 class="display-2" data-split><Split text={f.title} /></h2>
-      <p class="text-lg !text-[#B7C9D2]" data-reveal style="--d:300">{f.subtitle}</p>
+      <h2 class="display-2">{f.title}</h2>
+      <p class="text-lg !text-[#B7C9D2]">{f.subtitle}</p>
     </div>
 
-    <dl class="grid gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-2 lg:grid-cols-3" data-reveal data-spotlight>
+    <dl class="grid gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
       {f.items.map((feature: any) => (
-        <div class="spot bg-ink p-7 sm:p-8">
-          <svg class="h-6 w-6 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d={feature.iconPath} />
-          </svg>
-          <dt class="mt-6 text-xl font-semibold" style="font-stretch: 90%">{feature.title}</dt>
+        <div class="bg-ink p-7 sm:p-8">
+          <dt class="text-xl font-semibold">{feature.title}</dt>
           <dd class="mt-2 text-[#B7C9D2]">{feature.description}</dd>
         </div>
       ))}

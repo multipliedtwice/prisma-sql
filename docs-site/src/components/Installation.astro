@@ -1,5 +1,4 @@
 ---
-import Split from './Split.astro';
 import { GENERATOR_SNIPPET, INSTALL_SNIPPET, QUERY_SNIPPET, SETUP_SNIPPET } from '../lib/code';
 
 interface Props {
@@ -25,15 +24,15 @@ const steps = ins.steps.map((step: any, i: number) => ({ title: step.title, bloc
 <section class="border-b border-line py-20 sm:py-28" id="install">
   <div class="page-x">
     <div class="section-head">
-      <h2 class="display-2" data-split><Split text={ins.title} /></h2>
-      <p class="text-lg" data-reveal style="--d:300">{ins.subtitle}</p>
+      <h2 class="display-2">{ins.title}</h2>
+      <p class="text-lg">{ins.subtitle}</p>
     </div>
 
     <ol>
       {steps.map((step: any, index: number) => (
-        <li class="grid gap-6 border-t border-line py-10 lg:grid-cols-12 lg:gap-10" data-reveal>
+        <li class="grid gap-6 border-t border-line py-10 lg:grid-cols-12 lg:gap-10">
           <div class="lg:col-span-4">
-            <span class="num block text-6xl font-bold leading-none text-amber" style="font-stretch: 75%" aria-hidden="true">{index + 1}</span>
+            <span class="num block text-6xl font-bold leading-none text-amber" aria-hidden="true">{index + 1}</span>
             <h3 class="display-3 mt-4">{step.title}</h3>
           </div>
           <div class="grid gap-4 lg:col-span-8">
