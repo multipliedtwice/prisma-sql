@@ -1,3 +1,17 @@
+# [1.93.0](https://github.com/multipliedtwice/prisma-sql/compare/v1.92.0...v1.93.0) (2026-09-30)
+
+
+### Bug Fixes
+
+* update references from prisma-to-sql to prisma-sql across documentation and components ([2e63e72](https://github.com/multipliedtwice/prisma-sql/commit/2e63e7288748342d2bdae69efdcfb11ac462e27d))
+
+
+### Features
+
+* **docs:** add comprehensive documentation for prisma-sql features and usage ([7ecc486](https://github.com/multipliedtwice/prisma-sql/commit/7ecc486cc1d266974297715c6a376f893559a004))
+* **tests:** add NOT array and count where test cases ([39b22ae](https://github.com/multipliedtwice/prisma-sql/commit/39b22ae334815d633c3395a6abee0e51886a4f84))
+* **tests:** enhance PostgreSQL test setup and add new test cases for include strategy ([788e1da](https://github.com/multipliedtwice/prisma-sql/commit/788e1da4f044a3bb1cff484117d733395342a502))
+
 # [1.92.0](https://github.com/multipliedtwice/prisma-sql/compare/v1.91.0...v1.92.0) (2026-08-27)
 
 ### Bug Fixes
