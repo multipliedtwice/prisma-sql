@@ -1,4 +1,6 @@
 ---
+import StatStrip from './StatStrip.astro';
+
 interface Props {
   t: any;
 }
@@ -6,24 +8,4 @@ interface Props {
 const { t } = Astro.props;
 ---
 
-<section class="border-b border-line bg-paper-2/60">
-  <dl class="page-x grid grid-cols-2 lg:grid-cols-4">
-    {t.stats.map((stat: any, i: number) => (
-      <div
-        class:list={[
-          'border-line py-8 sm:py-10',
-          i % 2 === 1 && 'border-s ps-5 sm:ps-8',
-          i >= 2 && 'border-t lg:border-t-0',
-          i === 2 && 'lg:border-s lg:ps-8',
-          i > 0 && i !== 2 && 'lg:ps-8',
-        ]}
-      >
-        <dt class="text-sm font-semibold text-ink">{stat.label}</dt>
-        <dd class="num mt-2 text-[clamp(2.4rem,4.6vw,3.75rem)] font-bold leading-none tracking-tight text-ink">
-          {stat.value}
-        </dd>
-        <dd class="mt-2 text-sm text-fog">{stat.subtitle}</dd>
-      </div>
-    ))}
-  </dl>
-</section>
+<StatStrip items={t.stats.map((stat: any) => ({ value: stat.value, label: stat.label, note: stat.subtitle }))} />

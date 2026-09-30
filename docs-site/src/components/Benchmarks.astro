@@ -262,12 +262,12 @@ const b = t.benchmarks
                     const speedupColor = isNoiseFloor
                       ? 'text-[#8FA6B3]'
                       : isWin
-                        ? (vsPrisma.practicallySignificant ? 'text-[#8FE0BA]' : 'text-[#58A585]')
-                        : (vsPrisma.practicallySignificant ? 'text-[#FF9C87]' : 'text-[#C9624E]')
+                        ? (vsPrisma.practicallySignificant ? 'text-[#9FE3C3]' : 'text-[#58A585]')
+                        : (vsPrisma.practicallySignificant ? 'text-[#FFB4A4]' : 'text-[#C9624E]')
 
                     const timingColor = isNoiseFloor
                       ? 'text-[#8FA6B3]'
-                      : isWin ? 'text-[#8FE0BA]' : 'text-[#FF9C87]'
+                      : isWin ? 'text-[#9FE3C3]' : 'text-[#FFB4A4]'
 
                     const sigTooltip = isNoiseFloor
                       ? `Δ = ${fmtMs(absDiff)}ms < ${PRACTICAL_THRESHOLD_MS}ms`
@@ -305,7 +305,7 @@ const b = t.benchmarks
                           {isNoiseFloor ? (
                             <span class="text-[#6F8896] text-xs">≈</span>
                           ) : vsPrisma.significant ? (
-                            <span class="text-[#8FE0BA] font-mono text-xs">{vsPrisma.stars}</span>
+                            <span class="text-[#9FE3C3] font-mono text-xs">{vsPrisma.stars}</span>
                           ) : (
                             <span class="text-[#6F8896] text-xs">ns</span>
                           )}
@@ -329,16 +329,16 @@ const b = t.benchmarks
             </div>
 
             <div class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-[#8FA6B3] px-1">
-              <span><span class="text-[#8FE0BA] font-mono">***</span> {b.legend.p001}</span>
-              <span><span class="text-[#8FE0BA] font-mono">**</span>&ensp;{b.legend.p01}</span>
-              <span><span class="text-[#8FE0BA] font-mono">*</span>&ensp;&ensp;{b.legend.p05}</span>
+              <span><span class="text-[#9FE3C3] font-mono">***</span> {b.legend.p001}</span>
+              <span><span class="text-[#9FE3C3] font-mono">**</span>&ensp;{b.legend.p01}</span>
+              <span><span class="text-[#9FE3C3] font-mono">*</span>&ensp;&ensp;{b.legend.p05}</span>
               <span><span class="text-[#6F8896]">ns</span>&ensp;{b.legend.ns}</span>
               <span><span class="text-[#6F8896]">≈</span>&ensp;{tpl(b.legend.noiseFloor, { threshold: String(PRACTICAL_THRESHOLD_MS) })}</span>
               <span>±&ensp;{b.legend.ci}</span>
               <span><span class="text-amber">CV% &gt; 15%</span> = {b.legend.highVariance}</span>
             </div>
 
-            <div class="mt-4 bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-sm text-[#AFC2CC] flex items-start gap-3">
+            <div class="mt-4 bg-white/[0.05] border border-white/10 rounded-2xl px-4 py-3 text-sm text-[#AFC2CC] flex items-start gap-3">
               <svg class="w-5 h-5 text-amber flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
@@ -349,7 +349,7 @@ const b = t.benchmarks
             </div>
 
             {p.significantRegressions > 0 && (
-              <div class="mt-4 bg-oxide/20 border border-oxide/40 rounded-lg px-4 py-3 text-sm text-[#FFB4A4]">
+              <div class="mt-4 bg-oxide/20 border border-oxide/40 rounded-2xl px-4 py-3 text-sm text-[#FFB4A4]">
                 {tpl(b.regressionWarning, { count: String(p.significantRegressions), threshold: String(PRACTICAL_THRESHOLD_MS) })}
               </div>
             )}
@@ -371,12 +371,12 @@ const b = t.benchmarks
     )}
 
     {b.methodology && (
-      <div class="mt-10 max-w-4xl mx-auto bg-white/[0.05] border border-white/10 rounded-xl px-6 py-5">
+      <div class="mt-10 max-w-4xl mx-auto bg-white/[0.05] border border-white/10 rounded-2xl px-6 py-5">
         <h3 class="text-sm font-semibold text-paper  mb-3">{b.methodology.title}</h3>
         <ul class="space-y-2 text-sm text-[#8FA6B3]">
           {b.methodology.lines.map((line: string) => (
             <li class="flex gap-2">
-              <span class="text-[#58717F] mt-0.5">–</span>
+              <span class="text-[#6F8896] mt-0.5">–</span>
               <span set:html={line.replace(/`([^`]+)`/g, '<code class="bg-white/[0.08] px-1.5 py-0.5 rounded text-xs text-paper">$1</code>')} />
             </li>
           ))}

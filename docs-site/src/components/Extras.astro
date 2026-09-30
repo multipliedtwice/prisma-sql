@@ -1,5 +1,6 @@
 ---
 import { cleanLabel } from '../lib/text';
+import CodeBlock from './CodeBlock.astro';
 
 interface Props {
   t: any;
@@ -22,9 +23,7 @@ const e = t.extras;
           <h3 class="font-mono text-lg font-semibold text-ink">{item.name}</h3>
           <p class="mt-1 text-lg font-semibold text-ink">{cleanLabel(item.tagline)}</p>
           <p class="mt-3 flex-1 text-fog">{item.description}</p>
-          <div class="code-surface mt-6">
-            <pre class="p-5 text-[0.8rem] leading-relaxed" dir="ltr"><code>{item.code}</code></pre>
-          </div>
+          <CodeBlock class="mt-6" code={item.code} />
         </article>
       ))}
     </div>

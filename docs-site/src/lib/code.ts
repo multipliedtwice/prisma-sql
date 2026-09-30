@@ -14,14 +14,14 @@ const KEYWORDS: Record<CodeLang, Set<string>> = {
 }
 
 const TOKEN =
-  /(\/\/[^\n]*|#[^\n]*|'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|\$\d+|\?|[A-Za-z_$][\w$]*|\s+|[^\sA-Za-z_$'"]+)/g
+  /(\/\/[^\n]*|--[^\n]*|#[^\n]*|'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|\$\d+|\?|[A-Za-z_$][\w$]*|\s+|[^\sA-Za-z_$'"]+)/g
 
 function escapeHtml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
 
 function classify(token: string, next: string, lang: CodeLang): string | null {
-  if (token.startsWith('//') || (lang === 'bash' && token.startsWith('#'))) return 'tok-punc'
+  if (token.startsWith('//') || (lang === 'bash' && token.startsWith('#')) || (lang === 'sql' && token.startsWith('--'))) return 'tok-punc'
   if (token.startsWith("'")) return 'tok-str'
   if (token.startsWith('"')) return lang === 'sql' ? null : 'tok-str'
   if (lang === 'sql' && (/^\$\d+$/.test(token) || token === '?')) return 'tok-param'
@@ -114,3 +114,52 @@ const basePrisma = new PrismaClient()
 export const prisma = basePrisma.$extends(
   speedExtension({ postgres: sql }),
 ) as SpeedClient<typeof basePrisma>`
+
+export const STEP_SNIPPETS: { file: string; lang: CodeLang; code: string }[] = [
+  {
+    file: 'generated/sql, excerpt',
+    lang: 'ts',
+    code: `query: {
+  $allModels: {
+    async $allOperations({ model, operation, args, query }) {
+      if (!ACCELERATED_METHODS.has(operation)) {
+        return query(args)
+      }
+      return executeAccelerated(model, operation, args, query)
+    },
+  },
+}`,
+  },
+  {
+    file: 'SQL for PostgreSQL',
+    lang: 'sql',
+    code: `${GENERATED_SQL.postgres.sql}
+
+-- params ${GENERATED_SQL.postgres.params}`,
+  },
+  {
+    file: 'generated/sql, excerpt',
+    lang: 'ts',
+    code: `if (DIALECT === 'postgres') {
+  await client.unsafe(sql, normalizedParams).forEach((row) => {
+    results.push(row)
+  })
+  return results
+}
+
+const stmt = getOrPrepareStatement(client, sql)
+return stmt.all(...normalizedParams)`,
+  },
+  {
+    file: 'users.ts',
+    lang: 'ts',
+    code: `${QUERY_SNIPPET}
+
+users[0].email
+users[0].posts[0].title
+
+// Same inferred types as Prisma Client.
+// Decimal, BigInt and DateTime values can
+// differ; the parity map lists each case.`,
+  },
+]

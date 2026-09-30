@@ -1,0 +1,166 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../Header.astro';
+import Footer from '../Footer.astro';
+import PageHero from '../PageHero.astro';
+import StatStrip from '../StatStrip.astro';
+import CodeBlock from '../CodeBlock.astro';
+import CtaBand from '../CtaBand.astro';
+
+interface Props {
+  t: any;
+  locale: string;
+}
+
+const { t, locale } = Astro.props;
+const p = t.testing;
+const versions = (['v6', 'v7', 'v8'] as const).map((key) => p.multiVersion[key]);
+const techniques = [p.advancedTechniques.dataTypes, p.advancedTechniques.performance];
+const databases = [p.databaseSpecific.postgres, p.databaseSpecific.sqlite];
+---
+
+<Layout title={p.meta.title} description={p.meta.description} locale={locale} keywords={p.meta.keywords}>
+  <Header t={t} locale={locale} />
+
+  <PageHero badge={p.hero.badge} title={`${p.hero.title} ${p.hero.titleHighlight}`} subtitle={p.hero.subtitle} />
+
+  <StatStrip items={p.stats.map((s: any) => ({ value: s.value, label: s.label, note: s.description }))} />
+
+  <section class="section">
+    <div class="page-x">
+      <div class="section-head">
+        <h2 class="display-2">{p.validation.title}</h2>
+        <p class="text-lg">{p.validation.subtitle}</p>
+      </div>
+
+      <ol>
+        {p.validation.steps.map((step: any, i: number) => (
+          <li class="grid grid-cols-[3.5rem_1fr] gap-4 border-t border-line py-7 sm:grid-cols-[5rem_1fr]">
+            <span class="num text-5xl font-bold leading-none text-amber sm:text-6xl" aria-hidden="true">{i + 1}</span>
+            <div>
+              <h3 class="text-xl font-semibold text-ink">{step.title}</h3>
+              <p class="mt-2 max-w-[62ch] text-fog">{step.description}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <h3 class="display-3 mt-16">{p.advancedTechniques.title}</h3>
+      <div class="mt-8 grid gap-x-10 md:grid-cols-2">
+        {techniques.map((group: any) => (
+          <article class="border-t-2 border-ink py-6">
+            <h4 class="text-lg font-semibold text-ink">{group.title}</h4>
+            <dl class="mt-4 space-y-3">
+              {group.items.map((item: any) => (
+                <div>
+                  <dt class="font-semibold text-ink">{item.label}</dt>
+                  <dd class="text-fog">{item.description}</dd>
+                </div>
+              ))}
+            </dl>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-paper-2/60">
+    <div class="page-x">
+      <div class="section-head">
+        <h2 class="display-2">{p.coverage.title}</h2>
+        <p class="text-lg">{p.coverage.subtitle}</p>
+      </div>
+
+      <div class="grid gap-x-10 md:grid-cols-3">
+        {p.coverage.categories.map((category: any) => (
+          <article class="border-t-2 border-ink py-6">
+            <h3 class="display-3">{category.title}</h3>
+            <ul class="dot-list mt-5 space-y-2 text-ink">
+              {category.items.map((item: string) => <li set:html={item} />)}
+            </ul>
+          </article>
+        ))}
+      </div>
+
+      <div class="mt-10 grid gap-x-10 md:grid-cols-2">
+        {databases.map((db: any) => (
+          <article class="border-t-2 border-ink py-6">
+            <h3 class="display-3">{db.title}</h3>
+            <ul class="dot-list mt-5 space-y-2 text-ink">
+              {db.items.map((item: string) => <li>{item}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="page-x">
+      <div class="section-head">
+        <h2 class="display-2">{p.example.title}</h2>
+        <p class="text-lg">{p.example.subtitle}</p>
+      </div>
+
+      <div class="grid gap-12 lg:grid-cols-12 lg:gap-10">
+        <div class="lg:col-span-7">
+          <CodeBlock file={p.example.filename} code={p.example.code} />
+        </div>
+        <div class="lg:col-span-5">
+          <h3 class="display-3">{p.executionFlow.title}</h3>
+          <ol class="mt-6">
+            {p.executionFlow.steps.map((step: any) => (
+              <li class="border-t border-line py-5">
+                <h4 class="font-semibold text-ink"><span class="num me-2 text-amber">{step.number}</span>{step.title}</h4>
+                <p class="mt-1 text-fog">{step.description}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+
+      <h3 class="display-3 mt-16">{p.multiVersion.title}</h3>
+      <p class="mt-3 max-w-[62ch] text-fog">{p.multiVersion.description}</p>
+      <div class="mt-8 grid gap-x-10 md:grid-cols-3">
+        {versions.map((version: any) => (
+          <article class="border-t-2 border-ink py-6">
+            <h4 class="text-lg font-semibold text-ink">{version.title}</h4>
+            <ul class="dot-list mt-4 space-y-1.5 text-sm text-ink">
+              {version.items.map((item: string) => <li>{item}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-paper-2/60">
+    <div class="page-x grid gap-10 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <h2 class="display-2">{p.benchmarkReports.title}</h2>
+        <p class="mt-5 text-lg text-fog">{p.benchmarkReports.description}</p>
+      </div>
+      <div class="lg:col-span-7">
+        <ul class="border-b border-line">
+          {p.benchmarkReports.files.map((file: string) => (
+            <li class="border-t border-line py-3">
+              <a href={`https://github.com/multipliedtwice/prisma-sql/blob/main/${file}`} class="link-underlined font-mono text-sm text-ink">{file}</a>
+            </li>
+          ))}
+        </ul>
+        <p class="mt-5 text-sm text-fog">{p.benchmarkReports.footer}</p>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    title={p.cta.title}
+    subtitle={p.cta.subtitle}
+    links={[
+      { href: 'https://github.com/multipliedtwice/prisma-sql/tree/main/tests', label: p.cta.button1 },
+      { href: 'https://github.com/multipliedtwice/prisma-sql#performance', label: p.cta.button2 },
+    ]}
+  />
+
+  <Footer t={t} locale={locale} />
+</Layout>

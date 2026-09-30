@@ -1,0 +1,22 @@
+---
+interface Props {
+  code: string;
+  lang?: string;
+  file?: string;
+  tone?: 'default' | 'danger' | 'safe';
+  class?: string;
+}
+
+const { code, lang = 'language-typescript', file, tone = 'default', class: className } = Astro.props;
+const toneBar = { default: '', danger: 'bg-oxide', safe: 'bg-pine' }[tone];
+---
+
+<div class:list={['code-surface overflow-hidden', className]}>
+  {file && (
+    <div class="flex items-center gap-2 border-b border-white/10 px-5 py-2 font-mono text-xs text-[#9fb4c0]">
+      {toneBar && <span class:list={['h-2 w-2 shrink-0 rounded-full', toneBar]} aria-hidden="true"></span>}
+      {file}
+    </div>
+  )}
+  <pre class="p-5 text-[0.85rem] leading-relaxed" dir="ltr"><code class={lang}>{code}</code></pre>
+</div>

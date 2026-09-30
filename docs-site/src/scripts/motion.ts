@@ -27,16 +27,47 @@ function initDataReveals() {
 }
 
 function initSteps() {
-  const io = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => entry.target.classList.toggle('is-active', entry.isIntersecting))
-    },
-    { rootMargin: '-45% 0px -45% 0px' },
-  )
-  all('[data-steps] > li').forEach((li) => io.observe(li))
+  const sections = all('[data-steps-section]').map((section) => ({
+    section,
+    steps: all('[data-steps] > li', section),
+    panels: all('[data-step-panel]', section),
+    active: -1,
+  }))
+  if (!sections.length) return () => {}
+
+  const activate = (entry: (typeof sections)[number], index: number) => {
+    if (entry.active === index) return
+    entry.active = index
+    entry.steps.forEach((li, i) => li.classList.toggle('is-active', i === index))
+    entry.panels.forEach((panel) => {
+      const on = Number(panel.dataset.stepPanel) === index
+      panel.classList.toggle('is-active', on)
+      if (on) panel.removeAttribute('aria-hidden')
+      else panel.setAttribute('aria-hidden', 'true')
+    })
+  }
+
+  sections.forEach((entry) => activate(entry, 0))
+
+  return () => {
+    const center = window.innerHeight / 2
+    sections.forEach((entry) => {
+      let best = entry.active
+      let bestDistance = Infinity
+      entry.steps.forEach((li, i) => {
+        const rect = li.getBoundingClientRect()
+        const distance = rect.top <= center && rect.bottom >= center ? 0 : Math.min(Math.abs(rect.top - center), Math.abs(rect.bottom - center))
+        if (distance < bestDistance) {
+          bestDistance = distance
+          best = i
+        }
+      })
+      activate(entry, best)
+    })
+  }
 }
 
-function initScroll() {
+function initScroll(onScroll: () => void) {
   const header = document.querySelector<HTMLElement>('[data-header]')
   const scrubs = all('[data-scrub]')
   let headerAnchor = window.scrollY
@@ -57,6 +88,7 @@ function initScroll() {
         header.classList.add('is-hidden')
         headerAnchor = y
       }
+      document.documentElement.classList.toggle('header-hidden', header.classList.contains('is-hidden'))
     }
 
     scrubs.forEach((el) => {
@@ -64,6 +96,8 @@ function initScroll() {
       const startLine = vh * Number(el.dataset.scrubStart || 0.85)
       el.style.setProperty('--p', clamp((startLine - rect.top) / rect.height, 0, 1).toFixed(4))
     })
+
+    onScroll()
   }
 
   const queue = () => {
@@ -77,8 +111,5 @@ function initScroll() {
   window.addEventListener('resize', queue)
 }
 
-initScroll()
-if (!reduceMotion) {
-  initDataReveals()
-  initSteps()
-}
+initScroll(initSteps())
+if (!reduceMotion) initDataReveals()

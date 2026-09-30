@@ -1,0 +1,193 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../Header.astro';
+import Footer from '../Footer.astro';
+import PageHero from '../PageHero.astro';
+import StatStrip from '../StatStrip.astro';
+import CodeBlock from '../CodeBlock.astro';
+import CtaBand from '../CtaBand.astro';
+
+interface Props {
+  t: any;
+  locale: string;
+}
+
+const { t, locale } = Astro.props;
+const p = t.sqlPrevention;
+---
+
+<Layout title={p.meta.title} description={p.meta.description} locale={locale} keywords={p.meta.keywords}>
+  <Header t={t} locale={locale} />
+
+  <PageHero badge={p.hero.badge} tone="oxide" title={`${p.hero.title} ${p.hero.titleHighlight}`} subtitle={p.hero.subtitle} />
+
+  <StatStrip items={p.stats.map((s: any) => ({ value: s.value, label: s.label, note: s.description }))} />
+
+  <section class="section">
+    <div class="page-x">
+      <div class="section-head">
+        <h2 class="display-2">{p.threat.title}</h2>
+        <p class="text-lg">{p.threat.subtitle}</p>
+      </div>
+
+      <p class="max-w-[62ch] border-s-2 border-oxide ps-5 text-lg text-ink/85">{p.threat.description}</p>
+
+      <h3 class="display-3 mt-16">{p.threat.examples.title}</h3>
+      <div class="mt-8 grid gap-x-10 md:grid-cols-3">
+        {p.threat.examples.items.map((example: any) => (
+          <article class="border-t-2 border-ink py-6">
+            <h4 class="text-lg font-semibold text-ink">{example.name}</h4>
+            <code class="mt-3 block break-all rounded bg-oxide/10 px-3 py-2 font-mono text-sm text-oxide" dir="ltr">{example.attack}</code>
+            <p class="mt-3 text-fog">{example.description}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-paper-2/60">
+    <div class="page-x">
+      <div class="section-head">
+        <h2 class="display-2">{p.protection.title}</h2>
+        <p class="text-lg">{p.protection.subtitle}</p>
+      </div>
+
+      <ol>
+        {p.protection.layers.map((layer: any) => (
+          <li class="grid gap-6 border-t border-line py-8 lg:grid-cols-12 lg:gap-10">
+            <div class="lg:col-span-5">
+              <h3 class="display-3">{layer.title}</h3>
+              <p class="mt-3 text-fog">{layer.description}</p>
+            </div>
+            <ul class="dot-list space-y-2 text-ink lg:col-span-7">
+              {layer.guarantees.map((g: string) => <li>{g}</li>)}
+            </ul>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="page-x">
+      <div class="section-head">
+        <h2 class="display-2">{p.formalProofs.title}</h2>
+        <p class="text-lg">{p.formalProofs.subtitle}</p>
+      </div>
+
+      <div>
+        {p.formalProofs.proofs.map((proof: any) => (
+          <article class="grid gap-6 border-t border-line py-10 lg:grid-cols-12 lg:gap-10">
+            <div class="lg:col-span-5">
+              <h3 class="display-3">{proof.title}</h3>
+              <p class="mt-4 border-s-2 border-amber ps-4 font-mono text-sm text-ink">{proof.statement}</p>
+              <p class="mt-4 whitespace-pre-line text-fog">{proof.proof}</p>
+            </div>
+            <div class="lg:col-span-7">
+              <CodeBlock code={proof.code} />
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-paper-2/60">
+    <div class="page-x">
+      <div class="section-head">
+        <h2 class="display-2">{p.testCoverage.title}</h2>
+        <p class="text-lg">{p.testCoverage.subtitle}</p>
+      </div>
+
+      <div class="grid gap-x-10 md:grid-cols-2">
+        {p.testCoverage.categories.map((category: any) => (
+          <article class="border-t-2 border-ink py-6">
+            <h3 class="text-xl font-semibold text-ink">{category.title}</h3>
+            <ul class="dot-list mt-4 space-y-2 text-ink">
+              {category.tests.map((test: string) => <li>{test}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="page-x">
+      <div class="section-head">
+        <h2 class="display-2">{p.codeExamples.title}</h2>
+      </div>
+
+      <div class="grid gap-8 md:grid-cols-2">
+        <div>
+          <span class="chip bg-oxide text-white">{p.codeExamples.unsafe.title}</span>
+          <CodeBlock class="mt-4" tone="danger" file="unsafe.ts" code={p.codeExamples.unsafe.code} />
+        </div>
+        <div>
+          <span class="chip bg-pine text-white">{p.codeExamples.safe.title}</span>
+          <CodeBlock class="mt-4" tone="safe" file="safe.ts" code={p.codeExamples.safe.code} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-paper-2/60">
+    <div class="page-x">
+      <div class="section-head">
+        <h2 class="display-2">{p.implementation.title}</h2>
+      </div>
+
+      <div>
+        {p.implementation.sections.map((section: any) => (
+          <article class="grid gap-6 border-t border-line py-10 lg:grid-cols-12 lg:gap-10">
+            <div class="lg:col-span-5">
+              <h3 class="display-3">{section.title}</h3>
+              <p class="mt-3 text-fog">{section.description}</p>
+            </div>
+            <div class="lg:col-span-7">
+              <CodeBlock code={section.code} />
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="page-x">
+      <div class="section-head">
+        <h2 class="display-2">{p.bestPractices.title}</h2>
+      </div>
+
+      <div class="grid gap-x-10 md:grid-cols-2">
+        {p.bestPractices.practices.map((practice: any) => (
+          <article class="border-t-2 border-ink py-6">
+            <h3 class="text-xl font-semibold text-ink">{practice.title}</h3>
+            <p class="mt-2 text-fog">{practice.description}</p>
+            <dl class="mt-4 grid gap-3 text-ink">
+              <div class="grid grid-cols-[4.5rem_1fr] items-baseline gap-3">
+                <dt><span class="chip bg-pine text-white">Do</span></dt>
+                <dd>{practice.do}</dd>
+              </div>
+              <div class="grid grid-cols-[4.5rem_1fr] items-baseline gap-3">
+                <dt><span class="chip bg-oxide text-white">Don't</span></dt>
+                <dd>{practice.dont}</dd>
+              </div>
+            </dl>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    title={p.cta.title}
+    subtitle={p.cta.subtitle}
+    links={[
+      { href: 'https://github.com/multipliedtwice/prisma-sql/tree/main/tests/sql-injection', label: p.cta.button1 },
+      { href: 'https://github.com/multipliedtwice/prisma-sql/tree/main/src', label: p.cta.button2 },
+    ]}
+  />
+
+  <Footer t={t} locale={locale} />
+</Layout>

@@ -71,9 +71,9 @@ export const prisma = extendedPrisma.$extends(
 ) as SpeedClient<typeof extendedPrisma>`}</code></pre>
 
   <h2>What gets accelerated</h2>
-  <div class="grid sm:grid-cols-2 gap-4 mb-4">
-    <div class="rounded-xl border border-green-200 bg-green-50/50 p-4">
-      <p class="font-semibold text-green-800 mb-2">Accelerated reads</p>
+  <div class="mb-6 grid gap-x-8 sm:grid-cols-2">
+    <div class="border-t-2 border-ink pt-4">
+      <p class="!mb-3"><span class="chip bg-pine text-white">Accelerated reads</span></p>
       <ul class="!mb-0">
         <li><code>findMany</code></li>
         <li><code>findFirst</code></li>
@@ -84,8 +84,8 @@ export const prisma = extendedPrisma.$extends(
         <li><code>$batch</code> (PostgreSQL)</li>
       </ul>
     </div>
-    <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
-      <p class="font-semibold text-gray-700 mb-2">Runs through Prisma as before</p>
+    <div class="border-t-2 border-ink pt-4">
+      <p class="!mb-3"><span class="chip bg-[#b9c5c8] text-ink">Runs through Prisma as before</span></p>
       <ul class="!mb-0">
         <li><code>create</code>, <code>update</code>, <code>delete</code>, <code>upsert</code></li>
         <li><code>createMany</code>, <code>updateMany</code>, <code>deleteMany</code></li>

@@ -1,4 +1,5 @@
 ---
+import CodeBlock from './CodeBlock.astro';
 import { GENERATOR_SNIPPET, INSTALL_SNIPPET, QUERY_SNIPPET, SETUP_SNIPPET } from '../lib/code';
 
 interface Props {
@@ -37,10 +38,7 @@ const steps = ins.steps.map((step: any, i: number) => ({ title: step.title, bloc
           </div>
           <div class="grid gap-4 lg:col-span-8">
             {step.blocks.map((block: any) => (
-              <div class="code-surface overflow-hidden">
-                <div class="border-b border-white/10 px-5 py-2 font-mono text-xs text-[#9fb4c0]">{block.file}</div>
-                <pre class="p-5 text-[0.85rem] leading-relaxed" dir="ltr"><code class={block.lang}>{block.code}</code></pre>
-              </div>
+              <CodeBlock file={block.file} lang={block.lang} code={block.code} />
             ))}
           </div>
         </li>

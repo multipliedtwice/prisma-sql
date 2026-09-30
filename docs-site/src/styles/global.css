@@ -114,6 +114,23 @@
     color: #f2a900;
   }
 
+  .section {
+    @apply border-b border-line py-20 sm:py-28;
+  }
+
+  .dot-list > li {
+    @apply relative ps-5;
+  }
+
+  .dot-list > li::before {
+    content: '';
+    @apply absolute start-0 top-[0.62em] h-1.5 w-1.5 rounded-full bg-pine;
+  }
+
+  .chip {
+    @apply inline-flex w-fit items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
+  }
+
   .link-underlined {
     text-decoration: underline;
     text-decoration-color: currentColor;
@@ -123,6 +140,50 @@
 
   .link-underlined:hover {
     text-decoration-thickness: 2px;
+  }
+
+
+  .docs-prose h1 {
+    @apply display-2 mb-6 text-ink;
+  }
+  .docs-prose h2 {
+    @apply display-3 mb-4 mt-14 text-ink;
+  }
+  .docs-prose h3 {
+    @apply text-xl font-semibold text-ink mt-8 mb-2;
+  }
+  .docs-prose p {
+    @apply text-ink/80 leading-relaxed mb-4 max-w-[72ch];
+  }
+  .docs-prose ul {
+    @apply list-disc ps-6 mb-4 space-y-1 text-ink/80;
+  }
+  .docs-prose ol {
+    @apply list-decimal ps-6 mb-4 space-y-1 text-ink/80;
+  }
+  .docs-prose a {
+    @apply text-ink underline decoration-1 underline-offset-[3px] hover:decoration-2;
+  }
+  .docs-prose code:not(pre code) {
+    @apply bg-paper-2 text-ink rounded px-1.5 py-0.5 text-[0.88em];
+  }
+  .docs-prose pre {
+    @apply bg-ink-deep text-[#D6E3E8] rounded-2xl p-5 overflow-x-auto text-sm leading-relaxed mb-5;
+  }
+  .docs-prose pre code {
+    @apply bg-transparent text-[#D6E3E8] p-0;
+  }
+  .docs-prose table {
+    @apply w-full text-sm mb-4;
+  }
+  .docs-prose th {
+    @apply text-start font-semibold text-ink px-3 py-2 border-b-2 border-ink;
+  }
+  .docs-prose td {
+    @apply px-3 py-2.5 border-b border-line text-ink/80 align-top;
+  }
+  .docs-prose blockquote {
+    @apply border-s-4 border-amber bg-paper-2/70 px-5 py-3 mb-5 text-ink rounded-e-xl;
   }
 }
 
@@ -381,4 +442,153 @@ pre::-webkit-scrollbar-thumb {
   .timeline::after {
     display: none;
   }
+}
+
+.tile {
+  cursor: pointer;
+  transition:
+    opacity 200ms ease,
+    outline-color 150ms ease;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.tile:hover,
+.tile.is-current {
+  outline-color: #0c344b;
+}
+
+.tile.is-pair {
+  outline: 2px dashed rgba(12, 52, 75, 0.55);
+}
+
+.tile.is-dim {
+  opacity: 0.18;
+}
+
+.parity-tip {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  width: min(22rem, calc(100vw - 16px));
+  padding: 0.9rem 1rem 0.8rem;
+  border: 0;
+  border-radius: 0.875rem;
+  background: #072536;
+  color: #d6e3e8;
+  box-shadow: 0 24px 48px -20px rgba(7, 37, 54, 0.6);
+  overflow: visible;
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease,
+    display 140ms allow-discrete,
+    overlay 140ms allow-discrete;
+}
+
+.parity-tip:not(:popover-open) {
+  opacity: 0;
+}
+
+@starting-style {
+  .parity-tip:popover-open {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.parity-tip::after {
+  content: '';
+  position: absolute;
+  left: calc(var(--ax, 50%) - 6px);
+  width: 12px;
+  height: 12px;
+  background: #072536;
+  transform: rotate(45deg);
+}
+
+.parity-tip[data-side='top']::after {
+  bottom: -5px;
+}
+
+.parity-tip[data-side='bottom']::after {
+  top: -5px;
+}
+
+.parity-tip .tip-lane {
+  color: #8fa6b3;
+}
+
+.parity-tip[data-db='pg'] .tip-lane[data-lane='pg'],
+.parity-tip[data-db='sqlite'] .tip-lane[data-lane='sqlite'] {
+  color: #ffffff;
+}
+
+.parity-tip .tip-desc {
+  display: none;
+}
+
+.parity-tip[data-db='pg'] .tip-desc[data-lane='pg'],
+.parity-tip[data-db='sqlite'] .tip-desc[data-lane='sqlite'] {
+  display: block;
+}
+
+.parity-tip code {
+  padding: 0.05em 0.3em;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.85em;
+}
+
+.step-stack,
+.step-file-stack {
+  display: grid;
+}
+
+.step-stack > *,
+.step-file-stack > * {
+  grid-area: 1 / 1;
+}
+
+.step-code,
+.step-file {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 350ms ease,
+    transform 450ms var(--ease-out),
+    visibility 0s linear 350ms;
+}
+
+.step-code {
+  transform: translateY(8px);
+}
+
+.step-code.is-active,
+.step-file.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s;
+}
+
+.step-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(214, 227, 232, 0.25);
+  transition: background-color 300ms ease;
+}
+
+.step-dot.is-active {
+  background: #f2a900;
+}
+
+[data-under-header] {
+  transition: top 450ms var(--ease-out);
+}
+
+.header-hidden [data-under-header] {
+  top: 0;
 }

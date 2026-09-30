@@ -5,6 +5,7 @@ import {
   STATUS_META,
   STATUS_ORDER,
   countByStatus,
+  inlineCode,
   rowsByGroup,
   type ParityStatus,
 } from '../lib/parity-data';
@@ -17,6 +18,7 @@ const { t } = Astro.props;
 const copy = t.parity ?? en.parity;
 
 const groups = rowsByGroup(PARITY_ROWS);
+const flatRows = groups.flatMap((g) => g.rows);
 const lanes = [
   { db: 'pg' as const, label: 'PostgreSQL' },
   { db: 'sqlite' as const, label: 'SQLite' },
@@ -41,8 +43,8 @@ const tileLabel = (feature: string, status: ParityStatus, db: string) =>
       <p class="text-lg">{copy.subtitle}</p>
     </div>
 
-    <div class="overflow-x-auto pb-2" dir="ltr" role="img" aria-label="Status of each checked Prisma Client feature on PostgreSQL and SQLite, grouped by area. Counts are in the table below.">
-      <div class="min-w-[46rem]" data-tiles>
+    <div class="overflow-x-auto pb-2" dir="ltr" data-tip-scroll>
+      <div class="min-w-[46rem]" data-tiles data-tip-grid role="group" aria-label="Status of each checked Prisma Client feature on PostgreSQL and SQLite, grouped by area. Use arrow keys to move between features.">
         {lanes.map((lane) => (
           <div class="grid grid-cols-[6.5rem_1fr] items-center gap-4 py-1.5">
             <span class="text-sm font-semibold text-ink">{lane.label}</span>
@@ -50,10 +52,16 @@ const tileLabel = (feature: string, status: ParityStatus, db: string) =>
               {groups.map((g) => (
                 <div class="flex flex-1 gap-[3px]" style={`flex-grow:${g.rows.length}`}>
                   {g.rows.map((row) => (
-                    <span
-                      class={`st st-${row[lane.db]} block h-10 flex-1 rounded-[3px] sm:h-12`}
-                      title={tileLabel(row.feature, row[lane.db], lane.label)}
-                    ></span>
+                    <button
+                      type="button"
+                      class={`tile st st-${row[lane.db]} block h-10 flex-1 rounded-[3px] sm:h-12`}
+                      data-tile={flatRows.indexOf(row)}
+                      data-db={lane.db}
+                      data-status={row[lane.db]}
+                      tabindex={lane.db === 'pg' && flatRows.indexOf(row) === 0 ? '0' : '-1'}
+                      aria-label={tileLabel(row.feature, row[lane.db], lane.label)}
+                      aria-describedby="parity-tip"
+                    ></button>
                   ))}
                 </div>
               ))}
@@ -88,7 +96,7 @@ const tileLabel = (feature: string, status: ParityStatus, db: string) =>
         </thead>
         <tbody>
           {legend.map((s) => (
-            <tr class="border-b border-line">
+            <tr class="border-b border-line" data-legend={s}>
               <th scope="row" class="py-2.5 text-start font-normal">
                 <span class="flex items-center gap-3">
                   <span class={`st st-${s} inline-block h-3.5 w-3.5 shrink-0 rounded-[3px]`} aria-hidden="true"></span>
@@ -103,6 +111,38 @@ const tileLabel = (feature: string, status: ParityStatus, db: string) =>
       </table>
     </div>
 
+    <div id="parity-tip" popover="manual" role="tooltip" class="parity-tip" data-tip></div>
+
+    {flatRows.map((row, i) => (
+      <template data-tip-content={i}>
+        <p class="text-xs text-[#8FA6B3]">{row.group}</p>
+        <p class="mt-0.5 font-mono text-[0.95rem] font-semibold text-paper">{row.feature}</p>
+        <dl class="mt-3 grid gap-1.5 text-sm">
+          {lanes.map((lane) => (
+            <div class="tip-lane flex items-center justify-between gap-4" data-lane={lane.db}>
+              <dt>{lane.label}</dt>
+              <dd class="flex items-center gap-2 font-semibold">
+                <span class={`st st-${row[lane.db]} inline-block h-3 w-3 shrink-0 rounded-[2px]`} aria-hidden="true"></span>
+                {STATUS_META[row[lane.db]].label}
+              </dd>
+            </div>
+          ))}
+        </dl>
+        {lanes.map((lane) => (
+          <p class="tip-desc mt-3 text-sm text-[#B7C9D2]" data-lane={lane.db}>{STATUS_META[row[lane.db]].description}</p>
+        ))}
+        {row.note && <p class="tip-note mt-2 text-sm text-paper" set:html={inlineCode(row.note)} />}
+        <p class="mt-3 border-t border-white/10 pt-2 text-xs text-[#8FA6B3]">
+          Prisma supports it on: {row.prisma}
+          {!row.verified && <span class="mt-1 block">Inferred from the source; not confirmed by a test run.</span>}
+        </p>
+      </template>
+    ))}
+
     <a href="/prisma-sql/docs/parity" class="btn-solid mt-10">{copy.link}</a>
   </div>
 </section>
+
+<script>
+  import '../scripts/parity-tips'
+</script>

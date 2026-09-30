@@ -1,13 +1,16 @@
 ---
+import { STEP_SNIPPETS, highlight } from '../lib/code';
+
 interface Props {
   t: any;
 }
 
 const { t } = Astro.props;
 const h = t.howItWorks;
+const panels = STEP_SNIPPETS.map((s) => ({ file: s.file, html: highlight(s.code, s.lang) }));
 ---
 
-<section class="border-b border-line py-20 sm:py-28" id="how">
+<section class="border-b border-line py-20 sm:py-28" id="how" data-steps-section>
   <div class="page-x">
     <div class="section-head">
       <h2 class="display-2">{h.title}</h2>
@@ -15,23 +18,45 @@ const h = t.howItWorks;
     </div>
 
     <div class="grid gap-12 lg:grid-cols-12 lg:gap-10">
-      <ol class="lg:col-span-7" data-steps>
+      <ol class="lg:col-span-6" data-steps>
         {h.steps.map((step: any, index: number) => (
-          <li class="grid grid-cols-[3.5rem_1fr] gap-4 border-t border-line py-7 sm:grid-cols-[5rem_1fr]">
+          <li class="grid grid-cols-[3.5rem_1fr] gap-4 border-t border-line py-7 sm:grid-cols-[5rem_1fr] lg:min-h-[48vh] lg:py-10">
             <span class="step-num num text-5xl font-bold leading-none text-ink/25 sm:text-6xl" aria-hidden="true">
               {index + 1}
             </span>
-            <div>
+            <div class="min-w-0">
               <h3 class="text-xl font-semibold text-ink">{step.title}</h3>
               <p class="mt-2 max-w-[56ch] text-fog">{step.description}</p>
+              {panels[index] && (
+                <div class="code-surface mt-5 overflow-hidden lg:hidden">
+                  <div class="border-b border-white/10 px-5 py-2 font-mono text-xs text-[#9fb4c0]">{panels[index].file}</div>
+                  <pre class="nohighlight p-5 text-[0.78rem] leading-relaxed" dir="ltr"><code class="nohighlight" set:html={panels[index].html} /></pre>
+                </div>
+              )}
             </div>
           </li>
         ))}
       </ol>
 
-      <div class="lg:col-span-5">
-        <div class="code-surface lg:sticky lg:top-24">
-          <pre class="p-5 text-[0.85rem] leading-relaxed sm:p-6" dir="ltr"><code class="language-typescript">{h.codeExample}</code></pre>
+      <div class="hidden lg:col-span-6 lg:block">
+        <div class="code-surface sticky top-24 overflow-hidden">
+          <div class="flex items-center justify-between gap-3 border-b border-white/10 px-5 py-2.5 font-mono text-xs text-[#9fb4c0]">
+            <span class="step-file-stack">
+              {panels.map((panel, i) => (
+                <span class:list={['step-file', i === 0 && 'is-active']} data-step-panel={i} aria-hidden={i === 0 ? undefined : 'true'}>{panel.file}</span>
+              ))}
+            </span>
+            <span class="flex gap-1.5" aria-hidden="true">
+              {panels.map((_, i) => (
+                <span class:list={['step-dot', i === 0 && 'is-active']} data-step-panel={i}></span>
+              ))}
+            </span>
+          </div>
+          <div class="step-stack">
+            {panels.map((panel, i) => (
+              <pre class:list={['step-code nohighlight p-6 text-[0.8rem] leading-relaxed', i === 0 && 'is-active']} dir="ltr" data-step-panel={i} aria-hidden={i === 0 ? undefined : 'true'}><code class="nohighlight" set:html={panel.html} /></pre>
+            ))}
+          </div>
         </div>
       </div>
     </div>

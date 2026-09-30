@@ -1,0 +1,30 @@
+---
+import { cleanLabel } from '../lib/text';
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  links: { href: string; label: string }[];
+}
+
+const { title, subtitle, links } = Astro.props;
+---
+
+<section class="bg-amber py-20 text-ink-deep sm:py-28">
+  <div class="page-x grid gap-10 lg:grid-cols-12 lg:items-end">
+    <div class="lg:col-span-8">
+      <h2 class="display-1 !text-[clamp(2.5rem,5.6vw,5.25rem)]">{title}</h2>
+      {subtitle && <p class="lede mt-6 text-ink-deep/80">{subtitle}</p>}
+    </div>
+    <div class="flex flex-col gap-3 sm:flex-row lg:col-span-4 lg:flex-col lg:items-stretch">
+      {links.map((link, i) => (
+        <a
+          href={link.href}
+          class:list={['btn', i === 0 ? 'bg-ink-deep text-paper hover:bg-ink' : 'border border-ink-deep hover:bg-ink-deep hover:text-paper']}
+        >
+          {cleanLabel(link.label)}
+        </a>
+      ))}
+    </div>
+  </div>
+</section>

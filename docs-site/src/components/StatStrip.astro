@@ -1,0 +1,27 @@
+---
+interface Props {
+  items: { value: string; label: string; note?: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+<section class="border-b border-line bg-paper-2/60">
+  <dl class="page-x grid grid-cols-2 lg:grid-cols-4">
+    {items.map((item, i) => (
+      <div
+        class:list={[
+          'border-line py-8 sm:py-10',
+          i % 2 === 1 && 'border-s ps-5 sm:ps-8',
+          i >= 2 && 'border-t lg:border-t-0',
+          i === 2 && 'lg:border-s lg:ps-8',
+          i > 0 && i !== 2 && 'lg:ps-8',
+        ]}
+      >
+        <dt class="text-sm font-semibold text-ink">{item.label}</dt>
+        <dd class="num mt-2 text-[clamp(2.2rem,4.2vw,3.4rem)] font-extrabold leading-none tracking-tight text-ink">{item.value}</dd>
+        {item.note && <dd class="mt-2 text-sm text-fog">{item.note}</dd>}
+      </div>
+    ))}
+  </dl>
+</section>
