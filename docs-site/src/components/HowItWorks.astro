@@ -7,7 +7,11 @@ interface Props {
 
 const { t } = Astro.props;
 const h = t.howItWorks;
-const panels = STEP_SNIPPETS.map((s) => ({ file: s.file, html: highlight(s.code, s.lang) }));
+const u = t.ui.howItWorks;
+const panels = STEP_SNIPPETS.map((s, i) => ({
+  file: u.files[i] ?? s.file,
+  html: highlight(i === STEP_SNIPPETS.length - 1 ? `${s.code}\n\n${u.resultNote}` : s.code, s.lang),
+}));
 ---
 
 <section class="border-b border-line py-20 sm:py-28" id="how" data-steps-section>

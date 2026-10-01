@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Arregla consultas lentas de Prisma | prisma-sql",
+    "title": "prisma-sql: lecturas de Prisma compatibles más rápidas",
     "description": "prisma-sql compila las lecturas de Prisma compatibles a SQL y las ejecuta con postgres.js o better-sqlite3. Benchmarks con Prisma v6–v8 en PostgreSQL y SQLite.",
     "keywords": "prisma lento, prisma es lento, rendimiento prisma, arreglar prisma lento, acelerar prisma, optimización prisma, velocidad de consultas prisma, consultas lentas prisma, problemas de rendimiento prisma, hacer prisma más rápido, postgresql, sqlite"
   },
@@ -10,26 +10,26 @@
   "hero": {
     "badge": "🚀 La solución para Prisma lento",
     "title": "Arregla consultas lentas de Prisma",
-    "titleHighlight": "Haz tu API 2–7× más rápida (hasta 53.5×)",
-    "description": "¿Prisma va lento? No estás solo. ¿Te encanta el DX de Prisma pero necesitas mejor rendimiento?",
-    "descriptionBold": "Acelera consultas lentas de Prisma 2–7×",
-    "descriptionSuffix": "(hasta 53.5× en filtros de relación de SQLite) sin cambiar ninguna consulta existente.",
+    "titleHighlight": "con ejecución SQL directa",
+    "description": "¿Te encanta el DX de Prisma pero necesitas menos sobrecarga de lectura en las formas de consulta compatibles?",
+    "descriptionBold": "El JSON de benchmarks actual muestra aceleraciones promedio en Prisma v6, v7 y v8",
+    "descriptionSuffix": "para lecturas compatibles en PostgreSQL y SQLite; cada forma de consulta varía.",
     "cta1": "Acelerar Prisma ahora",
     "cta2": "Ver cómo funciona",
     "trustBadges": [
-      "Lecturas de Prisma más rápidas",
+      "Lecturas compatibles más rápidas",
       "Sin cambios de consulta",
-      "Listo para producción",
-      "137 pruebas E2E"
+      "JSON de benchmarks actual",
+      "PostgreSQL y SQLite"
     ],
     "codeTitle": "Arregla Prisma lento en una línea",
     "codeSnippet": "import { PrismaClient, Prisma } from '@prisma/client'\nimport { speedExtension, convertDMMFToModels } from 'prisma-sql'\nimport postgres from 'postgres'\n\nconst sql = postgres(process.env.DATABASE_URL)\nconst models = convertDMMFToModels(Prisma.dmmf.datamodel)\n\nconst prisma = new PrismaClient().$extends(\n  speedExtension({ postgres: sql, models })\n)\n\nconst users = await prisma.user.findMany({\n  where: { status: 'ACTIVE' },\n  include: { posts: true }\n})"
   },
   "stats": [
     {
-      "value": "2–7×",
-      "label": "Lecturas de Prisma más rápidas",
-      "subtitle": "Aceleración típica",
+      "value": "v6–v8",
+      "label": "Cobertura de Prisma",
+      "subtitle": "Matriz de benchmarks en PostgreSQL y SQLite",
       "color": "text-accent"
     },
     {
@@ -39,9 +39,9 @@
       "color": "text-blue-600"
     },
     {
-      "value": "137",
-      "label": "Pruebas E2E",
-      "subtitle": "Solución verificada",
+      "value": "6",
+      "label": "Archivos de benchmark",
+      "subtitle": "Prisma v6/v7/v8 × PG/SQLite",
       "color": "text-purple-600"
     },
     {
@@ -94,17 +94,17 @@
       },
       {
         "title": "Moldeado de resultados",
-        "description": "Los resultados se moldean para coincidir con el comportamiento esperado de la API de Prisma. Esto es excelente para DX y consistencia, pero añade latencia, especialmente en conjuntos de resultados grandes e includes complejos.",
+        "description": "Los resultados se moldean para coincidir con el comportamiento de la API de Prisma. Esto es excelente para DX y consistencia, pero añade latencia, especialmente en conjuntos de resultados grandes e includes complejos.",
         "iconPath": "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
       }
     ],
-    "conclusion": "Esta extensión complementa Prisma ofreciendo una ruta más rápida para consultas de lectura. Conservas todo lo que te gusta de Prisma y obtienes lecturas 2–7× más rápidas en casos típicos (y hasta 53.5× en filtros de relación de SQLite) cuando el rendimiento importa."
+    "conclusion": "Esta extensión complementa Prisma ofreciendo una ruta más rápida para las consultas de lectura compatibles. Conservas Prisma para el esquema, las migraciones, las escrituras y los tipos generados, mientras el SQL generado atiende las lecturas frecuentes seleccionadas mediante clientes nativos de la base de datos."
   },
   "performance": {
     "title": "¿Cuánto más rápido? Benchmarks reales",
-    "subtitle": "Comparación completa entre Prisma v6, v7, v8, Drizzle ORM y Prisma-SQL",
-    "environment": "Entorno de benchmark: MacBook Pro M1 • PostgreSQL 15 • SQLite 3.43 • 137 casos de prueba por base de datos",
-    "footer": "Benchmarks basados en 137 pruebas E2E por base de datos. Prisma v6.19.3, Prisma v7.10.0, Drizzle ORM latest.",
+    "subtitle": "Comparación del JSON de benchmarks más reciente entre Prisma v6, v7, v8, Drizzle ORM y prisma-sql",
+    "environment": "Fuente de datos: archivos JSON más recientes de benchmark-results/v6|v7|v8 × postgres|sqlite en esta copia del repositorio",
+    "footer": "Resumen generado a partir de los archivos JSON de benchmark más recientes en benchmark-results.",
     "footerLink": "Ver datos completos del benchmark"
   },
   "howItWorks": {
@@ -128,7 +128,7 @@
         "description": "Los resultados coinciden con la forma esperada por Prisma. Tipos, IntelliSense y el código de consultas existente permanecen sin cambios"
       }
     ],
-    "codeExample": "const users = await prisma.user.findMany({\n  where: { status: 'ACTIVE' },\n  include: { posts: true }\n})\n\n// Direct SQL execution for reads\n// Benchmarked around ~1.00ms on this workload\n// Same Prisma query code"
+    "codeExample": "const users = await prisma.user.findMany({\n  where: { status: 'ACTIVE' },\n  include: { posts: true }\n})\n\n// Ejecución SQL directa para lecturas\n// Medido en torno a ~1.00ms en esta carga de trabajo\n// El mismo código de consulta Prisma"
   },
   "features": {
     "title": "¿Por qué elegir esta extensión de Prisma?",
@@ -148,7 +148,7 @@
       },
       {
         "title": "Solución probada en producción",
-        "description": "137 pruebas E2E validan compatibilidad con versiones recientes de Prisma. Usada para acelerar lecturas de Prisma en apps de producción.",
+        "description": "Las pruebas de paridad actuales validan las lecturas compatibles en versiones recientes de Prisma. Úsala en apps de producción tras comprobar la compatibilidad con tu versión de Prisma y tu carga de trabajo.",
         "color": "purple",
         "iconPath": "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
       },
@@ -160,7 +160,7 @@
       },
       {
         "title": "Opción precompilada",
-        "description": "Un generador opcional crea SQL en build-time, reduciendo la sobrecarga a microsegundos para tus consultas más calientes.",
+        "description": "Un generador opcional crea el SQL en tiempo de compilación, reduciendo la sobrecarga a microsegundos para tus consultas más frecuentes.",
         "color": "yellow",
         "iconPath": "M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
       },
@@ -193,7 +193,7 @@
         "benefits": [
           "Menores tiempos de respuesta de la API",
           "Manejar más solicitudes por instancia",
-          "Reducir costos de infraestructura"
+          "Reducir costes de infraestructura"
         ]
       },
       {
@@ -202,7 +202,7 @@
         "color": "green",
         "benefits": [
           "Mejor p95/p99 en lecturas",
-          "Menor costo mediante lecturas más rápidas",
+          "Menor coste mediante lecturas más rápidas",
           "Lecturas más rápidas sin refactors"
         ]
       },
@@ -228,7 +228,7 @@
         "code": "# PostgreSQL\nnpm install prisma-sql postgres\n\n# SQLite\nnpm install prisma-sql better-sqlite3"
       },
       {
-        "title": "Añade la extensión al cliente de Prisma",
+        "title": "Añade la extensión a Prisma Client",
         "language": "language-typescript",
         "code": "import { PrismaClient, Prisma } from '@prisma/client'\nimport { speedExtension, convertDMMFToModels } from 'prisma-sql'\nimport postgres from 'postgres'\n\nconst sql = postgres(process.env.DATABASE_URL)\nconst models = convertDMMFToModels(Prisma.dmmf.datamodel)\n\nconst prisma = new PrismaClient().$extends(\n  speedExtension({ postgres: sql, models })\n)"
       },
@@ -261,7 +261,7 @@
       },
       {
         "question": "¿Esto funciona en producción?",
-        "answer": "Sí. Está validado con 137 pruebas E2E y está diseñado para usarse en producción. Verifica siempre la compatibilidad con tu versión de Prisma y ejecuta tus propias pruebas de regresión antes del despliegue."
+        "answer": "Sí, está diseñado para usarse en producción en las rutas de lectura compatibles. Verifica siempre la compatibilidad con tu versión de Prisma y ejecuta tus propias pruebas de regresión antes del despliegue."
       },
       {
         "question": "¿Qué causa agregaciones más lentas en Prisma?",
@@ -271,37 +271,37 @@
   },
   "cta": {
     "title": "¿Listo para acelerar Prisma?",
-    "subtitle": "Únete a desarrolladores que optimizan lecturas de Prisma: 2–7× más rápido (hasta 53.5×)",
+    "subtitle": "Consulta la tabla de benchmarks actual para lecturas compatibles en PostgreSQL y SQLite",
     "button1": "Instalar Prisma-SQL",
     "button2": "Ver en GitHub"
   },
   "footer": {
-    "copyright": "© 2026 Prisma-SQL - Acelera lecturas de Prisma 2–7× (hasta 53.5×)",
+    "copyright": "© 2026 Prisma-SQL - Lecturas de Prisma compatibles más rápidas",
     "tagline": "Haciendo Prisma aún mejor"
   },
   "testingCallout": {
     "badge": "✓ Validado",
     "title": "¿Cómo aseguramos la corrección?",
-    "description": "Cada consulta se valida contra Prisma con 137 pruebas end-to-end en PostgreSQL y SQLite",
+    "description": "Las consultas compatibles se validan contra Prisma en PostgreSQL y SQLite, con informes de benchmark que cubren Prisma v6, v7, v8, Drizzle y SQL generado.",
     "link": "Ver metodología de pruebas →"
   },
   "testing": {
     "meta": {
       "title": "Metodología de pruebas - prisma-sql",
-      "description": "Enfoque de pruebas integral que valida con 137 pruebas E2E que el SQL generado coincide exactamente con la salida de Prisma",
+      "description": "Las consultas compatibles se validan contra Prisma en PostgreSQL y SQLite, y los informes de benchmark comparan Prisma v6, v7, v8, Drizzle y SQL generado.",
       "keywords": "pruebas prisma, validación sql, pruebas e2e, pruebas orm, pruebas de base de datos"
     },
     "hero": {
       "badge": "🧪 Aseguramiento de calidad",
-      "title": "Pruebas",
-      "titleHighlight": "Metodología",
-      "subtitle": "137 pruebas end-to-end validan que cada consulta SQL generada coincide exactamente con la salida de Prisma"
+      "title": "Metodología",
+      "titleHighlight": "de pruebas",
+      "subtitle": "La validación actual cubre las lecturas compatibles en PostgreSQL y SQLite, con informes de benchmark para Prisma v6, v7, v8, Drizzle y SQL generado."
     },
     "stats": [
       {
-        "value": "137",
-        "label": "Pruebas E2E",
-        "description": "Cada consulta validada"
+        "value": "Actual",
+        "label": "Suite E2E",
+        "description": "Paridad de consultas validada"
       },
       {
         "value": "100%",
@@ -341,7 +341,7 @@
         },
         {
           "title": "Benchmark de rendimiento",
-          "description": "Mide el tiempo de ejecución con 5 ejecuciones de calentamiento y luego promedia 10-50 iteraciones por prueba. Compara contra Prisma v6, Prisma v7 y Drizzle ORM."
+          "description": "Mide el tiempo de ejecución con 5 ejecuciones de calentamiento y luego promedia 10-50 iteraciones por prueba. Compara contra Prisma v6, Prisma v7, Prisma v8 y Drizzle ORM."
         }
       ]
     },
@@ -465,7 +465,7 @@
       "title": "Ejemplo de caso de prueba",
       "subtitle": "Mira cómo validamos una consulta anidada compleja con filtros de relación",
       "filename": "tests/e2e/postgres.test.ts",
-      "code": "it('nested relation filter', () =>\n  runParityTest(\n    db,\n    benchmarkResults,\n    'findMany nested relation',\n    'Organization',\n    {\n      method: 'findMany',\n      where: {\n        projects: {\n          some: {\n            tasks: { some: { status: 'DONE' } }\n          }\n        }\n      }\n    },\n    () => db.prisma.organization.findMany({\n      where: {\n        projects: {\n          some: {\n            tasks: { some: { status: 'DONE' } }\n          }\n        }\n      },\n      orderBy: { id: 'asc' }\n    }),\n  )\n)\n\n// runParityTest internally:\n// 1. Calls generateSQL() with the args\n// 2. Executes generated SQL directly\n// 3. Executes Prisma query\n// 4. Normalizes both results\n// 5. Deep equality check - fails if any difference\n// 6. Benchmarks execution time"
+      "code": "it('nested relation filter', () =>\n  runParityTest(\n    db,\n    benchmarkResults,\n    'findMany nested relation',\n    'Organization',\n    {\n      method: 'findMany',\n      where: {\n        projects: {\n          some: {\n            tasks: { some: { status: 'DONE' } }\n          }\n        }\n      }\n    },\n    () => db.prisma.organization.findMany({\n      where: {\n        projects: {\n          some: {\n            tasks: { some: { status: 'DONE' } }\n          }\n        }\n      },\n      orderBy: { id: 'asc' }\n    }),\n  )\n)\n\n// runParityTest internamente:\n// 1. Llama a generateSQL() con los args\n// 2. Ejecuta el SQL generado directamente\n// 3. Ejecuta la consulta Prisma\n// 4. Normaliza ambos resultados\n// 5. Comprobación de igualdad profunda - falla ante cualquier diferencia\n// 6. Mide el tiempo de ejecución"
     },
     "executionFlow": {
       "title": "Qué ocurre durante la ejecución de las pruebas",
@@ -473,7 +473,7 @@
         {
           "number": "1",
           "title": "Generación de consulta (microsegundos)",
-          "description": "La función generateSQL() parsea los args de Prisma y crea SQL parametrizado. Este paso se mide por separado para medir la sobrecarga de generación."
+          "description": "La función generateSQL() parsea los args de Prisma y crea SQL parametrizado. Este paso se mide por separado para cuantificar la sobrecarga de generación de consultas."
         },
         {
           "number": "2",
@@ -499,7 +499,7 @@
     },
     "multiVersion": {
       "title": "Validación multi-versión",
-      "description": "Cada prueba se ejecuta contra Prisma v6, v7, v8 para asegurar compatibilidad entre versiones:",
+      "description": "Cada prueba con benchmark se ejecuta en Prisma v6, v7 y v8 donde es compatible:",
       "v6": {
         "title": "Prisma v6 (6.19.3)",
         "items": [
@@ -519,14 +519,14 @@
       "v8": {
         "title": "Prisma v8 (8.1.0-dev.1)",
         "items": [
-          "Prisma v8",
-          "@prisma/adapter-*",
-          "PostgreSQL + SQLite"
+          "Cobertura de la versión dev de Prisma v8",
+          "Arquitectura basada en adapters",
+          "Paridad de benchmarks en PostgreSQL y SQLite"
         ]
       }
     },
     "benchmarkReports": {
-      "title": "Reportes automáticos de benchmarks",
+      "title": "Informes automáticos de benchmarks",
       "description": "Todos los resultados de benchmarks se generan automáticamente y se guardan como archivos JSON para transparencia total:",
       "files": [
         "benchmark-results/v6-postgres-latest.json",
@@ -540,7 +540,7 @@
     },
     "cta": {
       "title": "Explora la suite completa de pruebas",
-      "subtitle": "Las 137 pruebas son open source. Revisa el código de pruebas, benchmarks y la lógica de validación.",
+      "subtitle": "La suite de validación y los informes de benchmark son open source. Revisa el código de pruebas, los datos de benchmark y las comprobaciones de paridad.",
       "button1": "Ver suite de pruebas →",
       "button2": "Ver benchmarks"
     }
@@ -548,13 +548,13 @@
   "sqlPrevention": {
     "meta": {
       "title": "Prevención de inyección SQL - Seguridad prisma-sql",
-      "description": "Metodología de prevención de inyección SQL usando enlace de parámetros, validación basada en esquema y 137 pruebas enfocadas en seguridad (suite actual)",
+      "description": "Metodología de prevención de inyección SQL mediante enlace de parámetros, validación basada en esquema y la suite actual de pruebas centradas en seguridad",
       "keywords": "prevención de inyección sql, consultas parametrizadas, seguridad sql, seguridad de base de datos, seguridad prisma"
     },
     "hero": {
       "badge": "🔒 Seguridad primero",
-      "title": "Inyección SQL",
-      "titleHighlight": "Prevención",
+      "title": "Prevención de",
+      "titleHighlight": "inyección SQL",
       "subtitle": "Los valores proporcionados por el usuario nunca se interpolan en el texto SQL — los valores se enlazan mediante placeholders de parámetros (dependiente del dialecto, p. ej. $1 o ?)"
     },
     "stats": [
@@ -574,9 +574,9 @@
         "description": "Los placeholders mapean a params 1:1"
       },
       {
-        "value": "137",
+        "value": "Actual",
         "label": "Pruebas de seguridad",
-        "description": "Cobertura de intentos de inyección (suite actual)"
+        "description": "Cobertura de intentos de inyección"
       }
     ],
     "threat": {
@@ -708,7 +708,7 @@
     },
     "testCoverage": {
       "title": "Cobertura integral de pruebas de seguridad",
-      "subtitle": "137 pruebas validan protección contra vectores comunes de inyección SQL y casos límite (suite actual)",
+      "subtitle": "La suite actual valida la protección contra vectores comunes de inyección SQL y casos límite",
       "categories": [
         {
           "title": "Parametrización de valores (basic.test.ts)",
@@ -758,7 +758,7 @@
           "tests": [
             "Inyección Unicode: \\u0027 OR \\u00271\\u0027=\\u00271",
             "Inyección codificada en hex: 0x31=0x31--",
-            "URL encoded: %27%3B%20DROP%20TABLE",
+            "Codificación URL: %27%3B%20DROP%20TABLE",
             "Consultas apiladas: '; DROP TABLE users; SELECT",
             "Time-based blind (según dialecto): WAITFOR DELAY '00:00:05'--",
             "Basada en UNION: UNION ALL SELECT null, password",
@@ -840,7 +840,7 @@
     "securityCallout": {
       "badge": "🔒 Seguridad verificada",
       "title": "¿Cómo prevenimos inyección SQL?",
-      "description": "Validación multi-capa con enlace de parámetros, chequeos de campos basados en esquema y 137 pruebas de seguridad (suite actual)",
+      "description": "Validación multicapa con enlace de parámetros, comprobaciones de campos basadas en esquema y la suite actual de pruebas de seguridad",
       "link": "Ver detalles de seguridad →"
     },
     "cta": {
@@ -853,14 +853,14 @@
   "benchmarks": {
     "title": "Resultados detallados de benchmark",
     "subtitle": "Comparación estadística con la prueba t de Welch y un umbral de significancia práctica de 1 ms",
-    "modeNote": "Estos resultados reflejan el modo <runtime>de ejecución</runtime>, donde las consultas se convierten a SQL en cada solicitud. En el modo <prerendered>preprocesado</prerendered>, el SQL se genera en tiempo de compilación — el tiempo de ejecución ejecuta consultas parametrizadas en bruto sin sobrecarga de conversión.",
-    "modeCallout": "Modo de ejecución evaluado.",
-    "modeCalloutDetail": "El modo preprocesado omite por completo la conversión de consulta a SQL en tiempo de ejecución — se espera una latencia menor que la mostrada aquí, especialmente para consultas complejas donde el costo de conversión es proporcionalmente mayor.",
+    "modeNote": "Estos resultados reflejan el <runtime>modo en tiempo de ejecución</runtime>, donde las consultas se convierten a SQL en cada solicitud. En el <prerendered>modo precompilado</prerendered>, el SQL se genera en tiempo de compilación — en ejecución solo se lanzan consultas parametrizadas en bruto, sin sobrecarga de conversión.",
+    "modeCallout": "Se midió el modo en tiempo de ejecución.",
+    "modeCalloutDetail": "El modo precompilado omite por completo la conversión de consulta a SQL en tiempo de ejecución — espera una latencia menor que la mostrada aquí, especialmente en consultas complejas, donde el coste de conversión es proporcionalmente mayor.",
     "noData": "No se encontraron datos de benchmark.",
-    "noDataHint": "Ejecute los benchmarks con <code>BENCHMARK_JSON_OUTPUT=1</code> para generar datos.",
+    "noDataHint": "Ejecuta los benchmarks con <code>BENCHMARK_JSON_OUTPUT=1</code> para generar datos.",
     "avgVsPrisma": "Promedio {speed} frente a Prisma",
     "avgVsDrizzle": "Promedio {speed} frente a Drizzle",
-    "significantWins": "{count}/{total} victorias estadísticamente significativas",
+    "significantWins": "{count}/{total} victorias significativas",
     "withinNoise": "{count} dentro del umbral de ruido",
     "col": {
       "test": "Prueba",
@@ -879,9 +879,244 @@
       "ns": "no significativo",
       "noiseFloor": "dentro del umbral de ruido de {threshold} ms",
       "ci": "IC del 95%",
-      "highVariance": "alta variación"
+      "highVariance": "alta varianza"
     },
     "regressionWarning": "{count} prueba(s) con regresiones estadísticamente significativas que superan el umbral de {threshold} ms.",
-    "viewRawData": "Ver datos brutos de benchmark en GitHub →"
+    "viewRawData": "Ver datos brutos de benchmark en GitHub →",
+    "methodology": {
+      "title": "Metodología",
+      "lines": [
+        "Reprodúcelo con: `npm run bench` (`BENCHMARK_JSON_OUTPUT=1` escribe JSON). Los resultados se guardan en `benchmark-results/summary-<date>.json`; `v<N>-<dialect>-latest.json` alimenta esta página.",
+        "Cada consulta se ejecuta contra la misma base de datos para todos los clientes: Prisma, prisma-sql, Drizzle. El tamaño de muestra de cada prueba aparece en la columna n.",
+        "Se reporta para cada lado: media, mediana, stdDev, p95, p99, CV%. La significancia usa la prueba t de Welch con un umbral práctico de 1 ms; las barras de error son IC del 95%.",
+        "Se mide el modo en tiempo de ejecución: el SQL se convierte en cada solicitud. Las consultas precompiladas (@optimize) omiten la conversión por completo y son más rápidas que lo mostrado.",
+        "El hardware y las versiones varían entre ejecuciones - cada archivo JSON lleva su propio timestamp. Compara ejecuciones de la misma máquina."
+      ]
+    }
+  },
+  "extras": {
+    "badge": "Extras sobre la API de Prisma",
+    "title": "Más allá de lecturas más rápidas",
+    "subtitle": "prisma-sql añade capacidades que Prisma Client no tiene. Los mismos tipos, el mismo estilo de código.",
+    "items": [
+      {
+        "name": "$batch",
+        "tagline": "N consultas de panel, un solo viaje de ida y vuelta",
+        "description": "Combina lecturas independientes en un único viaje de ida y vuelta a PostgreSQL. Resultado como objeto tipado, sin malabares con Promise.all.",
+        "code": "const dash = await prisma.$batch((b) => ({\n  users: b.user.count(),\n  posts: b.post.findMany({ take: 10 }),\n  stats: b.task.aggregate({ _count: true }),\n}))"
+      },
+      {
+        "name": "@optimize",
+        "tagline": "Precompila tus consultas más frecuentes",
+        "description": "Anota un modelo en schema.prisma. En tiempo de generación se fija el SQL exacto; las formas que coinciden en tiempo de ejecución omiten la conversión por completo.",
+        "code": "/// @optimize {\n///   \"method\": \"findMany\",\n///   \"query\": {\n///     \"where\": { \"status\": \"$status\" },\n///     \"take\": \"$take\"\n///   }\n/// }\nmodel User { ... }"
+      },
+      {
+        "name": "Planificador de cardinalidad",
+        "tagline": "Estrategia elegida por los datos, no por intuición",
+        "description": "Las estadísticas de relaciones recopiladas deciden el cambio de estrategia entre joins planos, subconsultas correlacionadas y carga segmentada con where-in. Las tablas hijas grandes nunca provocan escaneos por cada padre.",
+        "code": "prisma-sql-collect-stats \\\n  --output dist/planner.generated.js \\\n  --prisma-client dist/client/index.js"
+      }
+    ]
+  },
+  "parity": {
+    "title": "Qué se ejecuta más rápido y qué se queda en Prisma",
+    "subtitle": "Cada funcionalidad de Prisma Client que comprobamos, en PostgreSQL y SQLite. Las escrituras se quedan en Prisma; las lecturas se compilan a SQL cuando la forma es compatible.",
+    "link": "Abrir el mapa de paridad completo",
+    "summary": "{accelerated} de {total} funcionalidades comprobadas están totalmente aceleradas en PostgreSQL. {differs} pueden devolver un resultado distinto al de Prisma; el mapa completo lista cada una con el motivo."
+  },
+  "ui": {
+    "nav": {
+      "main": "Principal",
+      "docs": "Docs",
+      "parity": "Paridad",
+      "benchmarks": "Benchmarks",
+      "github": "prisma-sql en GitHub",
+      "npm": "prisma-sql en npm"
+    },
+    "footer": {
+      "product": "Producto",
+      "elsewhere": "En otros sitios",
+      "language": "Idioma",
+      "docs": "Documentación",
+      "parity": "Mapa de paridad con Prisma",
+      "benchmarks": "Benchmarks",
+      "testing": "Pruebas",
+      "security": "Prevención de inyección SQL",
+      "changelog": "Registro de cambios"
+    },
+    "hero": {
+      "copy": "Copiar",
+      "copied": "Copiado",
+      "copyFailed": "Selecciona y copia",
+      "copiedStatus": "Copiado: {text}",
+      "figureLabel": "Una consulta de Prisma y el SQL que prisma-sql genera para ella",
+      "yourCall": "Tu llamada a Prisma",
+      "sqlRuns": "SQL que ejecuta prisma-sql",
+      "database": "Base de datos",
+      "params": "params",
+      "statement": "1 sentencia",
+      "caption": "Salida de <code>createToSQL</code> para un esquema de dos modelos, con saltos de línea añadidos."
+    },
+    "performance": {
+      "noData": "No se encontraron archivos JSON de benchmark.",
+      "casesPerRun": "{count} casos de consulta por ejecución",
+      "vsDrizzle": "{speed} frente a Drizzle",
+      "measured": "{count} casos de consulta medidos, promedio frente a Prisma",
+      "srRow": "{label}: aceleración promedio de {speed} frente a Prisma",
+      "note": "Generado en tiempo de compilación a partir de los archivos <code>benchmark-results/*-latest.json</code> más recientes. Las barras comparten una misma escala en ambas bases de datos; el ámbar marca la mejor ejecución por base de datos. Cada forma de consulta varía.",
+      "perQuery": "Tabla por consulta"
+    },
+    "howItWorks": {
+      "files": [
+        "generated/sql, extracto",
+        "SQL para PostgreSQL",
+        "generated/sql, extracto",
+        "users.ts"
+      ],
+      "resultNote": "// Los mismos tipos inferidos que Prisma Client.\n// Los valores Decimal, BigInt y DateTime pueden\n// diferir; el mapa de paridad lista cada caso."
+    },
+    "installation": {
+      "sqliteNote": "SQLite: pasa <code>speedExtension({ sqlite: db })</code> con una base de datos de <code>better-sqlite3</code>.",
+      "guide": "Guía de configuración completa"
+    },
+    "parity": {
+      "stripLabel": "Estado de cada funcionalidad de Prisma Client comprobada en PostgreSQL y SQLite, agrupadas por área. Usa las teclas de flecha para moverte entre funcionalidades.",
+      "tileLabel": "{feature}, {db}: {status}",
+      "tableCaption": "Número de funcionalidades por estado",
+      "status": "Estado",
+      "supportedOn": "Prisma lo admite en: {value}",
+      "inferred": "Inferido del código fuente; no confirmado por una ejecución de pruebas."
+    },
+    "queryStrip": {
+      "title": "Cada consulta medida, {count} formas",
+      "caption": "Cada barra es una forma de consulta de la última ejecución. Hacia arriba es más rápido que Prisma, hacia abajo más lento, escala logarítmica.",
+      "faster": "{value}× más rápido",
+      "slower": "{value}× (más lento)",
+      "notRun": "no ejecutado"
+    },
+    "security": {
+      "do": "Hacer",
+      "dont": "No hacer",
+      "unsafeFile": "unsafe.ts",
+      "safeFile": "safe.ts"
+    },
+    "benchmarks": {
+      "region": "Resultados de benchmark por consulta"
+    }
+  },
+  "parityData": {
+    "status": {
+      "accelerated": {
+        "label": "Acelerado",
+        "description": "Compilado a SQL y ejecutado mediante postgres.js o better-sqlite3."
+      },
+      "partial": {
+        "label": "Parcial",
+        "description": "Compilado a SQL; algunas formas de argumentos recurren a Prisma."
+      },
+      "fallback": {
+        "label": "Recurre a Prisma",
+        "description": "El constructor de SQL lo rechaza y Prisma ejecuta la consulta. Mismo resultado, sin aceleración."
+      },
+      "prisma": {
+        "label": "Se ejecuta en Prisma",
+        "description": "No se intercepta. Prisma Client lo ejecuta como antes."
+      },
+      "differs": {
+        "label": "Puede diferir",
+        "description": "Acelerado, pero el resultado puede diferir del de Prisma sin ningún error."
+      },
+      "missing": {
+        "label": "No disponible",
+        "description": "Prisma lo admite; prisma-sql no tiene equivalente."
+      },
+      "extra": {
+        "label": "Solo prisma-sql",
+        "description": "Añadido por prisma-sql. No forma parte de la API de Prisma Client."
+      },
+      "na": {
+        "label": "No está en Prisma",
+        "description": "Prisma no lo admite en esa base de datos."
+      },
+      "unknown": {
+        "label": "Sin comprobar",
+        "description": "El comportamiento en esta base de datos aún no se ha comprobado."
+      }
+    },
+    "groups": {
+      "Model methods": "Métodos de modelo",
+      "Query options": "Opciones de consulta",
+      "Filters": "Filtros",
+      "Ordering": "Ordenación",
+      "Aggregates": "Agregados",
+      "Client API": "API del cliente",
+      "Result types": "Tipos de resultado"
+    },
+    "notes": {
+      "findMany": "Compilado a SQL.",
+      "findFirst": "Compilado con LIMIT 1. `cursor` y `take` negativo se ignoran. `distinct` recurre a Prisma.",
+      "findUnique": "Las claves únicas compuestas como `a_b: { a, b }` recurren a Prisma.",
+      "findUniqueOrThrow, findFirstOrThrow": "No se interceptan.",
+      "count": "`select: { _all, field }` se ignora y se devuelve un número en lugar de un objeto. `take` negativo recurre a Prisma.",
+      "aggregate": "`take`, `skip`, `cursor` y `orderBy` se ignoran, por lo que los totales pueden diferir.",
+      "groupBy": "`by` como string único recurre a Prisma. Se espera que ordenar por un agregado recurra a Prisma (no verificado).",
+      "create, createMany, createManyAndReturn": "Las escrituras no se interceptan.",
+      "update, updateMany, updateManyAndReturn": "Las escrituras no se interceptan.",
+      "upsert, delete, deleteMany": "Las escrituras no se interceptan.",
+      "findManyStream, findManyReduceStream": "Streaming de filas. Solo PostgreSQL; en SQLite lanza un error.",
+      "select": "Escalares, relaciones y `_count`. Los campos desconocidos recurren a Prisma.",
+      "include": "Las consultas que superan los límites de profundidad, fan-out o includes circulares recurren a Prisma.",
+      "omit (per query)": "Se ignora. Los campos omitidos se devuelven.",
+      "omit (client option)": "No se lee. Los campos omitidos en `new PrismaClient({ omit })` se devuelven.",
+      "distinct": "PostgreSQL usa DISTINCT ON; cuando `orderBy` no empieza por los campos de distinct, el orden y `take` pueden diferir (no verificado). SQLite con `cursor` recurre a Prisma.",
+      "Negative take": "Requiere `orderBy` sobre campos escalares seleccionados; si no, recurre a Prisma.",
+      "cursor": "Cuando la fila del cursor no existe, se devuelven filas; Prisma devuelve una lista vacía. Sin `orderBy`, el orden de las filas no es fijo.",
+      "relationLoadStrategy": "Se ignora. El planificador de prisma-sql elige cómo se cargan las relaciones.",
+      "_count in select / include": "Se admiten conteos filtrados. `_count: true` en la raíz también puede contar relaciones a uno (no verificado).",
+      "Nested orderBy": "Solo campos escalares. Los campos de relación recurren a Prisma.",
+      "Nested cursor, distinct": "Se aplican a una única consulta hija por lotes para todos los padres, no por cada padre.",
+      "not": "Las filas NULL se excluyen, como en Prisma.",
+      "in, notIn": "Las listas vacías se comportan como en Prisma.",
+      "lt, lte, gt, gte": "Un valor null recurre a Prisma.",
+      "contains, startsWith, endsWith": "`%` y `_` no se escapan, como en Prisma.",
+      "mode: 'insensitive'": "PostgreSQL usa ILIKE. En SQLite, donde Prisma rechaza `mode`, prisma-sql lo acepta y usa LOWER().",
+      "AND, OR, NOT": "Un `OR` vacío no coincide con nada, como en Prisma.",
+      "is, isNot": "Cuando se indican ambos, `isNot` se descarta.",
+      "Scalar lists: has, hasSome, hasEvery, isEmpty, equals": "`not` solo acepta `{ equals }`. `isEmpty` trata las listas NULL como vacías.",
+      "Json string_contains, string_starts_with, string_ends_with": "Siempre sin distinguir mayúsculas de minúsculas y comparado con todo el texto JSON.",
+      "DbNull, JsonNull, AnyNull": "El filtro puede descartarse.",
+      "null, undefined": "`undefined` se omite, como en Prisma.",
+      "Enum values": "Se mapean a los nombres de `@map`.",
+      "{ sort, nulls }": "SQLite emula NULLS FIRST / LAST.",
+      "Relation field": "Relaciones a uno, anidadas.",
+      "Optional relation { sort, nulls }": "Extensión de tipos añadida por prisma-sql. Lanza un error en lugar de recurrir a Prisma cuando no es compatible.",
+      "groupBy having": "equals, not, gt, gte, lt, lte, in, notIn. Otros operadores recurren a Prisma.",
+      "groupBy take, skip": "Se aceptan sin `orderBy`; Prisma lo exige.",
+      "aggregate take, skip, cursor, orderBy": "Se ignoran.",
+      "_count: true result shape": "Devuelve `{ _all: n }`; Prisma devuelve `n`.",
+      "$transaction(async (tx) => …)": "Se ejecuta en el cliente base. Las lecturas dentro del callback no se aceleran.",
+      "$transaction([…])": "Las lecturas aceleradas pueden ejecutarse en la conexión de prisma-sql, fuera de la transacción de Prisma.",
+      "$transaction([{ model, method, args }])": "Forma de prisma-sql con nivel de aislamiento y timeout. Solo PostgreSQL.",
+      "findUnique batching": "Cada findUnique ejecuta su propia consulta SQL.",
+      "log, $on('query')": "Las consultas aceleradas no llegan a los logs de Prisma. Usa `debug` u `onQuery`.",
+      "$batch, $batchCount": "Varias lecturas en un solo viaje de ida y vuelta. BigInt y Decimal se devuelven como números de JS.",
+      "createShardedReader": "Devuelve filas en bruto: sin conversión de tipos ni mapeo de enums.",
+      "Multiple schemas (@@schema)": "El esquema está fijado a `public`.",
+      "Decimal": "String en filas planas, número dentro de relaciones incluidas. Los agregados devuelven Prisma.Decimal.",
+      "BigInt": "String en filas planas, número dentro de relaciones incluidas. Los agregados devuelven bigint.",
+      "DateTime": "PostgreSQL: Date en filas planas, string dentro de relaciones incluidas. SQLite: número o string en bruto.",
+      "Boolean": "SQLite devuelve 0 / 1.",
+      "Bytes": "Buffer en filas planas, string hexadecimal dentro de relaciones incluidas.",
+      "Json": "SQLite devuelve el string JSON en bruto cuando no hay include.",
+      "Enum with @map": "Se devuelve el valor de la base de datos, no el nombre del esquema."
+    },
+    "support": {
+      "PostgreSQL, SQLite": "PostgreSQL, SQLite",
+      "No": "No",
+      "PostgreSQL (preview)": "PostgreSQL (vista previa)",
+      "PostgreSQL": "PostgreSQL",
+      "PostgreSQL, SQLite (preview)": "PostgreSQL, SQLite (vista previa)"
+    }
   }
 }

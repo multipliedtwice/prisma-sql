@@ -1,4 +1,5 @@
 ---
+import { localize } from '../../lib/i18n';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import Layout from '../../layouts/Layout.astro';
@@ -25,7 +26,8 @@ interface Props {
   locale: string;
 }
 
-const { t, locale } = Astro.props;
+const { t: dictionary, locale } = Astro.props;
+const t = localize(dictionary, locale);
 
 const pkg = JSON.parse(readFileSync(resolve(process.cwd(), '..', 'package.json'), 'utf-8'));
 
@@ -56,7 +58,7 @@ const structuredData = {
   <HowItWorks t={t} />
   <SecurityCallout t={t} locale={locale} />
   <Features t={t} />
-  {t.extras && <Extras t={t} />}
+  <Extras t={t} />
   <UseCases t={t} />
   <Installation t={t} />
   <FAQ t={t} />

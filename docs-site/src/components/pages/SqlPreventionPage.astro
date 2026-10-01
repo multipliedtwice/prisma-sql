@@ -1,4 +1,5 @@
 ---
+import { localize } from '../../lib/i18n';
 import Layout from '../../layouts/Layout.astro';
 import Header from '../Header.astro';
 import Footer from '../Footer.astro';
@@ -12,7 +13,8 @@ interface Props {
   locale: string;
 }
 
-const { t, locale } = Astro.props;
+const { t: dictionary, locale } = Astro.props;
+const t = localize(dictionary, locale);
 const p = t.sqlPrevention;
 ---
 
@@ -121,11 +123,11 @@ const p = t.sqlPrevention;
       <div class="grid gap-8 md:grid-cols-2">
         <div>
           <span class="chip bg-oxide text-white">{p.codeExamples.unsafe.title}</span>
-          <CodeBlock class="mt-4" tone="danger" file="unsafe.ts" code={p.codeExamples.unsafe.code} />
+          <CodeBlock class="mt-4" tone="danger" file={t.ui.security.unsafeFile} code={p.codeExamples.unsafe.code} />
         </div>
         <div>
           <span class="chip bg-pine text-white">{p.codeExamples.safe.title}</span>
-          <CodeBlock class="mt-4" tone="safe" file="safe.ts" code={p.codeExamples.safe.code} />
+          <CodeBlock class="mt-4" tone="safe" file={t.ui.security.safeFile} code={p.codeExamples.safe.code} />
         </div>
       </div>
     </div>
@@ -165,12 +167,12 @@ const p = t.sqlPrevention;
             <h3 class="text-xl font-semibold text-ink">{practice.title}</h3>
             <p class="mt-2 text-fog">{practice.description}</p>
             <dl class="mt-4 grid gap-3 text-ink">
-              <div class="grid grid-cols-[4.5rem_1fr] items-baseline gap-3">
-                <dt><span class="chip bg-pine text-white">Do</span></dt>
+              <div class="grid grid-cols-[auto_1fr] items-baseline gap-3">
+                <dt><span class="chip bg-pine text-white">{t.ui.security.do}</span></dt>
                 <dd>{practice.do}</dd>
               </div>
-              <div class="grid grid-cols-[4.5rem_1fr] items-baseline gap-3">
-                <dt><span class="chip bg-oxide text-white">Don't</span></dt>
+              <div class="grid grid-cols-[auto_1fr] items-baseline gap-3">
+                <dt><span class="chip bg-oxide text-white">{t.ui.security.dont}</span></dt>
                 <dd>{practice.dont}</dd>
               </div>
             </dl>

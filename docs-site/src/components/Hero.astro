@@ -6,6 +6,7 @@ interface Props {
 }
 
 const { t } = Astro.props;
+const u = t.ui.hero;
 
 const dialects = [
   { id: 'postgres', label: 'PostgreSQL' },
@@ -40,9 +41,12 @@ const installCommand = 'npm install prisma-sql';
             type="button"
             class="group inline-flex items-center justify-between gap-4 rounded-full border border-ink bg-paper py-2.5 pe-2.5 ps-5 text-start font-mono text-[0.9rem] text-ink transition-colors hover:bg-white"
             data-copy={installCommand}
+            data-copy-done={u.copied}
+            data-copy-failed={u.copyFailed}
+            data-copy-status-text={u.copiedStatus}
           >
             <span><span class="text-fog">$</span> {installCommand}</span>
-            <span class="rounded-full bg-ink px-3 py-1 font-sans text-xs font-semibold text-paper" data-copy-label>Copy</span>
+            <span class="rounded-full bg-ink px-3 py-1 font-sans text-xs font-semibold text-paper" data-copy-label>{u.copy}</span>
           </button>
           <a href="/prisma-sql/docs/" class="btn-solid">{t.hero.cta1}</a>
         </div>
@@ -58,10 +62,10 @@ const installCommand = 'npm install prisma-sql';
         </ul>
       </div>
 
-      <figure class="compile lg:col-span-7" data-compile aria-label="A Prisma query and the SQL prisma-sql generates for it">
+      <figure class="compile lg:col-span-7" data-compile aria-label={u.figureLabel}>
         <div class="code-surface overflow-hidden shadow-[0_30px_60px_-30px_rgba(7,37,54,0.55)]">
           <div class="flex items-center justify-between gap-3 border-b border-white/10 px-5 py-3 text-[0.8rem] text-[#9fb4c0]">
-            <span>Your Prisma call</span>
+            <span>{u.yourCall}</span>
             <span class="font-mono">user.findMany</span>
           </div>
           <pre class="nohighlight px-5 py-4 text-[0.82rem] leading-relaxed sm:text-[0.9rem]" dir="ltr"><code class="nohighlight" set:html={queryHtml} /></pre>
@@ -69,9 +73,9 @@ const installCommand = 'npm install prisma-sql';
           <div class="flex flex-wrap items-center justify-between gap-3 border-y border-white/10 bg-white/[0.03] px-5 py-2.5">
             <span class="flex items-center gap-2 text-[0.8rem] text-[#9fb4c0]">
               <svg class="h-3.5 w-3.5 text-amber" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2v10m0 0-4-4m4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              SQL that prisma-sql runs
+              {u.sqlRuns}
             </span>
-            <div class="flex rounded-full bg-black/25 p-0.5" role="group" aria-label="Database">
+            <div class="flex rounded-full bg-black/25 p-0.5" role="group" aria-label={u.database}>
               {dialects.map((d, i) => (
                 <button
                   type="button"
@@ -91,15 +95,13 @@ const installCommand = 'npm install prisma-sql';
                 <span class="sql-line" style={`--i:${n}`} set:html={line || ' '} />
               ))}</code></pre>
               <div class="flex items-center justify-between gap-3 border-t border-white/10 px-5 py-2.5 font-mono text-[0.76rem] text-[#9fb4c0]" dir="ltr">
-                <span>params {d.params}</span>
-                <span>1 statement</span>
+                <span>{u.params} {d.params}</span>
+                <span>{u.statement}</span>
               </div>
             </div>
           ))}
         </div>
-        <figcaption class="mt-3 text-sm text-fog">
-          Output of <code class="text-ink">createToSQL</code> for a two-model schema, line breaks added.
-        </figcaption>
+        <figcaption class="hero-caption mt-3 text-sm text-fog" set:html={u.caption} />
       </figure>
     </div>
   </div>
@@ -127,6 +129,10 @@ const installCommand = 'npm install prisma-sql';
       transform: none;
       clip-path: inset(0 0 0 0);
     }
+  }
+
+  .hero-caption :global(code) {
+    color: #0c344b;
   }
 
   .dialect-btn {
@@ -171,16 +177,17 @@ const installCommand = 'npm install prisma-sql';
       btn.addEventListener('click', async () => {
         const text = btn.dataset.copy ?? '';
         const label = btn.querySelector<HTMLElement>('[data-copy-label]');
+        const idle = label?.textContent ?? '';
         const status = document.querySelector<HTMLElement>('[data-copy-status]');
         try {
           await navigator.clipboard.writeText(text);
-          if (label) label.textContent = 'Copied';
-          if (status) status.textContent = `Copied ${text}`;
+          if (label) label.textContent = btn.dataset.copyDone ?? '';
+          if (status) status.textContent = (btn.dataset.copyStatusText ?? '').replace('{text}', text);
         } catch {
-          if (label) label.textContent = 'Select and copy';
+          if (label) label.textContent = btn.dataset.copyFailed ?? '';
         }
         window.setTimeout(() => {
-          if (label) label.textContent = 'Copy';
+          if (label) label.textContent = idle;
         }, 1800);
       });
     });

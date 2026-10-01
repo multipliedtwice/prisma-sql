@@ -28,11 +28,6 @@ function isPayload(value: unknown): value is Payload {
   return typeof value === 'object' && value !== null && 'names' in value && 'lanes' in value
 }
 
-function formatSpeed(value: number | null) {
-  if (value === null) return 'not run'
-  return value >= 1 ? `${value.toFixed(2)}× faster` : `${value.toFixed(2)}× (slower)`
-}
-
 function initStrip(figure: HTMLElement) {
   const canvas = figure.querySelector<HTMLCanvasElement>('[data-query-canvas]')
   const caption = figure.querySelector<HTMLElement>('[data-query-caption]')
@@ -46,6 +41,11 @@ function initStrip(figure: HTMLElement) {
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const idleCaption = figure.dataset.caption ?? ''
+  const formatSpeed = (value: number | null) => {
+    if (value === null) return figure.dataset.notRun ?? ''
+    const template = (value >= 1 ? figure.dataset.faster : figure.dataset.slower) ?? '{value}×'
+    return template.replace('{value}', value.toFixed(2))
+  }
   const all = lanes.flatMap((lane) => lane.values).filter((v): v is number => v !== null && v > 0)
   const logMax = Math.log(Math.max(2, ...all))
 

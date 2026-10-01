@@ -16,6 +16,7 @@
     @apply bg-paper text-ink font-sans antialiased;
     font-size: 1.0625rem;
     line-height: 1.55;
+    overflow-wrap: break-word;
   }
 
   ::selection {
@@ -44,6 +45,13 @@
 @layer components {
   .page-x {
     @apply mx-auto w-full max-w-page px-5 sm:px-8 lg:px-10;
+  }
+
+  .display-1,
+  .display-2,
+  .display-3 {
+    overflow-wrap: break-word;
+    hyphens: auto;
   }
 
   .display-1 {

@@ -45,9 +45,15 @@ const steps = ins.steps.map((step: any, i: number) => ({ title: step.title, bloc
       ))}
     </ol>
 
-    <p class="mt-4 text-fog">
-      SQLite: pass <code class="text-ink">{'speedExtension({ sqlite: db })'}</code> with a <code class="text-ink">better-sqlite3</code> database.
-      <a href="/prisma-sql/docs/" class="link-underlined ms-1 text-ink">Full setup guide</a>
+    <p class="install-note mt-4 text-fog">
+      <Fragment set:html={t.ui.installation.sqliteNote} />
+      <a href="/prisma-sql/docs/" class="link-underlined ms-1 text-ink">{t.ui.installation.guide}</a>
     </p>
   </div>
 </section>
+
+<style>
+  .install-note :global(code) {
+    color: #0c344b;
+  }
+</style>

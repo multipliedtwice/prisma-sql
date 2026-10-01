@@ -2,7 +2,10 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import t from '../i18n/en.json';
+import en from '../i18n/en.json';
+import { localize } from '../lib/i18n';
+
+const t = localize(en, 'en');
 ---
 
 <Layout title="Page not found - prisma-sql" description="This page does not exist." locale="en" noindex>

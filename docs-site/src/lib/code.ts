@@ -156,10 +156,6 @@ return stmt.all(...normalizedParams)`,
     code: `${QUERY_SNIPPET}
 
 users[0].email
-users[0].posts[0].title
-
-// Same inferred types as Prisma Client.
-// Decimal, BigInt and DateTime values can
-// differ; the parity map lists each case.`,
+users[0].posts[0].title`,
   },
 ]

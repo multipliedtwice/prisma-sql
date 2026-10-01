@@ -1,4 +1,5 @@
 ---
+import { localize } from '../../lib/i18n';
 import Layout from '../../layouts/Layout.astro';
 import Header from '../Header.astro';
 import Footer from '../Footer.astro';
@@ -12,7 +13,8 @@ interface Props {
   locale: string;
 }
 
-const { t, locale } = Astro.props;
+const { t: dictionary, locale } = Astro.props;
+const t = localize(dictionary, locale);
 const p = t.testing;
 const versions = (['v6', 'v7', 'v8'] as const).map((key) => p.multiVersion[key]);
 const techniques = [p.advancedTechniques.dataTypes, p.advancedTechniques.performance];

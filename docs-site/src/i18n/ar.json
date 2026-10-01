@@ -1,8 +1,8 @@
 {
   "meta": {
-    "title": "إصلاح بطء استعلامات Prisma | prisma-sql",
+    "title": "prisma-sql: قراءات أسرع لاستعلامات Prisma المدعومة",
     "description": "يحوّل prisma-sql عمليات القراءة المدعومة في Prisma إلى SQL وينفّذها عبر postgres.js أو better-sqlite3. قياسات الأداء على Prisma v6–v8 مع PostgreSQL وSQLite.",
-    "keywords": "slow prisma, prisma slow, prisma performance, fix slow prisma, speed up prisma, prisma optimization, prisma query speed, slow prisma queries, prisma performance issues, make prisma faster, postgresql, sqlite"
+    "keywords": "بطء prisma, prisma بطيء, أداء prisma, إصلاح بطء prisma, تسريع prisma, تحسين prisma, سرعة استعلامات prisma, استعلامات prisma البطيئة, مشاكل أداء prisma, جعل prisma أسرع, postgresql, sqlite"
   },
   "header": {
     "cta": "إصلاح بطء Prisma →"
@@ -10,26 +10,26 @@
   "hero": {
     "badge": "🚀 الحل لمشكلة بطء Prisma",
     "title": "إصلاح استعلامات Prisma البطيئة",
-    "titleHighlight": "اجعل API أسرع 2–7× (حتى 53.5×)",
-    "description": "هل Prisma بطيء؟ لست وحدك. تحب تجربة المطوّر في Prisma لكن تحتاج أداءً أفضل؟",
-    "descriptionBold": "سرّع استعلامات Prisma البطيئة بمقدار 2–7×",
-    "descriptionSuffix": "(حتى 53.5× على مرشحات العلاقات في SQLite) بدون تغيير أي استعلامات موجودة.",
+    "titleHighlight": "عبر تنفيذ SQL مباشر",
+    "description": "تحب تجربة المطوّر في Prisma لكنك تحتاج عبئًا أقل على القراءة في أشكال الاستعلامات المدعومة؟",
+    "descriptionBold": "تُظهر ملفات JSON الحالية لقياسات الأداء متوسط التسريع عبر Prisma v6 وv7 وv8",
+    "descriptionSuffix": "لعمليات القراءة المدعومة في PostgreSQL وSQLite؛ وتتفاوت النتائج بين أشكال الاستعلامات الفردية.",
     "cta1": "سرّع Prisma الآن",
     "cta2": "شاهد كيف يعمل",
     "trustBadges": [
-      "قراءات Prisma أسرع",
+      "قراءات مدعومة أسرع",
       "بدون تغيير الاستعلامات",
-      "جاهز للإنتاج",
-      "137 اختبار E2E"
+      "ملفات JSON حالية لقياسات الأداء",
+      "PostgreSQL وSQLite"
     ],
     "codeTitle": "إصلاح بطء Prisma بسطر واحد",
     "codeSnippet": "import { PrismaClient, Prisma } from '@prisma/client'\nimport { speedExtension, convertDMMFToModels } from 'prisma-sql'\nimport postgres from 'postgres'\n\nconst sql = postgres(process.env.DATABASE_URL)\nconst models = convertDMMFToModels(Prisma.dmmf.datamodel)\n\nconst prisma = new PrismaClient().$extends(\n  speedExtension({ postgres: sql, models })\n)\n\nconst users = await prisma.user.findMany({\n  where: { status: 'ACTIVE' },\n  include: { posts: true }\n})"
   },
   "stats": [
     {
-      "value": "2–7×",
-      "label": "قراءات Prisma أسرع",
-      "subtitle": "تسريع نموذجي",
+      "value": "v6–v8",
+      "label": "تغطية إصدارات Prisma",
+      "subtitle": "مصفوفة قياس أداء على PostgreSQL وSQLite",
       "color": "text-accent"
     },
     {
@@ -39,9 +39,9 @@
       "color": "text-blue-600"
     },
     {
-      "value": "137",
-      "label": "اختبار E2E",
-      "subtitle": "حل مُتحقق منه",
+      "value": "6",
+      "label": "ملفات القياس",
+      "subtitle": "Prisma v6/v7/v8 × PG/SQLite",
       "color": "text-purple-600"
     },
     {
@@ -53,7 +53,7 @@
   ],
   "problem": {
     "title": "لماذا Prisma بطيء؟",
-    "subtitle": "فهم تطور Prisma وخصائص الأداء يوضح لماذا توجد هذه الإضافة.",
+    "subtitle": "فهم تطور Prisma وخصائص أدائه يوضح سبب وجود هذه الإضافة.",
     "historyTitle": "رحلة Prisma: DX أولًا، والأداء مهم عند التوسع",
     "history": [
       {
@@ -89,7 +89,7 @@
       },
       {
         "title": "التحقق وضمانات الأنواع",
-        "description": "يُحقق Prisma الاستعلامات مقابل المخطط ويفرض ضمانات على مستوى الواجهة. تمنع هذه الضمانات فئات من الأخطاء لكنها تضيف عبئًا لكل استعلام.",
+        "description": "يتحقق Prisma من الاستعلامات مقابل المخطط ويفرض ضمانات على مستوى الواجهة. تمنع هذه الضمانات فئات من الأخطاء لكنها تضيف عبئًا لكل استعلام.",
         "iconPath": "M13 10V3L4 14h7v7l9-11h-7z"
       },
       {
@@ -98,13 +98,13 @@
         "iconPath": "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
       }
     ],
-    "conclusion": "تُكمل هذه الإضافة Prisma عبر توفير مسار أسرع لاستعلامات القراءة. تحتفظ بكل ما تحبه في Prisma مع الحصول على قراءات أسرع 2–7× عادةً (وحتى 53.5× على مرشحات العلاقات في SQLite) عندما تكون السرعة مهمة."
+    "conclusion": "تُكمل هذه الإضافة Prisma بتوفير مسار أسرع لاستعلامات القراءة المدعومة. تحتفظ بـPrisma للمخطط والترحيلات والكتابة والأنواع المولّدة، بينما يتولى SQL المُولَّد عمليات قراءة مختارة كثيفة الاستخدام عبر عملاء قاعدة البيانات الأصلية."
   },
   "performance": {
     "title": "كم أسرع؟ معايير أداء حقيقية",
-    "subtitle": "مقارنة شاملة عبر Prisma v6 و v7 و v8 و Drizzle ORM و Prisma-SQL",
-    "environment": "بيئة القياس: MacBook Pro M1 • PostgreSQL 15 • SQLite 3.43 • 137 حالة اختبار لكل قاعدة بيانات",
-    "footer": "المعايير مبنية على 137 اختبار E2E لكل قاعدة بيانات. Prisma v6.19.3, Prisma v7.10.0, Drizzle ORM latest.",
+    "subtitle": "مقارنة أحدث ملفات JSON لقياسات الأداء عبر Prisma v6 وv7 وv8 وDrizzle ORM وprisma-sql",
+    "environment": "مصدر البيانات: أحدث ملفات JSON في benchmark-results/v6|v7|v8 × postgres|sqlite ضمن هذه النسخة من المستودع",
+    "footer": "ملخص مُولَّد من أحدث ملفات JSON لقياسات الأداء في benchmark-results.",
     "footerLink": "عرض بيانات القياس الكاملة"
   },
   "howItWorks": {
@@ -117,7 +117,7 @@
       },
       {
         "title": "توليد SQL مُحسّن",
-        "description": "تحويل استعلامات Prisma إلى SQL سريع ومُعلّم بالمعاملات مع JOINs مُحسّنة"
+        "description": "تحويل استعلامات Prisma إلى SQL سريع ذي معاملات مربوطة مع JOINs مُحسّنة"
       },
       {
         "title": "تنفيذ مباشر",
@@ -125,10 +125,10 @@
       },
       {
         "title": "إرجاع نتائج متوافقة",
-        "description": "تطابق النتائج الشكل المتوقع في Prisma. تبقى الأنواع وIntelliSense وكود الاستعلام كما هو"
+        "description": "تطابق النتائج الشكل المتوقع في Prisma. تبقى الأنواع وIntelliSense وكود الاستعلام الحالي كما هي"
       }
     ],
-    "codeExample": "const users = await prisma.user.findMany({\n  where: { status: 'ACTIVE' },\n  include: { posts: true }\n})\n\n// Direct SQL execution for reads\n// Benchmarked around ~1.00ms on this workload\n// Same Prisma query code"
+    "codeExample": "const users = await prisma.user.findMany({\n  where: { status: 'ACTIVE' },\n  include: { posts: true }\n})\n\n// تنفيذ SQL مباشر لعمليات القراءة\n// قيس بحوالي ~1.00ms على حمل العمل هذا\n// نفس كود استعلام Prisma"
   },
   "features": {
     "title": "لماذا تختار هذه الإضافة لـPrisma؟",
@@ -148,7 +148,7 @@
       },
       {
         "title": "حل مُختبر للإنتاج",
-        "description": "137 اختبار E2E يتحقق من التوافق مع إصدارات Prisma الحديثة. يُستخدم لتسريع قراءات Prisma في تطبيقات إنتاجية.",
+        "description": "تتحقق اختبارات التكافؤ الحالية من عمليات القراءة المدعومة عبر إصدارات Prisma الحديثة. استخدمه في تطبيقات الإنتاج بعد التحقق من التوافق مع إصدار Prisma وحمل العمل لديك.",
         "color": "purple",
         "iconPath": "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
       },
@@ -160,20 +160,20 @@
       },
       {
         "title": "خيار مُسبق التجميع",
-        "description": "مولّد اختياري ينشئ SQL وقت البناء، ويقلل العبء إلى ميكروثوانٍ لأكثر استعلاماتك سخونة.",
+        "description": "مولّد اختياري ينشئ SQL وقت البناء، ويقلل العبء إلى ميكروثوانٍ لأكثر استعلاماتك استخدامًا.",
         "color": "yellow",
         "iconPath": "M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
       },
       {
-        "title": "جاهز للسيرفرلس (بيئات Node)",
-        "description": "يعمل في بيئات Node السيرفرلس. دعم Edge يعتمد على قيود البيئة والسائق الذي تستخدمه.",
+        "title": "جاهز لـServerless (بيئات Node)",
+        "description": "يعمل في بيئات Node من نوع Serverless. دعم بيئة Edge يعتمد على قيود البيئة والسائق الذي تستخدمه.",
         "color": "green",
         "iconPath": "M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
       }
     ]
   },
   "useCases": {
-    "title": "متى تهمّك أداء Prisma أكثر",
+    "title": "متى يكون أداء Prisma أكثر أهمية",
     "subtitle": "سيناريوهات شائعة تُحدث فيها هذه الإضافة فرقًا حقيقيًا",
     "cases": [
       {
@@ -188,30 +188,30 @@
       },
       {
         "title": "🚀 واجهات API عالية المرور",
-        "description": "يتراكم العبء لكل استعلام تحت الحمل، خصوصًا لنقاط النهاية كثيفة القراءة",
+        "description": "يتراكم العبء لكل استعلام تحت الحمل، خصوصًا في نقاط النهاية كثيفة القراءة",
         "color": "purple",
         "benefits": [
-          "أزمنة استجابة أقل",
+          "أزمنة استجابة أقل لواجهات API",
           "معالجة طلبات أكثر لكل مثيل",
           "خفض تكاليف البنية التحتية"
         ]
       },
       {
         "title": "☁️ وظائف Serverless",
-        "description": "كل ميلي ثانية مهمة في السيرفرلس: قلّل زمن القراءة حيث يهم",
+        "description": "كل ميلي ثانية مهمة في Serverless: قلّل زمن القراءة حيث يهم",
         "color": "green",
         "benefits": [
           "p95/p99 أفضل للقراءات",
           "تكلفة أقل عبر قراءات أسرع",
-          "قراءات أسرع بلا refactor"
+          "قراءات أسرع بلا إعادة هيكلة"
         ]
       },
       {
-        "title": "📱 Backends للموبايل",
-        "description": "المستخدمون يلاحظون التأخير: القراءات الأسرع تحسن UX المُدرَك فورًا",
+        "title": "📱 خوادم تطبيقات الجوال",
+        "description": "المستخدمون يلاحظون التأخير: القراءات الأسرع تحسّن تجربة المستخدم المُدرَكة فورًا",
         "color": "orange",
         "benefits": [
-          "تحميل feed أسرع",
+          "تحميل أسرع للخلاصات",
           "ترقيم صفحات أسرع",
           "تفاعلات أكثر استجابة"
         ]
@@ -223,12 +223,12 @@
     "subtitle": "سرّع قراءات Prisma خلال أقل من 60 ثانية",
     "steps": [
       {
-        "title": "تثبيت إضافة Prisma",
+        "title": "ثبّت إضافة Prisma",
         "language": "language-bash",
         "code": "# PostgreSQL\nnpm install prisma-sql postgres\n\n# SQLite\nnpm install prisma-sql better-sqlite3"
       },
       {
-        "title": "إضافة الإضافة إلى Prisma Client",
+        "title": "أضف الإضافة إلى Prisma Client",
         "language": "language-typescript",
         "code": "import { PrismaClient, Prisma } from '@prisma/client'\nimport { speedExtension, convertDMMFToModels } from 'prisma-sql'\nimport postgres from 'postgres'\n\nconst sql = postgres(process.env.DATABASE_URL)\nconst models = convertDMMFToModels(Prisma.dmmf.datamodel)\n\nconst prisma = new PrismaClient().$extends(\n  speedExtension({ postgres: sql, models })\n)"
       },
@@ -245,11 +245,11 @@
     "questions": [
       {
         "question": "لماذا لدى Prisma عبء إضافي؟",
-        "answer": "يضيف Prisma عبئًا لأنه يطبق ضمانات على مستوى الواجهة مثل التحقق المعتمد على المخطط والسلوك المتسق وتشكيل النتائج. هذه الطبقات تمنح تجربة مطوّر ممتازة لكنها تكلف وقتًا مقارنة بتنفيذ SQL خام مباشرة."
+        "answer": "يضيف Prisma عبئًا لأنه يطبق ضمانات على مستوى الواجهة مثل التحقق المعتمد على المخطط والسلوك المتسق للاستعلامات وتشكيل النتائج. هذه الطبقات تمنح تجربة مطوّر ممتازة لكنها تكلف وقتًا مقارنة بتنفيذ SQL خام مباشرة."
       },
       {
         "question": "كيف أحسّن استعلامات Prisma؟",
-        "answer": "حسّن أحمال Prisma كثيفة القراءة بإضافة هذه الإضافة. تنفذ عمليات القراءة عبر SQL مباشر باستخدام postgres.js أو better-sqlite3 مع الحفاظ على واجهة Prisma وأنواعها. الإعداد تغيير صغير في التهيئة ولا يتطلب إعادة هيكلة لاستعلاماتك."
+        "answer": "حسّن أحمال Prisma كثيفة القراءة بإضافة هذه الإضافة. تنفذ عمليات القراءة عبر SQL مباشر باستخدام postgres.js أو better-sqlite3 مع الحفاظ على واجهة Prisma وأنواعها. الإعداد تغيير صغير في التهيئة ولا يتطلب إعادة هيكلة لاستعلاماتك الحالية."
       },
       {
         "question": "هل Prisma أبطأ من SQL الخام؟",
@@ -261,52 +261,52 @@
       },
       {
         "question": "هل يعمل ذلك في الإنتاج؟",
-        "answer": "نعم. تم التحقق منه عبر 137 اختبار E2E ومصمم للاستخدام في الإنتاج. تحقّق دائمًا من التوافق مع إصدار Prisma لديك وشغّل اختباراتك الرجعية قبل الإطلاق."
+        "answer": "نعم، صُممت للاستخدام في الإنتاج على مسارات القراءة المدعومة. تحقّق دائمًا من التوافق مع إصدار Prisma لديك وشغّل اختبارات الانحدار الخاصة بك قبل الإطلاق."
       },
       {
         "question": "ما الذي يسبب بطء تجميعات Prisma؟",
-        "answer": "عمليات aggregate وgroupBy غالبًا تضخّم العبء الثابت (معالجة الاستعلام وتشكيل النتائج) وقد تشمل مجموعات وسيطة أكبر. تحسن هذه الإضافة هذه القراءات عبر توليد SQL مباشرة، ما يقلل عادةً زمن الاستجابة لنقاط النهاية كثيفة التجميع."
+        "answer": "عمليات aggregate وgroupBy غالبًا تضخّم العبء الثابت (معالجة الاستعلام وتشكيل النتائج) وقد تشمل مجموعات نتائج وسيطة أكبر. تحسّن هذه الإضافة هذه القراءات عبر توليد SQL مباشرة، ما يقلل عادةً زمن الاستجابة لنقاط النهاية كثيفة التجميع."
       }
     ]
   },
   "cta": {
     "title": "جاهز لتسريع Prisma؟",
-    "subtitle": "انضم إلى المطورين الذين يحسنون قراءات Prisma: أسرع 2–7× (حتى 53.5×)",
+    "subtitle": "راجع جدول القياس الحالي لعمليات القراءة المدعومة في PostgreSQL وSQLite",
     "button1": "تثبيت Prisma-SQL",
     "button2": "عرض على GitHub"
   },
   "footer": {
-    "copyright": "© 2026 Prisma-SQL - سرّع قراءات Prisma بمقدار 2–7× (حتى 53.5×)",
-    "tagline": "نجعل Prisma أفضل"
+    "copyright": "© 2026 Prisma-SQL - قراءات Prisma مدعومة أسرع",
+    "tagline": "نجعل Prisma أفضل مما هو عليه"
   },
   "testingCallout": {
     "badge": "✓ مُتحقق",
     "title": "كيف نضمن الصحة؟",
-    "description": "يتم التحقق من كل استعلام مقابل Prisma عبر 137 اختبار end-to-end على PostgreSQL وSQLite",
+    "description": "يتم التحقق من الاستعلامات المدعومة مقابل Prisma على PostgreSQL وSQLite، مع تقارير قياس أداء تغطي Prisma v6 وv7 وv8 وDrizzle وSQL المُولَّد.",
     "link": "عرض منهجية الاختبار →"
   },
   "testing": {
     "meta": {
       "title": "منهجية الاختبار - prisma-sql",
-      "description": "نهج اختبار شامل: 137 اختبار E2E يضمن أن SQL المُولّد يطابق ناتج Prisma تمامًا",
-      "keywords": "prisma testing, sql validation, e2e tests, orm testing, database testing"
+      "description": "يتم التحقق من الاستعلامات المدعومة مقابل Prisma على PostgreSQL وSQLite، وتقارن تقارير القياس بين Prisma v6 وv7 وv8 وDrizzle وSQL المُولَّد.",
+      "keywords": "اختبار prisma, التحقق من sql, اختبارات e2e, اختبار orm, اختبار قواعد البيانات"
     },
     "hero": {
       "badge": "🧪 ضمان الجودة",
-      "title": "الاختبار",
-      "titleHighlight": "المنهجية",
-      "subtitle": "137 اختبار end-to-end يتحقق من أن كل SQL مُولّد يطابق ناتج Prisma تمامًا"
+      "title": "منهجية",
+      "titleHighlight": "الاختبار",
+      "subtitle": "يغطي التحقق الحالي عمليات القراءة المدعومة على PostgreSQL وSQLite، مع تقارير قياس أداء لـ Prisma v6 وv7 وv8 وDrizzle وSQL المُولَّد."
     },
     "stats": [
       {
-        "value": "137",
-        "label": "اختبارات E2E",
-        "description": "التحقق من كل استعلام"
+        "value": "حالية",
+        "label": "مجموعة E2E",
+        "description": "التحقق من تكافؤ الاستعلامات"
       },
       {
         "value": "100%",
-        "label": "تغطية التطابق",
-        "description": "تطابق حرفيًا (byte-for-byte)"
+        "label": "تغطية التكافؤ",
+        "description": "تطابق بايت ببايت"
       },
       {
         "value": "2",
@@ -316,32 +316,32 @@
       {
         "value": "4",
         "label": "مقارنات ORM",
-        "description": "Prisma v6/v7/v8, Drizzle"
+        "description": "Prisma v6/v7/v8 وDrizzle"
       }
     ],
     "validation": {
       "title": "كيف نتحقق من الصحة",
-      "subtitle": "يتبع كل اختبار عملية تحقق صارمة من 5 خطوات لضمان أن SQL المُولّد ينتج نفس نتائج Prisma",
+      "subtitle": "يتبع كل اختبار عملية تحقق صارمة من 5 خطوات لضمان أن SQL المُولَّد ينتج نفس نتائج Prisma",
       "steps": [
         {
           "title": "توليد SQL من استعلام Prisma",
-          "description": "تحليل وسيطات استعلام Prisma وتوليد SQL مكافئ باستخدام نفس النماذج والمخطط. يستخدم SQL المُولّد استعلامات مُعلّمة بالمعاملات للأمان والأداء."
+          "description": "تحليل وسائط استعلام Prisma وتوليد SQL مكافئ باستخدام نفس النماذج والمخطط. يستخدم SQL المُولَّد استعلامات ذات معاملات مربوطة للأمان والأداء."
         },
         {
           "title": "تنفيذ الاستعلامين بالتوازي",
-          "description": "تشغيل SQL المُولّد مباشرة عبر postgres.js أو better-sqlite3 وتشغيل نفس الاستعلام عبر Prisma. كلاهما يضرب نفس حالة قاعدة البيانات."
+          "description": "تشغيل SQL المُولَّد مباشرة عبر postgres.js أو better-sqlite3، وتنفيذ نفس الاستعلام عبر Prisma. كلاهما يعمل على نفس حالة قاعدة البيانات."
         },
         {
           "title": "تطبيع النتائج",
-          "description": "معالجة اختلافات الأنواع (BigInt مقابل Number، دقة Decimal، تسلسل Date) وتطبيع ترتيب مفاتيح الكائن للمقارنة العادلة."
+          "description": "معالجة اختلافات الأنواع (BigInt مقابل Number، دقة Decimal، تسلسل Date) وتطبيع ترتيب مفاتيح الكائن لمقارنة عادلة."
         },
         {
           "title": "فحص مساواة عميق",
-          "description": "التحقق من التطابق التام: نفس عدد الصفوف ونفس قيم الحقول ونفس العلاقات المتداخلة ونفس الترتيب. أي اختلاف يفشل الاختبار."
+          "description": "التحقق من التطابق التام: نفس عدد الصفوف ونفس قيم الحقول ونفس العلاقات المتداخلة ونفس الترتيب. أي اختلاف يُفشل الاختبار."
         },
         {
           "title": "قياس الأداء",
-          "description": "قياس زمن التنفيذ عبر 5 تشغيلات تمهيدية ثم متوسط 10–50 تكرارًا لكل اختبار. المقارنة مع Prisma v6 وPrisma v7 وPrisma v8 وDrizzle ORM."
+          "description": "قياس زمن التنفيذ عبر 5 تشغيلات تمهيدية ثم حساب متوسط 10-50 تكرارًا لكل اختبار. المقارنة مع Prisma v6 وPrisma v7 وPrisma v8 وDrizzle ORM."
         }
       ]
     },
@@ -377,19 +377,19 @@
         "items": [
           {
             "label": "مرحلة التمهيد",
-            "description": "5 تكرارات لتهيئة الكاش وJIT"
+            "description": "5 تكرارات لتهيئة الذاكرة المؤقتة وJIT"
           },
           {
             "label": "تكرارات تكيفية",
-            "description": "5–50 تشغيلًا حسب تعقيد الاستعلام"
+            "description": "5-50 تشغيلًا حسب تعقيد الاستعلام"
           },
           {
             "label": "قياس معزول",
             "description": "قياس مستقل لكل نوع استعلام"
           },
           {
-            "label": "مقارنة متعددة ORM",
-            "description": "Prisma v6, v7, v8, Drizzle, SQL المُولّد"
+            "label": "مقارنة بين عدة ORMs",
+            "description": "Prisma v6 وv7 وv8 وDrizzle وSQL المُولَّد"
           },
           {
             "label": "زمن توليد SQL",
@@ -407,31 +407,31 @@
           "items": [
             "findMany مع مرشحات معقدة",
             "findFirst مع skip والترقيم",
-            "findUnique بواسطة ID وحقول فريدة",
+            "findUnique بواسطة ID والحقول الفريدة",
             "count مع شروط WHERE",
             "aggregate (sum, avg, min, max)",
-            "groupBy مع HAVING"
+            "groupBy مع عبارات HAVING"
           ]
         },
         {
           "title": "سيناريوهات معقدة",
           "items": [
-            "Includes متداخلة (حتى 4 مستويات)",
+            "includes متداخلة (بعمق 4 مستويات)",
             "مرشحات العلاقات (some/every/none)",
-            "Distinct مع دوال نافذة",
-            "ترقيم بالـcursor",
-            "دمج Select + include",
+            "Distinct مع دوال النافذة",
+            "الترقيم بالمؤشر (cursor)",
+            "دمج select + include",
             "عدّ العلاقات (_count)"
           ]
         },
         {
           "title": "أنواع المرشحات",
           "items": [
-            "مقارنات (lt/lte/gt/gte)",
-            "منطق (AND/OR/NOT)",
-            "عمليات نصية (contains/startsWith)",
+            "المقارنة (lt/lte/gt/gte)",
+            "المنطقية (AND/OR/NOT)",
+            "عمليات النصوص (contains/startsWith)",
             "فحوص NULL (is/isNot)",
-            "IN/NOT IN arrays",
+            "مصفوفات IN/NOT IN",
             "أوضاع حساسية حالة الأحرف"
           ]
         }
@@ -441,23 +441,23 @@
       "postgres": {
         "title": "اختبارات PostgreSQL",
         "items": [
-          "ILIKE للبحث غير الحساس",
+          "ILIKE للبحث غير الحساس لحالة الأحرف",
           "عمليات JSON/JSONB",
-          "تعامل حقول array",
-          "دعم الأنواع المركبة",
-          "تحقق دوال النافذة",
+          "معالجة حقول المصفوفات",
+          "دعم الأنواع المركّبة",
+          "التحقق من دوال النافذة",
           "اختبار عزل المعاملات"
         ]
       },
       "sqlite": {
         "title": "اختبارات SQLite",
         "items": [
-          "مطابقة نمط LIKE",
+          "مطابقة أنماط LIKE",
           "التحقق من امتداد JSON1",
           "محاكاة دوال النافذة",
           "تحسين DISTINCT",
           "ترابط الاستعلامات الفرعية",
-          "تعامل text affinity"
+          "معالجة text affinity"
         ]
       }
     },
@@ -465,7 +465,7 @@
       "title": "مثال على حالة اختبار",
       "subtitle": "شاهد كيف نتحقق من استعلام متداخل معقد مع مرشحات علاقات",
       "filename": "tests/e2e/postgres.test.ts",
-      "code": "it('nested relation filter', () =>\n  runParityTest(\n    db,\n    benchmarkResults,\n    'findMany nested relation',\n    'Organization',\n    {\n      method: 'findMany',\n      where: {\n        projects: {\n          some: {\n            tasks: { some: { status: 'DONE' } }\n          }\n        }\n      }\n    },\n    () => db.prisma.organization.findMany({\n      where: {\n        projects: {\n          some: {\n            tasks: { some: { status: 'DONE' } }\n          }\n        }\n      },\n      orderBy: { id: 'asc' }\n    }),\n  )\n)\n\n// runParityTest internally:\n// 1. Calls generateSQL() with the args\n// 2. Executes generated SQL directly\n// 3. Executes Prisma query\n// 4. Normalizes both results\n// 5. Deep equality check - fails if any difference\n// 6. Benchmarks execution time"
+      "code": "it('nested relation filter', () =>\n  runParityTest(\n    db,\n    benchmarkResults,\n    'findMany nested relation',\n    'Organization',\n    {\n      method: 'findMany',\n      where: {\n        projects: {\n          some: {\n            tasks: { some: { status: 'DONE' } }\n          }\n        }\n      }\n    },\n    () => db.prisma.organization.findMany({\n      where: {\n        projects: {\n          some: {\n            tasks: { some: { status: 'DONE' } }\n          }\n        }\n      },\n      orderBy: { id: 'asc' }\n    }),\n  )\n)\n\n// ما تفعله runParityTest داخليًا:\n// 1. تستدعي generateSQL() بالوسائط\n// 2. تنفّذ SQL المُولَّد مباشرة\n// 3. تنفّذ استعلام Prisma\n// 4. تطبّع النتيجتين\n// 5. فحص مساواة عميق - يفشل عند أي اختلاف\n// 6. تقيس زمن التنفيذ"
     },
     "executionFlow": {
       "title": "ما الذي يحدث أثناء تنفيذ الاختبار",
@@ -473,61 +473,61 @@
         {
           "number": "1",
           "title": "توليد الاستعلام (ميكروثوانٍ)",
-          "description": "تقوم generateSQL() بتحليل وسيطات Prisma وإنشاء SQL مُعلّم بالمعاملات. يتم قياس هذه الخطوة بشكل منفصل لقياس عبء توليد SQL."
+          "description": "تحلّل الدالة generateSQL() وسائط Prisma وتنشئ SQL ذا معاملات مربوطة. تُقاس هذه الخطوة بشكل منفصل لقياس عبء توليد الاستعلام."
         },
         {
           "number": "2",
           "title": "تنفيذ متوازٍ (ميلي ثانية)",
-          "description": "يضرب الاستعلامان نفس حالة قاعدة البيانات بالتزامن باستخدام Promise.all() لضمان مقارنة عادلة وظروف بيانات متطابقة."
+          "description": "يعمل الاستعلامان على نفس حالة قاعدة البيانات في الوقت نفسه باستخدام Promise.all()، ما يضمن مقارنة عادلة وظروف بيانات متطابقة."
         },
         {
           "number": "3",
           "title": "تطبيع عميق",
-          "description": "تخضع النتائج لتطبيع تكراري: BigInt→Number، Decimal→Float(10)، Date→null، تحليل JSON، وفرز المفاتيح. يضمن ذلك دقة مقارنة byte-for-byte."
+          "description": "تخضع النتائج لتطبيع تكراري: BigInt→Number، Decimal→Float(10)، Date→null، تحليل JSON، وفرز المفاتيح. يضمن ذلك دقة المقارنة بايت ببايت."
         },
         {
           "number": "4",
           "title": "مساواة صارمة",
-          "description": "مقارنة JSON stringify بدون أي تسامح. أي اختلاف في عدد الصفوف أو القيم أو الكائنات المتداخلة أو الترتيب يفشل الاختبار مع diff مفصل."
+          "description": "مقارنة عبر JSON stringify بدون أي تسامح. أي اختلاف في عدد الصفوف أو قيم الحقول أو الكائنات المتداخلة أو الترتيب يُفشل الاختبار مع مخرجات diff مفصّلة."
         },
         {
           "number": "5",
           "title": "قياس الأداء",
-          "description": "بعد التحقق، تقيس 5–50 تكرارًا متوسط زمن التنفيذ. تشمل النتائج: Prisma v6 وPrisma v7 وPrisma v8 وDrizzle ORM وSQL المُولّد وعبء توليد SQL."
+          "description": "بعد التحقق، تقيس 5-50 تكرارًا متوسط زمن التنفيذ. تشمل النتائج: Prisma v6 وPrisma v7 وPrisma v8 وDrizzle ORM وSQL المُولَّد وعبء توليد SQL."
         }
       ]
     },
     "multiVersion": {
       "title": "تحقق متعدد الإصدارات",
-      "description": "يعمل كل اختبار على Prisma v6 وv7 وv8 لضمان التوافق عبر الإصدارات:",
+      "description": "يعمل كل اختبار مشمول بالقياس على Prisma v6 وv7 وv8 حيثما كان ذلك مدعومًا:",
       "v6": {
         "title": "Prisma v6 (6.19.3)",
         "items": [
           "استخدام PrismaClient مباشرة",
-          "بنية محرك قديمة",
-          "مقاييس أداء أساس"
+          "بنية المحرك القديمة",
+          "مقاييس أداء مرجعية"
         ]
       },
       "v7": {
         "title": "Prisma v7 (7.10.0)",
         "items": [
           "بنية قائمة على adapters",
-          "@prisma/adapter-pg & adapter-better-sqlite3",
-          "تحسينات محرك جديدة"
+          "@prisma/adapter-pg و adapter-better-sqlite3",
+          "تحسينات المحرك الجديدة"
         ]
       },
       "v8": {
         "title": "Prisma v8 (8.1.0-dev.1)",
         "items": [
-          "Prisma v8",
-          "@prisma/adapter-*",
-          "PostgreSQL + SQLite"
+          "تغطية إصدار التطوير من Prisma v8",
+          "بنية قائمة على adapters",
+          "تكافؤ قياس الأداء على PostgreSQL وSQLite"
         ]
       }
     },
     "benchmarkReports": {
       "title": "تقارير قياس مؤتمتة",
-      "description": "تُولَّد جميع نتائج القياس تلقائيًا وتُخزَّن كملفات JSON للشفافية الكاملة:",
+      "description": "تُولَّد جميع نتائج القياس تلقائيًا وتُخزَّن كملفات JSON للشفافية الكاملة:",
       "files": [
         "benchmark-results/v6-postgres-latest.json",
         "benchmark-results/v7-postgres-latest.json",
@@ -536,11 +536,11 @@
         "benchmark-results/v7-sqlite-latest.json",
         "benchmark-results/v8-sqlite-latest.json"
       ],
-      "footer": "يحتوي كل ملف على: اسم الاختبار، زمن Prisma، زمن SQL المُولّد، زمن Drizzle، نسب التسريع، وطابع ISO."
+      "footer": "يحتوي كل ملف على: اسم الاختبار، زمن تنفيذ Prisma، زمن SQL المُولَّد، زمن Drizzle، نسب التسريع، وطابع زمني ISO."
     },
     "cta": {
       "title": "استكشف مجموعة الاختبارات كاملة",
-      "subtitle": "كل الاختبارات الـ137 مفتوحة المصدر. راجع كود الاختبار والقياسات ومنطق التحقق.",
+      "subtitle": "مجموعة التحقق وتقارير القياس مفتوحة المصدر. راجع كود الاختبارات وبيانات القياس وفحوص التكافؤ.",
       "button1": "عرض مجموعة الاختبارات →",
       "button2": "عرض القياسات"
     }
@@ -548,41 +548,41 @@
   "sqlPrevention": {
     "meta": {
       "title": "منع حقن SQL - أمان prisma-sql",
-      "description": "منهجية منع حقن SQL باستخدام ربط المعاملات والتحقق المعتمد على المخطط و137 اختبارًا أمنيًا (المجموعة الحالية)",
-      "keywords": "sql injection prevention, parameterized queries, sql security, database security, prisma security"
+      "description": "منهجية منع حقن SQL باستخدام ربط المعاملات والتحقق المعتمد على المخطط ومجموعة الاختبارات الحالية المركّزة على الأمان",
+      "keywords": "منع حقن sql, استعلامات ذات معاملات, أمان sql, أمان قواعد البيانات, أمان prisma"
     },
     "hero": {
       "badge": "🔒 الأمان أولًا",
-      "title": "حقن SQL",
-      "titleHighlight": "المنع",
-      "subtitle": "لا يتم إدراج القيم المقدمة من المستخدم داخل نص SQL مطلقًا — بل تُربط عبر placeholders للمعاملات (حسب اللهجة، مثل $1 أو ?)"
+      "title": "منع",
+      "titleHighlight": "حقن SQL",
+      "subtitle": "لا تُدرج القيم المقدَّمة من المستخدم داخل نص SQL أبدًا — بل تُربط عبر عناصر نائبة للمعاملات (حسب لهجة SQL، مثل $1 أو ?)"
     },
     "stats": [
       {
         "value": "100%",
-        "label": "مربوط بالمعاملات",
-        "description": "كل قيم المستخدم تستخدم placeholders"
+        "label": "ربط بالمعاملات",
+        "description": "كل القيم المقدَّمة من المستخدم تستخدم عناصر نائبة"
       },
       {
-        "value": "Zero",
-        "label": "إقحام القيم",
-        "description": "بيانات المستخدم لا تظهر في نص SQL"
+        "value": "صفر",
+        "label": "إدراج القيم في النص",
+        "description": "بيانات المستخدم لا تظهر أبدًا في نص SQL"
       },
       {
-        "value": "Guaranteed",
+        "value": "مضمون",
         "label": "حفظ الترتيب",
-        "description": "placeholders تطابق params بنسبة 1:1"
+        "description": "العناصر النائبة تقابل المعاملات 1:1"
       },
       {
-        "value": "137",
-        "label": "اختبارات أمان",
-        "description": "تغطية محاولات الحقن (المجموعة الحالية)"
+        "value": "حالية",
+        "label": "اختبارات الأمان",
+        "description": "تغطية محاولات الحقن"
       }
     ],
     "threat": {
       "title": "فهم حقن SQL",
       "subtitle": "يبقى حقن SQL من أخطر ثغرات تطبيقات الويب",
-      "description": "يحدث حقن SQL عندما تُضمَّن بيانات غير موثوقة داخل نص SQL بدون ربط معاملات آمن. يمكن للمهاجمين تغيير معنى الاستعلام للوصول إلى بيانات غير مصرح بها أو تعديل سجلات أو تنفيذ عمليات غير مقصودة.",
+      "description": "يحدث حقن SQL عندما تُضمَّن بيانات غير موثوقة داخل نص SQL بدون ربط معاملات آمن. يمكن للمهاجمين تغيير معنى الاستعلام للوصول إلى بيانات غير مصرح بها أو تعديل سجلات أو تنفيذ عمليات غير مقصودة.",
       "examples": {
         "title": "أنماط هجوم شائعة",
         "items": [
@@ -603,7 +603,7 @@
           },
           {
             "name": "استغلال خطأ ترتيب المعاملات",
-            "attack": "Exploit: If placeholders and params are mismatched, authorization checks may use the wrong values",
+            "attack": "استغلال: إذا لم تتطابق العناصر النائبة مع المعاملات، فقد تستخدم فحوص التفويض قيمًا خاطئة",
             "description": "مثال: WHERE userId=$1 AND isAdmin=$2، لكن params=[true, 123] بدلًا من [123, true] قد يمنح صلاحيات admin بشكل خاطئ"
           }
         ]
@@ -614,177 +614,177 @@
       "subtitle": "يمر كل استعلام عبر طبقات متعددة من التحقق الأمني",
       "layers": [
         {
-          "title": "الطبقة 1: ربط معاملات تلقائي",
-          "description": "تُحوَّل كل قيم المستخدم إلى معاملات مربوطة. لا تدخل القيم نص SQL كحروفية.",
+          "title": "الطبقة 1: ربط تلقائي للمعاملات",
+          "description": "تُحوَّل كل القيم المقدَّمة من المستخدم إلى معاملات مربوطة. لا تدخل القيم نص SQL كقيم حرفية (literals).",
           "guarantees": [
-            "تمثيل قيم المستخدم عبر placeholders خاصة باللهجة (مثل $1 أو ?)",
-            "مُدخلات المصفوفات تُعلَّم (توسيع placeholders أو معاملات array حسب اللهجة/الاستراتيجية)",
-            "معالجة NULL والقيم الاختيارية بدون وصل إدخال المستخدم بنص SQL",
-            "قيم التاريخ/الوقت تُعلَّم",
-            "قيم JSON تُعلَّم"
+            "تُمثَّل قيم المستخدم بعناصر نائبة خاصة بلهجة SQL (مثل $1 أو ?)",
+            "مُدخلات المصفوفات تُمرَّر كمعاملات (عناصر نائبة موسّعة أو معاملات مصفوفة حسب اللهجة/الاستراتيجية)",
+            "تُعالَج قيم NULL والقيم الاختيارية دون دمج مُدخلات المستخدم في نص SQL",
+            "قيم التاريخ/الوقت تُمرَّر كمعاملات",
+            "قيم JSON تُمرَّر كمعاملات"
           ]
         },
         {
           "title": "الطبقة 2: التحقق من أسماء الحقول",
-          "description": "يتم التحقق من كل اسم حقل مقابل بيانات مخطط Prisma قبل توليد الاستعلام.",
+          "description": "يتم التحقق من كل اسم حقل مقابل البيانات الوصفية لمخطط Prisma قبل توليد الاستعلام.",
           "guarantees": [
-            "السماح فقط بالحقول المعرفة في المخطط",
-            "التحقق من مرشحات العلاقات عبر بيانات المخطط",
+            "السماح فقط بالحقول المعرَّفة في المخطط",
+            "التحقق من مرشحات العلاقات عبر البيانات الوصفية للمخطط",
             "لا تُقبل أسماء حقول عشوائية",
-            "رفض الحقول غير المدعومة/المحسوبة عند الحاجة",
-            "رفض حمولات prototype pollution (مثل __proto__ وconstructor)"
+            "رفض الحقول غير المدعومة/المحسوبة عند الاقتضاء",
+            "رفض حمولات تلويث النموذج الأولي (prototype pollution) (مثل __proto__ وconstructor)"
           ]
         },
         {
           "title": "الطبقة 3: تنقية المعرّفات",
-          "description": "التحقق من أسماء الجداول والأعمدة والـaliases واقتباسها/هروبها بأمان حسب الحاجة.",
+          "description": "يتم التحقق من أسماء الجداول والأعمدة والأسماء المستعارة (aliases) واقتباسها/تهريبها بأمان حسب الحاجة.",
           "guarantees": [
             "رفض أحرف التحكم",
             "اقتباس الكلمات المحجوزة عند الحاجة",
-            "دعم تأهيل المخطط عند الإعداد",
-            "هروب علامات الاقتباس المزدوجة (أو ما يعادلها) للمعرّفات",
+            "دعم تأهيل المخطط حيثما تم إعداده",
+            "تهريب علامات الاقتباس المزدوجة (أو ما يعادلها في اللهجة) للمعرّفات",
             "فرض الحد الأقصى لطول المعرّف حسب اللهجة"
           ]
         },
         {
-          "title": "الطبقة 4: التحقق من العوامل (Operators)",
+          "title": "الطبقة 4: التحقق من العوامل",
           "description": "السماح فقط بعوامل معروفة وآمنة لكل نوع حقل.",
           "guarantees": [
-            "عوامل النص: contains, startsWith, endsWith",
-            "عوامل الأرقام: lt, lte, gt, gte",
-            "عوامل المصفوفات: in, notIn مع تحقق النوع",
-            "العوامل المنطقية: AND, OR, NOT تُتحقق بنيويًا",
+            "عوامل النصوص: contains, startsWith, endsWith",
+            "العوامل الرقمية: lt, lte, gt, gte",
+            "عوامل المصفوفات: in, notIn مع التحقق من النوع",
+            "العوامل المنطقية: AND, OR, NOT يُتحقق منها بنيويًا",
             "رفض العوامل غير المعروفة فورًا"
           ]
         },
         {
           "title": "الطبقة 5: ضمان ترتيب المعاملات",
-          "description": "ترتيب صارم يضمن أن كل placeholder يطابق معاملًا واحدًا بالضبط حسب ترتيب الإدراج لمنع عدم التطابق.",
+          "description": "ترتيب صارم يضمن أن كل عنصر نائب يقابل معاملًا واحدًا بالضبط حسب ترتيب الإدراج، مما يمنع عدم التطابق.",
           "guarantees": [
             "عداد تسلسلي يمنع إعادة الترتيب",
-            "بناء SQL ومصفوفة المعاملات بخطوة متزامنة",
-            "لا توجد مخازن أو عمليات إعادة ترتيب وسيطة",
-            "تحقق الاختبارات: SQL المُولّد والمعاملات دائمًا متطابقان",
-            "مطابقة 1–1: placeholder رقم N → params[N-1] (أو ما يعادلها حسب اللهجة)"
+            "بناء SQL ومصفوفة المعاملات بشكل متزامن خطوة بخطوة",
+            "لا مخازن وسيطة ولا عمليات إعادة ترتيب",
+            "تحقق الاختبارات: SQL المُولَّد والمعاملات متطابقان دائمًا",
+            "تطابق واحد لواحد: العنصر النائب N → params[N-1] (أو ما يعادله حسب اللهجة)"
           ]
         }
       ]
     },
     "formalProofs": {
       "title": "ضمانات أمنية شكلية",
-      "subtitle": "ملخصات براهين لمقاومة الحقن وفق افتراضات التصميم (ربط معاملات، لا تجاوز raw SQL، استخدام صحيح للسائق)",
+      "subtitle": "مخططات براهين لمقاومة الحقن وفق افتراضات التصميم المعلنة (ربط المعاملات، لا تجاوز عبر SQL خام، استخدام صحيح للسائق)",
       "proofs": [
         {
           "title": "المبرهنة 1: عزل القيم",
-          "statement": "For all user-provided values V, there exists no execution path where V appears as SQL text in the generated query string.",
-          "proof": "By construction, all code paths that handle user values call addParameter(value) which:\n1. Stores the value in a separate params array\n2. Returns a placeholder token for the SQL text\n3. Only the placeholder token is appended into the SQL string\n4. The database driver receives SQL text and parameter values separately\n∴ User values are not parsed as SQL syntax",
+          "statement": "لكل القيم المقدَّمة من المستخدم V، لا يوجد مسار تنفيذ تظهر فيه V كنص SQL في سلسلة الاستعلام المُولَّدة.",
+          "proof": "بحكم البناء، تستدعي كل مسارات الكود التي تعالج قيم المستخدم الدالة addParameter(value) التي:\n1. تخزّن القيمة في مصفوفة params منفصلة\n2. تُرجع رمز عنصر نائب لنص SQL\n3. يُلحَق رمز العنصر النائب فقط بسلسلة SQL\n4. يستقبل سائق قاعدة البيانات نص SQL وقيم المعاملات بشكل منفصل\n∴ لا تُحلَّل قيم المستخدم كصياغة SQL",
           "code": "const addParameter = (params: any[], value: any) => {\n  params.push(value)\n  const index = params.length\n  return `$${index}`\n}"
         },
         {
-          "title": "المبرهنة 2: إغلاق أسماء الحقول",
-          "statement": "The set of field names F in any generated query is a subset of schema-defined fields S, i.e., F ⊆ S.",
-          "proof": "For every field reference:\n1. Field name extracted from query object\n2. Lookup performed against schema metadata\n3. If the field does not exist in the schema, an error is thrown\n4. Only validated fields reach SQL generation\n∴ Arbitrary field names cannot appear in SQL",
+          "title": "المبرهنة 2: انغلاق أسماء الحقول",
+          "statement": "مجموعة أسماء الحقول F في أي استعلام مُولَّد هي مجموعة جزئية من الحقول المعرَّفة في المخطط S، أي F ⊆ S.",
+          "proof": "لكل مرجع إلى حقل:\n1. يُستخرج اسم الحقل من كائن الاستعلام\n2. يُبحث عنه في البيانات الوصفية للمخطط\n3. إذا لم يكن الحقل موجودًا في المخطط، يُرمى خطأ\n4. لا تصل إلى توليد SQL إلا الحقول التي تم التحقق منها\n∴ لا يمكن أن تظهر أسماء حقول عشوائية في SQL",
           "code": "const validateField = (field: string, model: Model) => {\n  if (!model.fields.has(field)) {\n    throw new Error(`Field ${field} does not exist`)\n  }\n  return model.fields.get(field)\n}"
         },
         {
           "title": "المبرهنة 3: أمان العوامل",
-          "statement": "For any operator O applied to field F, O is a member of the allowed operators for F's type T.",
-          "proof": "Operator validation algorithm:\n1. Extract field type T from schema\n2. Define allowed_ops(T) = { valid operators for type T }\n3. For operator O in query:\n   - If O ∉ allowed_ops(T), throw error\n   - Else apply operator using parameter binding\n∴ Only type-appropriate operators can be used",
+          "statement": "لأي عامل O يُطبَّق على الحقل F، ينتمي O إلى مجموعة العوامل المسموح بها لنوع الحقل F وهو T.",
+          "proof": "خوارزمية التحقق من العوامل:\n1. استخراج نوع الحقل T من المخطط\n2. تعريف allowed_ops(T) = { العوامل الصالحة للنوع T }\n3. لكل عامل O في الاستعلام:\n   - إذا كان O ∉ allowed_ops(T)، يُرمى خطأ\n   - وإلا يُطبَّق العامل باستخدام ربط المعاملات\n∴ لا يمكن استخدام إلا العوامل المناسبة للنوع",
           "code": "const ALLOWED_OPS: Record<string, string[]> = {\n  String: ['contains', 'startsWith', 'endsWith'],\n  Int: ['lt', 'lte', 'gt', 'gte']\n}\nif (!ALLOWED_OPS[fieldType]?.includes(operator)) {\n  throw new Error('Invalid operator')\n}"
         },
         {
           "title": "المبرهنة 4: أمان المعرّفات",
-          "statement": "All SQL identifiers I are validated to prevent control characters and to ensure safe quoting/escaping per dialect.",
-          "proof": "Identifier processing:\n1. Reject if contains control characters\n2. Escape internal quote characters per dialect rules\n3. Quote identifiers when required (reserved keywords or special characters)\n4. Enforce per-dialect identifier length limits\n∴ Identifiers cannot break SQL syntax or introduce injected tokens",
+          "statement": "يتم التحقق من جميع معرّفات SQL (I) لمنع أحرف التحكم ولضمان اقتباس/تهريب آمن حسب اللهجة.",
+          "proof": "معالجة المعرّفات:\n1. الرفض إذا احتوى المعرّف على أحرف تحكم\n2. تهريب علامات الاقتباس الداخلية وفق قواعد اللهجة\n3. اقتباس المعرّفات عند الحاجة (الكلمات المحجوزة أو الأحرف الخاصة)\n4. فرض حدود طول المعرّف لكل لهجة\n∴ لا يمكن للمعرّفات كسر صياغة SQL أو إدخال رموز محقونة",
           "code": "const quoteIdentifier = (id: string) => {\n  if (/[\\x00-\\x1F]/.test(id)) {\n    throw new Error('Invalid characters')\n  }\n  const escaped = id.replace(/\"/g, '\"\"')\n  const needsQuoting = /[^a-z0-9_]/i.test(id) || isReservedKeyword(id)\n  return needsQuoting ? `\"${escaped}\"` : id\n}"
         },
         {
           "title": "المبرهنة 5: اتساق ترتيب المعاملات",
-          "statement": "For every placeholder position N emitted into the SQL text, params[N-1] contains the exact value intended for that position, with no reordering or mismatch.",
-          "proof": "Parameter ordering guarantee:\n1. A single tracker maintains insertion order\n2. Each add() call appends the value to params and immediately emits the next placeholder token\n3. SQL text construction and params construction proceed in lockstep\n4. No intermediate reordering operations occur\n∴ One-to-one correspondence is maintained throughout",
+          "statement": "لكل موضع عنصر نائب N يُضاف إلى نص SQL، يحتوي params[N-1] على القيمة المقصودة لذلك الموضع بالضبط، دون إعادة ترتيب أو عدم تطابق.",
+          "proof": "ضمان ترتيب المعاملات:\n1. متتبّع واحد يحافظ على ترتيب الإدراج\n2. كل استدعاء add() يُلحق القيمة بـ params ويُصدر فورًا رمز العنصر النائب التالي\n3. يسير بناء نص SQL وبناء params بشكل متزامن خطوة بخطوة\n4. لا تحدث عمليات إعادة ترتيب وسيطة\n∴ يبقى التطابق واحدًا لواحد طوال العملية",
           "code": "class ParameterTracker {\n  private params: any[] = []\n\n  add(value: any): string {\n    this.params.push(value)\n    return `$${this.params.length}`\n  }\n\n  getParams(): any[] {\n    return this.params\n  }\n}\n\nconst tracker = new ParameterTracker()\nconst sql = `WHERE email = ${tracker.add(email)} AND age > ${tracker.add(age)}`\nconst params = tracker.getParams()"
         }
       ]
     },
     "testCoverage": {
       "title": "تغطية اختبارات أمان شاملة",
-      "subtitle": "137 اختبارًا يتحقق من الحماية ضد متجهات الحقن الشائعة وحالات الحواف (المجموعة الحالية)",
+      "subtitle": "تتحقق المجموعة الحالية من الحماية ضد متجهات حقن SQL الشائعة وحالات الحواف",
       "categories": [
         {
-          "title": "تعلّيم القيم (basic.test.ts)",
+          "title": "تمرير القيم كمعاملات (basic.test.ts)",
           "tests": [
-            "Strings with quotes: user'with'quotes",
-            "Strings with semicolons: user;extra",
-            "SQL keywords as values: DROP TABLE users",
-            "Complex injection: '; DROP TABLE users; --",
-            "Union attacks: ' UNION SELECT * FROM users--",
-            "Boolean attacks: admin' OR '1'='1",
-            "Comment injection: test@example.com' -- comment"
+            "سلاسل تحتوي علامات اقتباس: user'with'quotes",
+            "سلاسل تحتوي فواصل منقوطة: user;extra",
+            "كلمات SQL المفتاحية كقيم: DROP TABLE users",
+            "حقن مركّب: '; DROP TABLE users; --",
+            "هجمات UNION: ' UNION SELECT * FROM users--",
+            "هجمات منطقية: admin' OR '1'='1",
+            "حقن التعليقات: test@example.com' -- comment"
           ]
         },
         {
           "title": "التحقق من أسماء الحقول (identifiers.test.ts)",
           "tests": [
-            "Reject malicious field names in SELECT",
-            "Reject malicious field names in WHERE",
-            "Reject malicious field names in ORDER BY",
-            "Reject SQL injection in field names",
-            "Reject non-existent fields",
-            "Reject prototype pollution: __proto__, constructor"
+            "رفض أسماء الحقول الخبيثة في SELECT",
+            "رفض أسماء الحقول الخبيثة في WHERE",
+            "رفض أسماء الحقول الخبيثة في ORDER BY",
+            "رفض حقن SQL في أسماء الحقول",
+            "رفض الحقول غير الموجودة",
+            "رفض تلويث النموذج الأولي (prototype pollution): __proto__, constructor"
           ]
         },
         {
           "title": "أمان أنماط LIKE (like-patterns.test.ts)",
           "tests": [
-            "Wildcard injection: %' OR '1'='1",
-            "Underscore injection: test_' OR '1'='1",
-            "Backslash handling: test\\\\'; DROP--",
-            "Multiple wildcards: %_%'; DROP--",
-            "Case insensitive injection: '; UNION SELECT--"
+            "حقن أحرف البدل: %' OR '1'='1",
+            "حقن الشرطة السفلية: test_' OR '1'='1",
+            "معالجة الشرطة المائلة العكسية: test\\\\'; DROP--",
+            "أحرف بدل متعددة: %_%'; DROP--",
+            "حقن غير حساس لحالة الأحرف: '; UNION SELECT--"
           ]
         },
         {
           "title": "أمان عوامل المصفوفات (array-operators.test.ts)",
           "tests": [
-            "IN with malicious arrays: ['; DROP--', 'UNION SELECT--']",
-            "NOT IN with injection: ['; TRUNCATE--', 'DELETE FROM--']",
-            "Empty array handling",
-            "Large array validation (100+ items)",
-            "Mixed type array handling"
+            "IN مع مصفوفات خبيثة: ['; DROP--', 'UNION SELECT--']",
+            "NOT IN مع حقن: ['; TRUNCATE--', 'DELETE FROM--']",
+            "معالجة المصفوفة الفارغة",
+            "التحقق من المصفوفات الكبيرة (100+ عنصر)",
+            "معالجة المصفوفات مختلطة الأنواع"
           ]
         },
         {
-          "title": "حالات حواف (edge-cases.test.ts)",
+          "title": "حالات الحواف (edge-cases.test.ts)",
           "tests": [
-            "Unicode injection: \\u0027 OR \\u00271\\u0027=\\u00271",
-            "Hex-encoded injection: 0x31=0x31--",
-            "URL encoded: %27%3B%20DROP%20TABLE",
-            "Stacked queries: '; DROP TABLE users; SELECT",
-            "Time-based blind (dialect-specific): WAITFOR DELAY '00:00:05'--",
-            "UNION-based: UNION ALL SELECT null, password",
-            "Second-order injection attempts"
+            "حقن Unicode: \\u0027 OR \\u00271\\u0027=\\u00271",
+            "حقن بترميز ست عشري: 0x31=0x31--",
+            "ترميز URL: %27%3B%20DROP%20TABLE",
+            "استعلامات مكدّسة: '; DROP TABLE users; SELECT",
+            "حقن أعمى قائم على الوقت (خاص باللهجة): WAITFOR DELAY '00:00:05'--",
+            "قائم على UNION: UNION ALL SELECT null, password",
+            "محاولات حقن من الدرجة الثانية"
           ]
         },
         {
           "title": "التحقق من ترتيب المعاملات (basic.test.ts)",
           "tests": [
-            "Sequential placeholder positions",
-            "Parameter array matches placeholder order",
-            "Complex queries maintain order across conditions",
-            "Nested OR/AND conditions preserve parameter sequence",
-            "Relation filters maintain correct parameter mapping"
+            "مواضع عناصر نائبة متتابعة",
+            "مصفوفة المعاملات تطابق ترتيب العناصر النائبة",
+            "الاستعلامات المعقدة تحافظ على الترتيب عبر الشروط",
+            "شروط OR/AND المتداخلة تحافظ على تسلسل المعاملات",
+            "مرشحات العلاقات تحافظ على الربط الصحيح للمعاملات"
           ]
         }
       ]
     },
     "codeExamples": {
-      "title": "آمن مقابل غير آمن: مقارنة كود",
+      "title": "آمن مقابل غير آمن: مقارنة الكود",
       "unsafe": {
-        "title": "❌ غير آمن: دمج سلاسل نصية",
+        "title": "❌ غير آمن: دمج السلاسل النصية",
         "code": "const email = req.body.email\nconst sql = \"SELECT * FROM users WHERE email = '\" + email + \"'\""
       },
       "safe": {
-        "title": "✅ آمن: ربط معاملات تلقائي",
+        "title": "✅ آمن: ربط تلقائي للمعاملات",
         "code": "const email = req.body.email\nconst { sql, params } = toSQL('User', 'findMany', {\n  where: { email }\n})\n\nconst result = { sql, params }"
       }
     },
@@ -793,17 +793,17 @@
       "sections": [
         {
           "title": "إدارة المعاملات",
-          "description": "تتبّع مركزي للمعاملات يضمن أن كل قيمة مستخدم مربوطة ومستقرة الترتيب",
+          "description": "تتبّع مركزي للمعاملات يضمن أن كل قيمة مقدَّمة من المستخدم مربوطة كمعامل وثابتة الترتيب",
           "code": "class ParameterTracker {\n  private params: any[] = []\n\n  add(value: any): string {\n    this.params.push(value)\n    return `$${this.params.length}`\n  }\n\n  getParams(): any[] {\n    return this.params\n  }\n}"
         },
         {
           "title": "التحقق من الحقول",
-          "description": "التحقق المعتمد على المخطط يمنع الوصول التعسفي للحقول",
+          "description": "التحقق المعتمد على المخطط يمنع الوصول العشوائي إلى الحقول",
           "code": "function validateField(\n  fieldName: string,\n  model: ModelInfo\n): FieldInfo {\n  const field = model.fields.get(fieldName)\n  if (!field) {\n    throw new Error(\n      `Field \"${fieldName}\" does not exist`\n    )\n  }\n  return field\n}"
         },
         {
           "title": "اقتباس المعرّفات",
-          "description": "التحقق والاقتباس وفق اللهجة يمنع حقنًا عبر المعرّفات",
+          "description": "التحقق من المعرّفات واقتباسها وفق اللهجة يمنع حقن الصياغة عبر المعرّفات",
           "code": "function quoteIdentifier(identifier: string): string {\n  if (/[\\x00-\\x1F]/.test(identifier)) {\n    throw new Error('Invalid control characters')\n  }\n\n  const escaped = identifier.replace(/\"/g, '\"\"')\n  const needsQuoting = /[^a-z0-9_]/i.test(identifier) || isReservedKeyword(identifier)\n\n  if (needsQuoting) {\n    return `\"${escaped}\"`\n  }\n\n  return identifier\n}"
         }
       ]
@@ -812,55 +812,55 @@
       "title": "أفضل ممارسات الأمان",
       "practices": [
         {
-          "title": "لا تُعطّل التحقق",
+          "title": "لا تُعطّل التحقق أبدًا",
           "description": "لا تتجاوز التحقق من المخطط أو فحص الحقول. هذه طبقات أمان حرجة.",
           "do": "استخدم المكتبة كما صُممت مع التحقق الكامل",
           "dont": "تجاوز التحقق من المخطط أو حقن SQL خام في نص الاستعلام"
         },
         {
-          "title": "حدّث المخطط باستمرار",
+          "title": "حافظ على تحديث المخطط",
           "description": "تأكد أن مخطط Prisma يعكس بنية قاعدة البيانات بدقة.",
           "do": "شغّل prisma db pull وprisma generate بعد تغييرات المخطط",
           "dont": "استخدام DMMF أو تعريفات مخطط قديمة"
         },
         {
-          "title": "تحقق من أنواع الإدخال",
-          "description": "TypeScript يوفر أمانًا وقت الترجمة، لكن التحقق وقت التشغيل يزيد الدفاع في العمق.",
+          "title": "تحقق من أنواع المُدخلات",
+          "description": "يوفر TypeScript أمانًا وقت الترجمة، لكن التحقق وقت التشغيل يضيف دفاعًا في العمق.",
           "do": "استخدم أنواع Prisma المولّدة لوسائط الاستعلام",
-          "dont": "تحويل إدخال المستخدم إلى any قبل تمريره للاستعلامات"
+          "dont": "تحويل مُدخلات المستخدم إلى any قبل تمريرها للاستعلامات"
         },
         {
           "title": "راقب أنماط الاستعلامات",
-          "description": "سجّل وراقب SQL المُولّد والمعاملات في الإنتاج لاكتشاف الشذوذ وسوء الاستخدام.",
+          "description": "سجّل وراقب SQL المُولَّد والمعاملات في الإنتاج لاكتشاف الشذوذ وسوء الاستخدام.",
           "do": "فعّل تسجيل الاستعلامات وراجع الأنماط",
-          "dont": "تشغيله في الإنتاج دون مراقبة"
+          "dont": "التشغيل في الإنتاج دون مراقبة"
         }
       ]
     },
     "securityCallout": {
       "badge": "🔒 آمن ومُتحقق",
       "title": "كيف نمنع حقن SQL؟",
-      "description": "تحقق متعدد الطبقات مع ربط معاملات وفحص حقول معتمد على المخطط و137 اختبار أمان (المجموعة الحالية)",
+      "description": "تحقق متعدد الطبقات مع ربط المعاملات وفحص الحقول المعتمد على المخطط ومجموعة اختبارات الأمان الحالية",
       "link": "عرض تفاصيل الأمان →"
     },
     "cta": {
-      "title": "الأمان بالتصميم",
-      "subtitle": "حماية حقن SQL مدمجة في كل طبقة من هذه المكتبة. راجع اختبارات الأمان وتفاصيل التنفيذ مباشرةً.",
+      "title": "الأمان عبر التصميم",
+      "subtitle": "الحماية من حقن SQL مدمجة في كل طبقة من هذه المكتبة. راجع اختبارات الأمان وتفاصيل التنفيذ مباشرةً.",
       "button1": "عرض اختبارات الأمان →",
-      "button2": "عرض الشيفرة المصدرية"
+      "button2": "عرض الكود المصدري"
     }
   },
   "benchmarks": {
     "title": "نتائج القياس التفصيلية",
     "subtitle": "مقارنة إحصائية باستخدام اختبار t لـ Welch وحد دلالة عملية قدره 1 مللي ثانية",
-    "modeNote": "تعكس هذه النتائج وضع <runtime>التشغيل</runtime>، حيث يتم تحويل الاستعلامات إلى SQL عند كل طلب. في وضع <prerendered>المعالجة المسبقة</prerendered>، يتم توليد SQL في وقت البناء — ويقوم وقت التشغيل بتنفيذ استعلامات خام مُعلمة بدون أي تكلفة تحويل.",
+    "modeNote": "تعكس هذه النتائج وضع <runtime>التشغيل</runtime>، حيث تُحوَّل الاستعلامات إلى SQL عند كل طلب. في وضع <prerendered>المعالجة المسبقة</prerendered>، يُولَّد SQL وقت البناء — وينفّذ وقت التشغيل استعلامات خام ذات معاملات دون أي عبء تحويل.",
     "modeCallout": "تم قياس وضع التشغيل.",
-    "modeCalloutDetail": "وضع المعالجة المسبقة يتجاوز تحويل الاستعلام إلى SQL بالكامل أثناء التشغيل — توقّع زمناً أقل للاستجابة مما هو معروض هنا، خاصةً للاستعلامات المعقدة حيث تكون تكلفة التحويل أعلى نسبياً.",
+    "modeCalloutDetail": "وضع المعالجة المسبقة يتجاوز تحويل الاستعلام إلى SQL بالكامل أثناء التشغيل — توقّع زمن استجابة أقل مما هو معروض هنا، خاصةً للاستعلامات المعقدة حيث تكون كلفة التحويل أعلى نسبيًا.",
     "noData": "لم يتم العثور على بيانات قياس.",
     "noDataHint": "قم بتشغيل القياسات باستخدام <code>BENCHMARK_JSON_OUTPUT=1</code> لإنشاء البيانات.",
     "avgVsPrisma": "المتوسط {speed} مقارنةً بـ Prisma",
     "avgVsDrizzle": "المتوسط {speed} مقارنةً بـ Drizzle",
-    "significantWins": "{count}/{total} انتصارات ذات دلالة إحصائية",
+    "significantWins": "{count}/{total} تفوّق ذو دلالة إحصائية",
     "withinNoise": "{count} ضمن حد الضوضاء",
     "col": {
       "test": "الاختبار",
@@ -876,12 +876,247 @@
       "p001": "p < 0.001",
       "p01": "p < 0.01",
       "p05": "p < 0.05",
-      "ns": "غير دال إحصائياً",
+      "ns": "غير دال إحصائيًا",
       "noiseFloor": "ضمن حد الضوضاء {threshold} مللي ثانية",
       "ci": "فاصل الثقة 95%",
       "highVariance": "تباين مرتفع"
     },
     "regressionWarning": "{count} اختبار(ات) بها تراجعات ذات دلالة إحصائية تتجاوز حد {threshold} مللي ثانية.",
-    "viewRawData": "عرض بيانات القياس الخام على GitHub →"
+    "viewRawData": "عرض بيانات القياس الخام على GitHub →",
+    "methodology": {
+      "title": "المنهجية",
+      "lines": [
+        "لإعادة الإنتاج: `npm run bench` (`BENCHMARK_JSON_OUTPUT=1` يكتب JSON). تُحفظ النتائج في `benchmark-results/summary-<date>.json`؛ ويغذّي `v<N>-<dialect>-latest.json` هذه الصفحة.",
+        "يعمل كل استعلام على قاعدة البيانات نفسها لجميع العملاء: Prisma وprisma-sql وDrizzle. يظهر حجم العينة لكل اختبار في العمود n.",
+        "يُعرض لكل طرف: المتوسط والوسيط والانحراف المعياري (stdDev) وp95 وp99 وCV%. تعتمد الدلالة على اختبار t لـ Welch مع حد عملي قدره 1 مللي ثانية؛ وأشرطة الخطأ تمثل فاصل ثقة 95%.",
+        "تم قياس وضع التشغيل: يُحوَّل SQL عند كل طلب. الاستعلامات المُعالجة مسبقًا (@optimize) تتجاوز التحويل بالكامل وهي أسرع مما هو معروض.",
+        "يختلف العتاد والإصدارات بين التشغيلات - يحمل كل ملف JSON طابعه الزمني الخاص. قارن التشغيلات من الجهاز نفسه."
+      ]
+    }
+  },
+  "extras": {
+    "badge": "إضافات فوق واجهة Prisma",
+    "title": "ما هو أبعد من القراءات الأسرع",
+    "subtitle": "يضيف prisma-sql قدرات غير موجودة في Prisma Client. نفس الأنواع، ونفس أسلوب الكود.",
+    "items": [
+      {
+        "name": "$batch",
+        "tagline": "N استعلامات للوحة المعلومات في رحلة ذهاب وإياب واحدة",
+        "description": "اجمع عمليات قراءة مستقلة في رحلة ذهاب وإياب واحدة إلى PostgreSQL. نتيجة ككائن مُحدَّد الأنواع، بلا تلاعب بـ Promise.all.",
+        "code": "const dash = await prisma.$batch((b) => ({\n  users: b.user.count(),\n  posts: b.post.findMany({ take: 10 }),\n  stats: b.task.aggregate({ _count: true }),\n}))"
+      },
+      {
+        "name": "@optimize",
+        "tagline": "جهّز مسبقًا أكثر استعلاماتك استخدامًا",
+        "description": "أضف تعليقًا توضيحيًا إلى نموذج في schema.prisma. وقت التوليد يُجهَّز SQL الدقيق مسبقًا؛ والأشكال المطابقة وقت التشغيل تتجاوز التحويل بالكامل.",
+        "code": "/// @optimize {\n///   \"method\": \"findMany\",\n///   \"query\": {\n///     \"where\": { \"status\": \"$status\" },\n///     \"take\": \"$take\"\n///   }\n/// }\nmodel User { ... }"
+      },
+      {
+        "name": "مخطِّط الكاردينالية",
+        "tagline": "استراتيجية تختارها البيانات، لا التخمين",
+        "description": "تقود إحصاءات العلاقات المجمَّعة التبديل بين الاستراتيجيات: الروابط المسطّحة (flat joins) والاستعلامات الفرعية المترابطة والتحميل المجزّأ عبر where-in. الجداول الفرعية الكبيرة لا تؤدي أبدًا إلى عمليات مسح لكل سجل أب.",
+        "code": "prisma-sql-collect-stats \\\n  --output dist/planner.generated.js \\\n  --prisma-client dist/client/index.js"
+      }
+    ]
+  },
+  "parity": {
+    "title": "ما الذي يعمل أسرع، وما الذي يبقى في Prisma",
+    "subtitle": "كل ميزة في Prisma Client فحصناها، على PostgreSQL وSQLite. تبقى عمليات الكتابة في Prisma؛ وتُصرَّف عمليات القراءة إلى SQL حيث يكون شكل الاستعلام مدعومًا.",
+    "link": "افتح خريطة التكافؤ الكاملة",
+    "summary": "{accelerated} من أصل {total} ميزة مفحوصة مُسرَّعة بالكامل على PostgreSQL. {differs} قد تُرجع نتيجة مختلفة عن Prisma؛ وتسرد الخريطة الكاملة كلًّا منها مع السبب."
+  },
+  "ui": {
+    "nav": {
+      "main": "الرئيسية",
+      "docs": "التوثيق",
+      "parity": "التكافؤ",
+      "benchmarks": "القياسات",
+      "github": "prisma-sql على GitHub",
+      "npm": "prisma-sql على npm"
+    },
+    "footer": {
+      "product": "المنتج",
+      "elsewhere": "في أماكن أخرى",
+      "language": "اللغة",
+      "docs": "التوثيق",
+      "parity": "خريطة التكافؤ مع Prisma",
+      "benchmarks": "قياسات الأداء",
+      "testing": "الاختبار",
+      "security": "منع حقن SQL",
+      "changelog": "سجل التغييرات"
+    },
+    "hero": {
+      "copy": "نسخ",
+      "copied": "تم النسخ",
+      "copyFailed": "حدّد وانسخ",
+      "copiedStatus": "تم نسخ {text}",
+      "figureLabel": "استعلام Prisma وSQL الذي يولّده prisma-sql له",
+      "yourCall": "استدعاء Prisma الخاص بك",
+      "sqlRuns": "SQL الذي ينفّذه prisma-sql",
+      "database": "قاعدة البيانات",
+      "params": "المعاملات",
+      "statement": "تعليمة واحدة",
+      "caption": "مخرجات <code>createToSQL</code> لمخطط من نموذجين، مع إضافة فواصل أسطر."
+    },
+    "performance": {
+      "noData": "لم يُعثر على ملفات JSON لقياسات الأداء.",
+      "casesPerRun": "{count} حالة استعلام لكل تشغيل",
+      "vsDrizzle": "{speed} مقارنةً بـ Drizzle",
+      "measured": "{count} حالة استعلام مقيسة، المتوسط مقارنةً بـ Prisma",
+      "srRow": "{label}: متوسط تسريع {speed} مقارنةً بـ Prisma",
+      "note": "مُولَّد وقت البناء من أحدث ملفات <code>benchmark-results/*-latest.json</code>. تتشارك الأشرطة مقياسًا واحدًا عبر قاعدتي البيانات؛ ويُميِّز اللون الكهرماني أفضل تشغيل لكل قاعدة بيانات. تتفاوت النتائج بين أشكال الاستعلامات الفردية.",
+      "perQuery": "جدول لكل استعلام"
+    },
+    "howItWorks": {
+      "files": [
+        "generated/sql، مقتطف",
+        "SQL لـ PostgreSQL",
+        "generated/sql، مقتطف",
+        "users.ts"
+      ],
+      "resultNote": "// نفس الأنواع المُستنتَجة كما في Prisma Client.\n// قد تختلف قيم Decimal وBigInt وDateTime؛\n// وتسرد خريطة التكافؤ كل حالة."
+    },
+    "installation": {
+      "sqliteNote": "SQLite: مرّر <code>speedExtension({ sqlite: db })</code> مع قاعدة بيانات <code>better-sqlite3</code>.",
+      "guide": "دليل الإعداد الكامل"
+    },
+    "parity": {
+      "stripLabel": "حالة كل ميزة مفحوصة في Prisma Client على PostgreSQL وSQLite، مجمَّعة حسب المجال. استخدم مفاتيح الأسهم للتنقل بين الميزات.",
+      "tileLabel": "{feature}، {db}: {status}",
+      "tableCaption": "عدد الميزات حسب الحالة",
+      "status": "الحالة",
+      "supportedOn": "يدعمها Prisma على: {value}",
+      "inferred": "مُستنتَج من الكود المصدري؛ لم يُؤكَّد بتشغيل اختبار."
+    },
+    "queryStrip": {
+      "title": "كل الاستعلامات المقيسة، {count} شكل استعلام",
+      "caption": "كل شريط يمثل شكل استعلام واحدًا من أحدث تشغيل. الأعلى أسرع من Prisma، والأسفل أبطأ، بمقياس لوغاريتمي.",
+      "faster": "أسرع بـ {value}×",
+      "slower": "{value}× (أبطأ)",
+      "notRun": "لم يُشغَّل"
+    },
+    "security": {
+      "do": "افعل",
+      "dont": "لا تفعل",
+      "unsafeFile": "unsafe.ts",
+      "safeFile": "safe.ts"
+    },
+    "benchmarks": {
+      "region": "نتائج القياس لكل استعلام"
+    }
+  },
+  "parityData": {
+    "status": {
+      "accelerated": {
+        "label": "مُسرَّع",
+        "description": "يُصرَّف إلى SQL ويُنفَّذ عبر postgres.js أو better-sqlite3."
+      },
+      "partial": {
+        "label": "جزئي",
+        "description": "يُصرَّف إلى SQL؛ بعض أشكال الوسائط تعود إلى Prisma."
+      },
+      "fallback": {
+        "label": "يعود إلى Prisma",
+        "description": "يرفضه مُنشئ SQL فيُنفِّذ Prisma الاستعلام. النتيجة نفسها، بلا تسريع."
+      },
+      "prisma": {
+        "label": "يعمل في Prisma",
+        "description": "غير مُعترَض. يُنفِّذه Prisma Client كما في السابق."
+      },
+      "differs": {
+        "label": "قد يختلف",
+        "description": "مُسرَّع، لكن النتيجة قد تختلف عن Prisma دون ظهور خطأ."
+      },
+      "missing": {
+        "label": "غير متوفر",
+        "description": "يدعمه Prisma؛ ولا يوجد مقابل له في prisma-sql."
+      },
+      "extra": {
+        "label": "prisma-sql فقط",
+        "description": "أضافه prisma-sql. ليس جزءًا من واجهة Prisma Client."
+      },
+      "na": {
+        "label": "غير موجود في Prisma",
+        "description": "لا يدعم Prisma هذا على قاعدة البيانات تلك."
+      },
+      "unknown": {
+        "label": "لم يُفحص",
+        "description": "لم يُفحص السلوك على قاعدة البيانات هذه بعد."
+      }
+    },
+    "groups": {
+      "Model methods": "دوال النموذج",
+      "Query options": "خيارات الاستعلام",
+      "Filters": "المرشحات",
+      "Ordering": "الترتيب",
+      "Aggregates": "التجميعات",
+      "Client API": "واجهة العميل",
+      "Result types": "أنواع النتائج"
+    },
+    "notes": {
+      "findMany": "يُصرَّف إلى SQL.",
+      "findFirst": "يُصرَّف مع LIMIT 1. يُتجاهل `cursor` و`take` السالب. `distinct` يعود إلى Prisma.",
+      "findUnique": "المفاتيح الفريدة المركّبة مثل `a_b: { a, b }` تعود إلى Prisma.",
+      "findUniqueOrThrow, findFirstOrThrow": "غير مُعترَض.",
+      "count": "يُتجاهل `select: { _all, field }` ويُرجَع رقم بدلًا من كائن. `take` السالب يعود إلى Prisma.",
+      "aggregate": "تُتجاهل `take` و`skip` و`cursor` و`orderBy`، لذا قد تختلف المجاميع.",
+      "groupBy": "`by` كسلسلة نصية مفردة يعود إلى Prisma. يُتوقع أن يعود الترتيب حسب تجميع إلى Prisma (لم يُتحقق منه).",
+      "create, createMany, createManyAndReturn": "عمليات الكتابة غير مُعترَضة.",
+      "update, updateMany, updateManyAndReturn": "عمليات الكتابة غير مُعترَضة.",
+      "upsert, delete, deleteMany": "عمليات الكتابة غير مُعترَضة.",
+      "findManyStream, findManyReduceStream": "بث الصفوف. PostgreSQL فقط؛ في SQLite يُرمى خطأ.",
+      "select": "الحقول القياسية (scalars) والعلاقات و`_count`. الحقول غير المعروفة تعود إلى Prisma.",
+      "include": "الاستعلامات التي تتجاوز حدود العمق أو التفرّع أو include الدائري تعود إلى Prisma.",
+      "omit (per query)": "يُتجاهل. تُرجَع الحقول المستبعدة.",
+      "omit (client option)": "لا يُقرأ. تُرجَع الحقول المستبعدة في `new PrismaClient({ omit })`.",
+      "distinct": "يستخدم PostgreSQL الصيغة DISTINCT ON؛ عندما لا يبدأ `orderBy` بحقول distinct، قد يختلف الترتيب و`take` (لم يُتحقق منه). في SQLite مع `cursor` يعود إلى Prisma.",
+      "Negative take": "يتطلب `orderBy` على حقول قياسية محدَّدة؛ وإلا يعود إلى Prisma.",
+      "cursor": "عندما لا يكون صف المؤشر موجودًا، تُرجَع صفوف؛ بينما يُرجع Prisma قائمة فارغة. بدون `orderBy`، ترتيب الصفوف غير ثابت.",
+      "relationLoadStrategy": "يُتجاهل. يختار مخطِّط prisma-sql طريقة تحميل العلاقات.",
+      "_count in select / include": "العدّ المُرشَّح مدعوم. قد يعدّ `_count: true` على المستوى الجذري العلاقات الأحادية (to-one) أيضًا (لم يُتحقق منه).",
+      "Nested orderBy": "الحقول القياسية فقط. حقول العلاقات تعود إلى Prisma.",
+      "Nested cursor, distinct": "يُطبَّق على استعلام فرعي واحد مُجمَّع لكل السجلات الأب، وليس لكل أب على حدة.",
+      "not": "تُستبعد صفوف NULL، كما في Prisma.",
+      "in, notIn": "القوائم الفارغة تتصرف كما في Prisma.",
+      "lt, lte, gt, gte": "قيمة null تؤدي إلى العودة إلى Prisma.",
+      "contains, startsWith, endsWith": "لا تُهرَّب `%` و`_`، كما في Prisma.",
+      "mode: 'insensitive'": "يستخدم PostgreSQL الصيغة ILIKE. في SQLite، حيث يرفض Prisma `mode`، يقبله prisma-sql ويستخدم LOWER().",
+      "AND, OR, NOT": "`OR` الفارغ لا يطابق شيئًا، كما في Prisma.",
+      "is, isNot": "عند تمرير الاثنين معًا، يُسقَط `isNot`.",
+      "Scalar lists: has, hasSome, hasEvery, isEmpty, equals": "`not` يقبل `{ equals }` فقط. `isEmpty` يعامل القوائم NULL كقوائم فارغة.",
+      "Json string_contains, string_starts_with, string_ends_with": "دائمًا غير حساس لحالة الأحرف ويُطابَق مع نص JSON بالكامل.",
+      "DbNull, JsonNull, AnyNull": "قد يُسقَط المرشح.",
+      "null, undefined": "يُتخطّى `undefined`، كما في Prisma.",
+      "Enum values": "تُحوَّل إلى أسماء `@map`.",
+      "{ sort, nulls }": "يحاكي SQLite الصيغة NULLS FIRST / LAST.",
+      "Relation field": "العلاقات الأحادية (to-one)، متداخلة.",
+      "Optional relation { sort, nulls }": "امتداد نوع أضافه prisma-sql. يرمي خطأ بدلًا من العودة إلى Prisma عند عدم الدعم.",
+      "groupBy having": "equals، not، gt، gte، lt، lte، in، notIn. العوامل الأخرى تعود إلى Prisma.",
+      "groupBy take, skip": "مقبولة بدون `orderBy`؛ بينما يشترطه Prisma.",
+      "aggregate take, skip, cursor, orderBy": "تُتجاهل.",
+      "_count: true result shape": "يُرجع `{ _all: n }`؛ بينما يُرجع Prisma `n`.",
+      "$transaction(async (tx) => …)": "يعمل على العميل الأساسي. عمليات القراءة داخل الدالة الراجعة غير مُسرَّعة.",
+      "$transaction([…])": "قد تعمل القراءات المُسرَّعة على اتصال prisma-sql، خارج معاملة Prisma.",
+      "$transaction([{ model, method, args }])": "صيغة خاصة بـ prisma-sql مع مستوى العزل ومهلة زمنية. PostgreSQL فقط.",
+      "findUnique batching": "كل findUnique يُنفِّذ استعلام SQL خاصًا به.",
+      "log, $on('query')": "الاستعلامات المُسرَّعة لا تصل إلى سجلات Prisma. استخدم `debug` أو `onQuery`.",
+      "$batch, $batchCount": "عدة عمليات قراءة في رحلة ذهاب وإياب واحدة. تعود قيم BigInt وDecimal كأرقام JS.",
+      "createShardedReader": "يُرجع صفوفًا خامًا: بلا تحويل أنواع، وبلا تحويل قيم enum.",
+      "Multiple schemas (@@schema)": "المخطط مثبّت على `public`.",
+      "Decimal": "سلسلة نصية في الصفوف المسطّحة، ورقم داخل العلاقات المُضمَّنة. التجميعات تُرجع Prisma.Decimal.",
+      "BigInt": "سلسلة نصية في الصفوف المسطّحة، ورقم داخل العلاقات المُضمَّنة. التجميعات تُرجع bigint.",
+      "DateTime": "PostgreSQL: كائن Date في الصفوف المسطّحة، وسلسلة نصية داخل العلاقات المُضمَّنة. SQLite: رقم أو سلسلة نصية خام.",
+      "Boolean": "يُرجع SQLite القيمة 0 / 1.",
+      "Bytes": "Buffer في الصفوف المسطّحة، وسلسلة ست عشرية داخل العلاقات المُضمَّنة.",
+      "Json": "يُرجع SQLite سلسلة JSON الخام عند عدم وجود include.",
+      "Enum with @map": "تُرجَع قيمة قاعدة البيانات، وليس الاسم في المخطط."
+    },
+    "support": {
+      "PostgreSQL, SQLite": "PostgreSQL، SQLite",
+      "No": "لا",
+      "PostgreSQL (preview)": "PostgreSQL (معاينة)",
+      "PostgreSQL": "PostgreSQL",
+      "PostgreSQL, SQLite (preview)": "PostgreSQL، SQLite (معاينة)"
+    }
   }
 }

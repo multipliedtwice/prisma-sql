@@ -1,8 +1,8 @@
 {
   "meta": {
-    "title": "ধীর Prisma কুয়েরি ঠিক করুন | prisma-sql",
-    "description": "prisma-sql সমর্থিত Prisma রিড কুয়েরিকে SQL-এ রূপান্তর করে postgres.js বা better-sqlite3 দিয়ে চালায়। PostgreSQL ও SQLite-এ Prisma v6–v8 দিয়ে বেঞ্চমার্ক করা।",
-    "keywords": "slow prisma, prisma slow, prisma performance, fix slow prisma, speed up prisma, prisma optimization, prisma query speed, slow prisma queries, prisma performance issues, make prisma faster, postgresql, sqlite"
+    "title": "prisma-sql: সমর্থিত Prisma রিড আরও দ্রুত",
+    "description": "prisma-sql সমর্থিত Prisma রিড কুয়েরিকে SQL-এ কম্পাইল করে postgres.js বা better-sqlite3 দিয়ে চালায়। PostgreSQL ও SQLite-এ Prisma v6–v8 দিয়ে বেঞ্চমার্ক করা হয়েছে।",
+    "keywords": "ধীর prisma, prisma ধীর, prisma পারফরম্যান্স, ধীর prisma ঠিক করা, prisma দ্রুত করা, prisma অপটিমাইজেশন, prisma কুয়েরির গতি, ধীর prisma কুয়েরি, prisma পারফরম্যান্স সমস্যা, prisma আরও দ্রুত করা, postgresql, sqlite"
   },
   "header": {
     "cta": "ধীর Prisma ঠিক করুন →"
@@ -10,524 +10,524 @@
   "hero": {
     "badge": "🚀 ধীর Prisma-এর সমাধান",
     "title": "ধীর Prisma কুয়েরি ঠিক করুন",
-    "titleHighlight": "আপনার API 2–7× দ্রুত করুন (সর্বোচ্চ 53.5×)",
-    "description": "Prisma কি ধীর? আপনি একা নন। Prisma-এর DX ভালো লাগে কিন্তু আরও performance দরকার?",
-    "descriptionBold": "ধীর Prisma কুয়েরি 2–7× দ্রুত করুন",
-    "descriptionSuffix": "(SQLite relation filters-এ সর্বোচ্চ 53.5×) কোনো existing query না বদলেই।",
+    "titleHighlight": "সরাসরি SQL এক্সিকিউশনের মাধ্যমে",
+    "description": "Prisma-এর DX পছন্দ, কিন্তু সমর্থিত কুয়েরি শেপে রিডের ওভারহেড কমাতে চান?",
+    "descriptionBold": "বর্তমান বেঞ্চমার্ক JSON Prisma v6, v7 ও v8 জুড়ে গড় গতিবৃদ্ধি দেখায়",
+    "descriptionSuffix": "সমর্থিত PostgreSQL ও SQLite রিডের ক্ষেত্রে; আলাদা আলাদা কুয়েরি শেপে ফল ভিন্ন হয়।",
     "cta1": "এখনই Prisma দ্রুত করুন",
     "cta2": "কীভাবে কাজ করে দেখুন",
     "trustBadges": [
-      "দ্রুত Prisma reads",
-      "কোনো query পরিবর্তন নয়",
-      "Production-ready",
-      "137 E2E tests"
+      "সমর্থিত রিড আরও দ্রুত",
+      "কুয়েরি বদলাতে হয় না",
+      "বর্তমান বেঞ্চমার্ক JSON",
+      "PostgreSQL ও SQLite"
     ],
     "codeTitle": "এক লাইনে ধীর Prisma ঠিক করুন",
     "codeSnippet": "import { PrismaClient, Prisma } from '@prisma/client'\nimport { speedExtension, convertDMMFToModels } from 'prisma-sql'\nimport postgres from 'postgres'\n\nconst sql = postgres(process.env.DATABASE_URL)\nconst models = convertDMMFToModels(Prisma.dmmf.datamodel)\n\nconst prisma = new PrismaClient().$extends(\n  speedExtension({ postgres: sql, models })\n)\n\nconst users = await prisma.user.findMany({\n  where: { status: 'ACTIVE' },\n  include: { posts: true }\n})"
   },
   "stats": [
     {
-      "value": "2–7×",
-      "label": "দ্রুত Prisma reads",
-      "subtitle": "Typical speedup",
+      "value": "v6–v8",
+      "label": "Prisma কভারেজ",
+      "subtitle": "PostgreSQL ও SQLite বেঞ্চমার্ক ম্যাট্রিক্স",
       "color": "text-accent"
     },
     {
       "value": "0",
-      "label": "Query পরিবর্তন",
-      "subtitle": "আপনার existing Prisma calls রাখুন",
+      "label": "কুয়েরি পরিবর্তন",
+      "subtitle": "আপনার বিদ্যমান Prisma কল রেখে দিন",
       "color": "text-blue-600"
     },
     {
-      "value": "137",
-      "label": "E2E tests",
-      "subtitle": "Verified solution",
+      "value": "6",
+      "label": "বেঞ্চমার্ক ফাইল",
+      "subtitle": "Prisma v6/v7/v8 × PG/SQLite",
       "color": "text-purple-600"
     },
     {
       "value": "100%",
-      "label": "Type safety",
+      "label": "টাইপ সেফটি",
       "subtitle": "একই Prisma API",
       "color": "text-pink-600"
     }
   ],
   "problem": {
     "title": "Prisma কেন ধীর?",
-    "subtitle": "Prisma-এর evolution ও performance characteristics বুঝলে বোঝা যায় এই extension কেন আছে।",
-    "historyTitle": "Prisma-এর যাত্রা: আগে DX, স্কেলে performance গুরুত্বপূর্ণ",
+    "subtitle": "Prisma-এর বিবর্তন ও পারফরম্যান্সের বৈশিষ্ট্য বুঝলে বোঝা যায় এই এক্সটেনশন কেন আছে।",
+    "historyTitle": "Prisma-এর যাত্রা: আগে DX, স্কেলে পারফরম্যান্স গুরুত্বপূর্ণ",
     "history": [
       {
         "period": "🎯 2019: আধুনিক Prisma-এর জন্ম",
-        "description": "Prisma 2 2019 সালে চালু হয়, schema থেকে generated types এবং type-safe database access দিয়ে TypeScript ORM landscape বদলে দেয়। Prisma একটি engine-based architecture এনেছে যা query translate, validate করে এবং এমন শক্তিশালী guarantees দেয় যা traditional JavaScript ORM-এ কঠিন ছিল।"
+        "description": "Prisma 2 চালু হয় 2019 সালে। টাইপ-সেফ ডেটাবেস অ্যাক্সেস এবং স্কিমা থেকে জেনারেট হওয়া টাইপ দিয়ে এটি TypeScript ORM-এর জগৎ বদলে দেয়। কুয়েরি অনুবাদ ও যাচাই করতে এবং প্রচলিত JavaScript ORM-এ যা পাওয়া কঠিন ছিল এমন শক্ত নিশ্চয়তা দিতে Prisma একটি ইঞ্জিন-ভিত্তিক আর্কিটেকচার আনে।"
       },
       {
         "period": "⚡ 2020–2022: দ্রুত বৃদ্ধি ও ফিচার বিস্তার",
-        "description": "Prisma nested writes, transactions, middleware মতো শক্তিশালী ফিচার যোগ করে। ফিচার বেড়েছে, কিন্তু প্রতিটি query এখনও architectural cost দেয়: query represent, validate, execute হয় এবং Prisma API অনুযায়ী result shape করা হয়।"
+        "description": "Prisma নেস্টেড রাইট, ট্রানজ্যাকশন ও মিডলওয়্যারের মতো শক্তিশালী ফিচার যোগ করে। ফিচার বাড়ে, কিন্তু প্রতিটি কুয়েরিকে তখনও একটি আর্কিটেকচারগত খরচ দিতে হয়: কুয়েরি উপস্থাপন, যাচাই ও এক্সিকিউট করা হয়, আর ফলাফলকে Prisma API-এর সাথে মিলিয়ে গঠন করা হয়।"
       },
       {
-        "period": "📊 2023: স্কেলে overhead চোখে পড়ে",
-        "description": "যখন বেশি টিম high-traffic workloads-এ Prisma deploy করে, per-query fixed overhead measurable হয়। এটি read-heavy endpoints, analytics, aggregations, এবং বড় result sets-এ সবচেয়ে বেশি দেখা যায়। এটি bug নয়; Prisma-এর guarantees ও API behavior-এর cost।"
+        "period": "📊 2023: স্কেলে ওভারহেড চোখে পড়তে থাকে",
+        "description": "আরও বেশি টিম উচ্চ-ট্রাফিক ওয়ার্কলোডে Prisma ডিপ্লয় করায় প্রতি কুয়েরির নির্দিষ্ট ওভারহেড পরিমাপযোগ্য হয়ে ওঠে। রিড-প্রধান এন্ডপয়েন্ট, অ্যানালিটিক্স, অ্যাগ্রিগেশন এবং বড় রেজাল্ট সেটে এটি সবচেয়ে বেশি দেখা যায়। এই ওভারহেড কোনো বাগ নয়; এটি Prisma-এর নিশ্চয়তা ও API আচরণের খরচ।"
       },
       {
-        "period": "🚀 2024–2025: Prisma performance কাজ চলতে থাকে",
-        "description": "Prisma performance ও engine changes-এ ফোকাস করা বড় আপডেট দেয়। উন্নতি সত্ত্বেও raw SQL সরাসরি execute করার তুলনায় parsing, validating, planning, এবং result shaping-এর unavoidable cost থাকে।"
+        "period": "🚀 2024–2025: Prisma-এর পারফরম্যান্সের কাজ চলছে",
+        "description": "Prisma পারফরম্যান্স ও ইঞ্জিন পরিবর্তনকে কেন্দ্র করে বড় আপডেট প্রকাশ করে। উন্নতির পরও সরাসরি raw SQL চালানোর তুলনায় পার্সিং, যাচাই, পরিকল্পনা ও ফলাফল গঠনের একটি অনিবার্য খরচ থেকে যায়।"
       },
       {
-        "period": "🎯 2026: prisma-sql Extension রিলিজ",
-        "description": "এই extension read performance-এ ফোকাস করে। findMany, findFirst, findUnique, count, aggregate, groupBy-এর জন্য Prisma read execution path bypass করে, কিন্তু writes, migrations, schema management, এবং type generation-এর জন্য Prisma রেখে দেয়। rollout-এর আগে আপনার Prisma version-এর সাথে compatibility validate করুন।"
+        "period": "🎯 2026: prisma-sql এক্সটেনশন প্রকাশিত",
+        "description": "এই এক্সটেনশন রিড পারফরম্যান্সে মনোযোগ দেয়। findMany, findFirst, findUnique, count, aggregate ও groupBy-এর জন্য এটি Prisma-এর রিড এক্সিকিউশন পথ এড়িয়ে যায়, আর রাইট, মাইগ্রেশন, স্কিমা ব্যবস্থাপনা ও টাইপ জেনারেশনের জন্য Prisma-ই থাকে। রোলআউটের আগে আপনার Prisma ভার্সনের সাথে সামঞ্জস্য যাচাই করুন।"
       }
     ],
     "whyExists": {
-      "title": "💡 এই extension কেন আছে",
-      "description": "Prisma তার লক্ষ্য অনুযায়ী সঠিক architectural choices নিয়েছে: type safety, developer experience, এবং cross-database behavior। কিন্তু এই choices স্কেলে noticeable overhead তৈরি করে। এই extension Prisma replace করে না—যে টিম Prisma-এর DX চান এবং যেখানে দরকার সেখানে দ্রুত execution চান তাদের জন্য reads optimize করে।"
+      "title": "💡 এই এক্সটেনশন কেন আছে",
+      "description": "Prisma তার লক্ষ্যের জন্য সঠিক আর্কিটেকচারগত সিদ্ধান্ত নিয়েছে: টাইপ সেফটি, ডেভেলপার এক্সপেরিয়েন্স এবং বিভিন্ন ডেটাবেসে একই আচরণ। কিন্তু এই সিদ্ধান্তগুলো এমন ওভারহেড তৈরি করে যা স্কেলে চোখে পড়ে। এই এক্সটেনশন Prisma-কে প্রতিস্থাপন করে না—যে টিমগুলো Prisma-এর DX রাখতে চায় এবং যেখানে দরকার সেখানে দ্রুত এক্সিকিউশন চায়, তাদের জন্য এটি রিড অপটিমাইজ করে।"
     },
     "technical": [
       {
-        "title": "Query translation layer",
-        "description": "Prisma আপনার query inputs কে database-specific SQL-এ translate করে। এটি cross-database behavior ও Prisma API semantics দেয়, কিন্তু database SQL দেখার আগে processing time বাড়ায়।",
+        "title": "কুয়েরি অনুবাদের স্তর",
+        "description": "Prisma আপনার কুয়েরি ইনপুটকে ডেটাবেস-নির্দিষ্ট SQL-এ অনুবাদ করে। এতে বিভিন্ন ডেটাবেসে একই আচরণ ও Prisma-এর API সেমান্টিক্স পাওয়া যায়, কিন্তু ডেটাবেস SQL পাওয়ার আগে প্রসেসিংয়ের সময় বাড়ে।",
         "iconPath": "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
       },
       {
-        "title": "Validation ও type guarantees",
-        "description": "Prisma schema-এর বিরুদ্ধে queries validate করে এবং API-level guarantees enforce করে। এই safeguards bug-এর কিছু class রোধ করে, কিন্তু প্রতিটি query-তে overhead যোগ করে।",
+        "title": "যাচাই ও টাইপের নিশ্চয়তা",
+        "description": "Prisma স্কিমার সাথে মিলিয়ে কুয়েরি যাচাই করে এবং API-স্তরের নিশ্চয়তা বজায় রাখে। এই সুরক্ষাগুলো নির্দিষ্ট ধরনের বাগ প্রতিরোধ করে, কিন্তু প্রতিটি কুয়েরিতে ওভারহেডও যোগ করে।",
         "iconPath": "M13 10V3L4 14h7v7l9-11h-7z"
       },
       {
-        "title": "Result shaping",
-        "description": "Results Prisma API behavior অনুযায়ী shape করা হয়। DX ও consistency-এর জন্য ভালো, কিন্তু latency বাড়ায়—বিশেষ করে বড় result sets ও complex includes-এ।",
+        "title": "ফলাফল গঠন",
+        "description": "ফলাফলকে Prisma-এর API আচরণের সাথে মিলিয়ে গঠন করা হয়। DX ও সামঞ্জস্যের জন্য এটি চমৎকার, কিন্তু ল্যাটেন্সি বাড়ায়, বিশেষ করে বড় রেজাল্ট সেট ও জটিল include-এ।",
         "iconPath": "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
       }
     ],
-    "conclusion": "এই extension Prisma-কে complement করে read queries-এর জন্য দ্রুত পথ দিয়ে। আপনি Prisma-এর পছন্দের সবকিছু রাখেন, আর performance দরকার হলে typical cases-এ 2–7× দ্রুত reads (এবং SQLite relation filters-এ সর্বোচ্চ 53.5×) পান।"
+    "conclusion": "সমর্থিত রিড কুয়েরির জন্য একটি দ্রুততর পথ দিয়ে এই এক্সটেনশন Prisma-এর পরিপূরক হিসেবে কাজ করে। স্কিমা, মাইগ্রেশন, রাইট ও জেনারেট হওয়া টাইপের জন্য Prisma থাকে, আর বাছাই করা ঘন ঘন চলা রিডগুলো ডেটাবেস-নেটিভ ক্লায়েন্টের মাধ্যমে জেনারেট হওয়া SQL দিয়ে চলে।"
   },
   "performance": {
     "title": "কতটা দ্রুত? বাস্তব বেঞ্চমার্ক",
-    "subtitle": "Prisma v6, v7, v8, Drizzle ORM এবং Prisma-SQL জুড়ে বিস্তৃত তুলনা",
-    "environment": "বেঞ্চমার্ক পরিবেশ: MacBook Pro M1 • PostgreSQL 15 • SQLite 3.43 • প্রতি ডাটাবেসে 137টি টেস্ট কেস",
-    "footer": "প্রতি ডাটাবেসে 137টি E2E টেস্টের উপর ভিত্তি করে বেঞ্চমার্ক। Prisma v6.19.3, Prisma v7.10.0, Drizzle ORM latest.",
+    "subtitle": "Prisma v6, v7, v8, Drizzle ORM ও prisma-sql জুড়ে সর্বশেষ বেঞ্চমার্ক JSON-এর তুলনা",
+    "environment": "ডেটার উৎস: এই চেকআউটের benchmark-results/v6|v7|v8 × postgres|sqlite সর্বশেষ JSON ফাইল",
+    "footer": "benchmark-results-এর সর্বশেষ বেঞ্চমার্ক JSON ফাইল থেকে তৈরি সারাংশ।",
     "footerLink": "সম্পূর্ণ বেঞ্চমার্ক ডেটা দেখুন"
   },
   "howItWorks": {
-    "title": "এটি Prisma কীভাবে optimize করে",
-    "subtitle": "Prisma-এর API ও types রেখে Prisma read execution path bypass করুন",
+    "title": "এটি কীভাবে Prisma অপটিমাইজ করে",
+    "subtitle": "Prisma-এর API ও টাইপ রেখে Prisma-এর রিড এক্সিকিউশন পথ এড়িয়ে যান",
     "steps": [
       {
-        "title": "Prisma queries intercept করুন",
-        "description": "Extension read operations (findMany, findFirst, findUnique, count, aggregate, groupBy) execute হওয়ার আগে ধরে"
+        "title": "Prisma কুয়েরি ইন্টারসেপ্ট করা",
+        "description": "এক্সটেনশন রিড অপারেশন (findMany, findFirst, findUnique, count, aggregate, groupBy) এক্সিকিউট হওয়ার আগেই ধরে ফেলে"
       },
       {
-        "title": "Optimized SQL generate করুন",
-        "description": "Prisma queries-কে দ্রুত, parameterized SQL-এ convert করুন optimized JOINs সহ"
+        "title": "অপটিমাইজড SQL জেনারেট করা",
+        "description": "Prisma কুয়েরিকে অপটিমাইজড JOIN সহ দ্রুত, প্যারামিটারাইজড SQL-এ রূপান্তর করে"
       },
       {
-        "title": "Direct execute করুন",
-        "description": "postgres.js বা better-sqlite3 দিয়ে queries চালান, Prisma read overhead bypass করে"
+        "title": "সরাসরি এক্সিকিউট করা",
+        "description": "Prisma-এর রিড ওভারহেড এড়িয়ে postgres.js বা better-sqlite3 দিয়ে কুয়েরি চালায়"
       },
       {
-        "title": "Compatible results ফেরত দিন",
-        "description": "Results Prisma-এর expected shape মেলে। Types, IntelliSense, এবং existing query code unchanged থাকে"
+        "title": "সামঞ্জস্যপূর্ণ ফলাফল ফেরত দেওয়া",
+        "description": "ফলাফল Prisma-এর প্রত্যাশিত আকারের সাথে মেলে। টাইপ, IntelliSense ও বিদ্যমান কুয়েরি কোড অপরিবর্তিত থাকে"
       }
     ],
-    "codeExample": "const users = await prisma.user.findMany({\n  where: { status: 'ACTIVE' },\n  include: { posts: true }\n})\n\n// Direct SQL execution for reads\n// Benchmarked around ~1.00ms on this workload\n// Same Prisma query code"
+    "codeExample": "const users = await prisma.user.findMany({\n  where: { status: 'ACTIVE' },\n  include: { posts: true }\n})\n\n// রিডের জন্য সরাসরি SQL এক্সিকিউশন\n// এই ওয়ার্কলোডে প্রায় ~1.00ms বেঞ্চমার্ক করা হয়েছে\n// একই Prisma কুয়েরি কোড"
   },
   "features": {
-    "title": "কেন এই Prisma extension বেছে নেবেন?",
-    "subtitle": "Reads-এর জন্য raw SQL execution speed পান, সাথে Prisma-এর developer experience রাখুন",
+    "title": "কেন এই Prisma এক্সটেনশন বেছে নেবেন?",
+    "subtitle": "Prisma-এর ডেভেলপার এক্সপেরিয়েন্স রেখে রিডে raw SQL এক্সিকিউশনের গতি পান",
     "items": [
       {
-        "title": "ইনস্ট্যান্ট Prisma speedup",
-        "description": "One-time setup Prisma reads accelerate করে। কোনো refactoring নয়, কোনো migration নয়, কোনো downtime নয়।",
+        "title": "তাৎক্ষণিক Prisma গতিবৃদ্ধি",
+        "description": "একবারের সেটআপেই Prisma রিড দ্রুত হয়। কোনো রিফ্যাক্টরিং নয়, মাইগ্রেশন নয়, ডাউনটাইম নয়।",
         "color": "accent",
         "iconPath": "M13 10V3L4 14h7v7l9-11h-7z"
       },
       {
-        "title": "আপনার Prisma types রাখুন",
-        "description": "পূর্ণ TypeScript support বজায় থাকে। Type inference, autocomplete, এবং compile-time safety রেখে reads দ্রুত হয়।",
+        "title": "আপনার Prisma টাইপ রেখে দিন",
+        "description": "পূর্ণ TypeScript সমর্থন বজায় থাকে। রিড দ্রুত করার সময়ও টাইপ ইনফারেন্স, অটোকমপ্লিট ও কম্পাইল-টাইম সেফটি অক্ষুণ্ণ থাকে।",
         "color": "blue",
         "iconPath": "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
       },
       {
-        "title": "Production-tested solution",
-        "description": "137 E2E tests সাম্প্রতিক Prisma versions-এর সাথে compatibility validate করে। Production apps-এ Prisma reads দ্রুত করতে ব্যবহৃত।",
+        "title": "প্রোডাকশনে পরীক্ষিত সমাধান",
+        "description": "বর্তমান প্যারিটি টেস্ট সাম্প্রতিক Prisma ভার্সনগুলোতে সমর্থিত রিড যাচাই করে। আপনার Prisma ভার্সন ও ওয়ার্কলোডের সাথে সামঞ্জস্য যাচাই করার পর প্রোডাকশন অ্যাপে এটি ব্যবহার করুন।",
         "color": "purple",
         "iconPath": "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
       },
       {
-        "title": "Multiple database support",
-        "description": "PostgreSQL (Neon, Supabase সহ) এবং SQLite-এ Prisma reads optimize করুন।",
+        "title": "একাধিক ডেটাবেস সমর্থন",
+        "description": "PostgreSQL (Neon, Supabase সহ) ও SQLite-এ Prisma রিড অপটিমাইজ করুন।",
         "color": "pink",
         "iconPath": "M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
       },
       {
-        "title": "Pre-compiled option",
-        "description": "Optional generator build-time SQL তৈরি করে, আপনার hottest queries-এর overhead microseconds-এ নামায়।",
+        "title": "প্রি-কম্পাইলড বিকল্প",
+        "description": "ঐচ্ছিক জেনারেটর বিল্ড টাইমে SQL তৈরি করে, ফলে আপনার সবচেয়ে ঘন ঘন চলা কুয়েরির ওভারহেড মাইক্রোসেকেন্ডে নেমে আসে।",
         "color": "yellow",
         "iconPath": "M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
       },
       {
-        "title": "Serverless ready (Node runtimes)",
-        "description": "Serverless Node runtimes-এ কাজ করে। Edge runtime support runtime constraints এবং আপনি যে driver ব্যবহার করেন তার ওপর নির্ভর করে।",
+        "title": "সার্ভারলেসের জন্য প্রস্তুত (Node রানটাইম)",
+        "description": "সার্ভারলেস Node রানটাইমে কাজ করে। Edge রানটাইমে সমর্থন রানটাইমের সীমাবদ্ধতা ও আপনার ব্যবহৃত ড্রাইভারের ওপর নির্ভর করে।",
         "color": "green",
         "iconPath": "M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
       }
     ]
   },
   "useCases": {
-    "title": "যখন Prisma performance সবচেয়ে গুরুত্বপূর্ণ",
-    "subtitle": "যে সাধারণ পরিস্থিতিতে এই extension বাস্তব পার্থক্য আনে",
+    "title": "যখন Prisma-এর পারফরম্যান্স সবচেয়ে গুরুত্বপূর্ণ",
+    "subtitle": "সাধারণ পরিস্থিতি, যেখানে এই এক্সটেনশন বাস্তব পার্থক্য আনে",
     "cases": [
       {
-        "title": "📊 Analytics & reporting",
-        "description": "Prisma aggregations এবং groupBy operations direct SQL execution থেকে বড় সুবিধা পায়",
+        "title": "📊 অ্যানালিটিক্স ও রিপোর্টিং",
+        "description": "Prisma-এর অ্যাগ্রিগেশন ও groupBy অপারেশন সরাসরি SQL এক্সিকিউশন থেকে উল্লেখযোগ্য সুবিধা পায়",
         "color": "blue",
         "benefits": [
           "5× দ্রুত groupBy রিপোর্ট দ্রুত করে",
-          "দ্রুত aggregate queries",
-          "কম latency-তে real-time metrics"
+          "দ্রুততর aggregate কুয়েরি",
+          "কম ল্যাটেন্সিতে রিয়েল-টাইম মেট্রিক্স"
         ]
       },
       {
-        "title": "🚀 High-traffic APIs",
-        "description": "Load-এর অধীনে per-query overhead জমে, বিশেষ করে read-heavy endpoints-এ",
+        "title": "🚀 উচ্চ-ট্রাফিক API",
+        "description": "লোডের মধ্যে প্রতি কুয়েরির ওভারহেড জমতে থাকে, বিশেষ করে রিড-প্রধান এন্ডপয়েন্টে",
         "color": "purple",
         "benefits": [
-          "কম API response time",
-          "প্রতি instance-এ বেশি request handle",
-          "ইনফ্রা খরচ কমানো"
+          "কম API রেসপন্স টাইম",
+          "প্রতি ইনস্ট্যান্সে আরও বেশি রিকোয়েস্ট সামলানো",
+          "ইনফ্রাস্ট্রাকচারের খরচ কমানো"
         ]
       },
       {
-        "title": "☁️ Serverless functions",
-        "description": "Serverless-এ প্রতিটি millisecond গুরুত্বপূর্ণ: যেখানে দরকার সেখানে read latency কমান",
+        "title": "☁️ সার্ভারলেস ফাংশন",
+        "description": "সার্ভারলেসে প্রতিটি মিলিসেকেন্ড গুরুত্বপূর্ণ: যেখানে দরকার সেখানে রিড ল্যাটেন্সি কমান",
         "color": "green",
         "benefits": [
-          "Reads-এ ভালো p95/p99",
-          "দ্রুত reads দিয়ে কম খরচ",
-          "Refactor ছাড়াই দ্রুত reads"
+          "রিডে ভালো p95/p99",
+          "দ্রুত রিডের ফলে কম খরচ",
+          "রিফ্যাক্টর ছাড়াই দ্রুত রিড"
         ]
       },
       {
-        "title": "📱 Mobile backends",
-        "description": "Users latency বুঝতে পারে: দ্রুত reads perceived UX দ্রুত উন্নত করে",
+        "title": "📱 মোবাইল ব্যাকএন্ড",
+        "description": "ব্যবহারকারীরা ল্যাটেন্সি টের পান: দ্রুত রিড সঙ্গে সঙ্গে অনুভূত UX উন্নত করে",
         "color": "orange",
         "benefits": [
-          "দ্রুত feed loading",
-          "দ্রুত pagination",
-          "আরও responsive interactions"
+          "দ্রুত ফিড লোডিং",
+          "দ্রুত পেজিনেশন",
+          "আরও রেসপনসিভ ইন্টারঅ্যাকশন"
         ]
       }
     ]
   },
   "installation": {
-    "title": "3 ধাপে Prisma optimize করুন",
-    "subtitle": "60 সেকেন্ডের মধ্যে Prisma reads accelerate করুন",
+    "title": "3 ধাপে Prisma অপটিমাইজ করুন",
+    "subtitle": "60 সেকেন্ডেরও কম সময়ে Prisma রিড দ্রুত করুন",
     "steps": [
       {
-        "title": "Prisma extension ইনস্টল করুন",
+        "title": "Prisma এক্সটেনশন ইনস্টল করুন",
         "language": "language-bash",
         "code": "# PostgreSQL\nnpm install prisma-sql postgres\n\n# SQLite\nnpm install prisma-sql better-sqlite3"
       },
       {
-        "title": "Prisma Client-এ extension যোগ করুন",
+        "title": "Prisma Client-এ এক্সটেনশন যোগ করুন",
         "language": "language-typescript",
         "code": "import { PrismaClient, Prisma } from '@prisma/client'\nimport { speedExtension, convertDMMFToModels } from 'prisma-sql'\nimport postgres from 'postgres'\n\nconst sql = postgres(process.env.DATABASE_URL)\nconst models = convertDMMFToModels(Prisma.dmmf.datamodel)\n\nconst prisma = new PrismaClient().$extends(\n  speedExtension({ postgres: sql, models })\n)"
       },
       {
-        "title": "Prisma সাধারণভাবেই ব্যবহার করুন",
+        "title": "স্বাভাবিকভাবে Prisma ব্যবহার করুন",
         "language": "language-typescript",
         "code": "const users = await prisma.user.findMany({\n  where: { status: 'ACTIVE' },\n  include: { posts: true }\n})"
       }
     ]
   },
   "faq": {
-    "title": "Prisma performance FAQ",
-    "subtitle": "Prisma reads optimize করার সাধারণ প্রশ্ন",
+    "title": "Prisma পারফরম্যান্স FAQ",
+    "subtitle": "Prisma রিড অপটিমাইজ করা নিয়ে সাধারণ প্রশ্ন",
     "questions": [
       {
-        "question": "Prisma-তে overhead কেন?",
-        "answer": "Prisma schema-based validation, consistent query behavior, এবং result shaping মতো API guarantees দেয় বলে overhead যোগ হয়। এগুলো developer experience ভালো করে, কিন্তু raw SQL সরাসরি execute করার তুলনায় সময় লাগে।"
+        "question": "Prisma-তে ওভারহেড কেন থাকে?",
+        "answer": "Prisma স্কিমা-ভিত্তিক যাচাই, সামঞ্জস্যপূর্ণ কুয়েরি আচরণ ও ফলাফল গঠনের মতো API নিশ্চয়তা বাস্তবায়ন করে বলে ওভারহেড যোগ হয়। এই স্তরগুলো চমৎকার ডেভেলপার এক্সপেরিয়েন্স দেয়, কিন্তু সরাসরি raw SQL চালানোর তুলনায় বেশি সময় নেয়।"
       },
       {
-        "question": "আমি Prisma queries কীভাবে optimize করব?",
-        "answer": "এই extension যোগ করে read-heavy Prisma workloads optimize করুন। এটি postgres.js বা better-sqlite3 দিয়ে direct SQL-এ reads execute করে, কিন্তু Prisma-এর API ও types রাখে। Setup হলো ছোট initialization change—existing queries refactor করতে হয় না।"
+        "question": "Prisma কুয়েরি কীভাবে অপটিমাইজ করব?",
+        "answer": "এই এক্সটেনশন যোগ করে রিড-প্রধান Prisma ওয়ার্কলোড অপটিমাইজ করুন। এটি Prisma-এর API ও টাইপ রেখে postgres.js বা better-sqlite3 দিয়ে সরাসরি SQL-এ রিড অপারেশন চালায়। সেটআপ মানে ইনিশিয়ালাইজেশনে ছোট একটি পরিবর্তন; বিদ্যমান কুয়েরি রিফ্যাক্টর করতে হয় না।"
       },
       {
-        "question": "Prisma কি raw SQL-এর চেয়ে ধীর?",
-        "answer": "অনেক read workload-এর ক্ষেত্রে, হ্যাঁ। raw SQL execution-এর তুলনায় architectural overhead থাকে। এই extension Prisma-এর DX রেখে SQL সরাসরি execute করে read latency কমাতে চায়।"
+        "question": "Prisma কি raw SQL-এর চেয়ে ধীর?",
+        "answer": "অনেক রিড ওয়ার্কলোডে, হ্যাঁ। raw SQL এক্সিকিউশনের তুলনায় আর্কিটেকচারগত ওভারহেড থাকে। এই এক্সটেনশনের লক্ষ্য হলো Prisma-এর DX বজায় রেখে সরাসরি SQL চালিয়ে রিড ল্যাটেন্সি কমানো।"
       },
       {
-        "question": "Existing queries না বদলেই কি Prisma দ্রুত করা যায়?",
-        "answer": "হ্যাঁ। Prisma Client initialization-এর সময় একবার extension যোগ করুন এবং existing Prisma query code unchanged রাখুন। Reads দ্রুত চলবে, Prisma API, types, schema একই থাকবে।"
+        "question": "বিদ্যমান কুয়েরি না বদলে কি Prisma দ্রুত করা যায়?",
+        "answer": "হ্যাঁ। Prisma Client ইনিশিয়ালাইজ করার সময় একবার এক্সটেনশন যোগ করুন, আর বিদ্যমান Prisma কুয়েরি কোড যেমন আছে তেমন রাখুন। রিড অপারেশন দ্রুত চলে, আর আপনার Prisma API, টাইপ ও স্কিমা একই থাকে।"
       },
       {
-        "question": "এটা কি production-এ কাজ করে?",
-        "answer": "হ্যাঁ। 137 E2E tests দিয়ে validate করা এবং production ব্যবহারের জন্য ডিজাইন করা। rollout-এর আগে আপনার Prisma version-এর সাথে compatibility যাচাই করুন এবং নিজের regression tests চালান।"
+        "question": "এটা কি প্রোডাকশনে কাজ করে?",
+        "answer": "হ্যাঁ, সমর্থিত রিড পথে প্রোডাকশন ব্যবহারের জন্যই এটি ডিজাইন করা। রোলআউটের আগে সবসময় আপনার Prisma ভার্সনের সাথে সামঞ্জস্য যাচাই করুন এবং নিজের রিগ্রেশন টেস্ট চালান।"
       },
       {
-        "question": "Prisma aggregations ধীর হয় কেন?",
-        "answer": "Aggregations এবং groupBy fixed overhead (query processing ও result shaping) বাড়িয়ে দেয় এবং বড় intermediate result sets লাগতে পারে। এই extension SQL সরাসরি generate করে reads optimize করে, ফলে aggregation-heavy endpoints-এ latency সাধারণত কমে।"
+        "question": "Prisma অ্যাগ্রিগেশন ধীর হয় কেন?",
+        "answer": "অ্যাগ্রিগেশন ও groupBy প্রায়ই নির্দিষ্ট ওভারহেড (কুয়েরি প্রসেসিং ও ফলাফল গঠন) বাড়িয়ে তোলে এবং এতে বড় মধ্যবর্তী রেজাল্ট সেট জড়িত থাকতে পারে। এই এক্সটেনশন সরাসরি SQL জেনারেট করে এই রিডগুলো অপটিমাইজ করে, যা সাধারণত অ্যাগ্রিগেশন-প্রধান এন্ডপয়েন্টে ল্যাটেন্সি কমায়।"
       }
     ]
   },
   "cta": {
     "title": "Prisma দ্রুত করতে প্রস্তুত?",
-    "subtitle": "Prisma reads optimize করা ডেভেলপারদের সাথে যোগ দিন: 2–7× দ্রুত (সর্বোচ্চ 53.5×)",
+    "subtitle": "সমর্থিত PostgreSQL ও SQLite রিডের জন্য বর্তমান বেঞ্চমার্ক টেবিল দেখুন",
     "button1": "Prisma-SQL ইনস্টল করুন",
     "button2": "GitHub-এ দেখুন"
   },
   "footer": {
-    "copyright": "© 2026 Prisma-SQL - Prisma reads 2–7× দ্রুত করুন (সর্বোচ্চ 53.5×)",
+    "copyright": "© 2026 Prisma-SQL - সমর্থিত Prisma রিড আরও দ্রুত",
     "tagline": "Prisma-কে আরও ভালো করছি"
   },
   "testingCallout": {
-    "badge": "✓ Validated",
-    "title": "আমরা correctness কীভাবে নিশ্চিত করি?",
-    "description": "PostgreSQL ও SQLite জুড়ে 137 end-to-end tests দিয়ে প্রতিটি query Prisma-এর বিরুদ্ধে validate করা হয়",
-    "link": "Testing Methodology দেখুন →"
+    "badge": "✓ যাচাইকৃত",
+    "title": "আমরা সঠিকতা কীভাবে নিশ্চিত করি?",
+    "description": "সমর্থিত কুয়েরিগুলো PostgreSQL ও SQLite জুড়ে Prisma-এর সাথে মিলিয়ে যাচাই করা হয়, আর বেঞ্চমার্ক রিপোর্ট Prisma v6, v7, v8, Drizzle ও জেনারেট হওয়া SQL কভার করে।",
+    "link": "টেস্টিং পদ্ধতি দেখুন →"
   },
   "testing": {
     "meta": {
-      "title": "Testing Methodology - prisma-sql",
-      "description": "Comprehensive testing approach validating 137 E2E tests ensure generated SQL matches Prisma output exactly",
-      "keywords": "prisma testing, sql validation, e2e tests, orm testing, database testing"
+      "title": "টেস্টিং পদ্ধতি - prisma-sql",
+      "description": "সমর্থিত কুয়েরিগুলো PostgreSQL ও SQLite জুড়ে Prisma-এর সাথে মিলিয়ে যাচাই করা হয়, আর বেঞ্চমার্ক রিপোর্ট Prisma v6, v7, v8, Drizzle ও জেনারেট হওয়া SQL তুলনা করে।",
+      "keywords": "prisma টেস্টিং, sql যাচাই, e2e টেস্ট, orm টেস্টিং, ডেটাবেস টেস্টিং"
     },
     "hero": {
-      "badge": "🧪 Quality assurance",
-      "title": "Testing",
-      "titleHighlight": "Methodology",
-      "subtitle": "137 end-to-end tests validate every generated SQL query matches Prisma's output exactly"
+      "badge": "🧪 মান নিশ্চিতকরণ",
+      "title": "টেস্টিং",
+      "titleHighlight": "পদ্ধতি",
+      "subtitle": "বর্তমান যাচাই PostgreSQL ও SQLite জুড়ে সমর্থিত রিড কভার করে, সাথে আছে Prisma v6, v7, v8, Drizzle ও জেনারেট হওয়া SQL-এর বেঞ্চমার্ক রিপোর্ট।"
     },
     "stats": [
       {
-        "value": "137",
-        "label": "E2E tests",
-        "description": "Every query validated"
+        "value": "বর্তমান",
+        "label": "E2E স্যুট",
+        "description": "কুয়েরি প্যারিটি যাচাইকৃত"
       },
       {
         "value": "100%",
-        "label": "Parity coverage",
-        "description": "Byte-for-byte match"
+        "label": "প্যারিটি কভারেজ",
+        "description": "বাইট-বাই-বাইট মিল"
       },
       {
         "value": "2",
-        "label": "Database engines",
-        "description": "PostgreSQL & SQLite"
+        "label": "ডেটাবেস ইঞ্জিন",
+        "description": "PostgreSQL ও SQLite"
       },
       {
         "value": "4",
-        "label": "ORM benchmarks",
+        "label": "ORM বেঞ্চমার্ক",
         "description": "Prisma v6/v7/v8, Drizzle"
       }
     ],
     "validation": {
-      "title": "আমরা correctness কীভাবে validate করি",
-      "subtitle": "Generated SQL যেন Prisma-এর মতোই ফল দেয়—এটা নিশ্চিত করতে প্রতিটি test একটি কঠোর 5-step process অনুসরণ করে",
+      "title": "আমরা সঠিকতা কীভাবে যাচাই করি",
+      "subtitle": "জেনারেট হওয়া SQL যেন Prisma-এর মতো হুবহু একই ফলাফল দেয়, তা নিশ্চিত করতে প্রতিটি টেস্ট একটি কঠোর 5-ধাপের যাচাই প্রক্রিয়া অনুসরণ করে",
       "steps": [
         {
-          "title": "Prisma query থেকে SQL generate করুন",
-          "description": "Prisma query arguments parse করে একই models ও schema ব্যবহার করে equivalent SQL generate করুন। Generated SQL security ও performance-এর জন্য parameterized queries ব্যবহার করে।"
+          "title": "Prisma কুয়েরি থেকে SQL জেনারেট করা",
+          "description": "Prisma কুয়েরির আর্গুমেন্ট পার্স করে একই মডেল ও স্কিমা ব্যবহার করে সমতুল্য SQL জেনারেট করা হয়। নিরাপত্তা ও পারফরম্যান্সের জন্য জেনারেট হওয়া SQL প্যারামিটারাইজড কুয়েরি ব্যবহার করে।"
         },
         {
-          "title": "দুটি query parallel-এ execute করুন",
-          "description": "postgres.js বা better-sqlite3 দিয়ে generated SQL direct চালান, এবং একই query Prisma দিয়ে চালান। দুটোই একই database state hit করে।"
+          "title": "দুটি কুয়েরি সমান্তরালে চালানো",
+          "description": "জেনারেট হওয়া SQL সরাসরি postgres.js বা better-sqlite3 দিয়ে চালানো হয়, আর একই কুয়েরি Prisma দিয়ে চালানো হয়। দুটিই ডেটাবেসের একই অবস্থার ওপর চলে।"
         },
         {
-          "title": "Results normalize করুন",
-          "description": "Type differences (BigInt vs Number, Decimal precision, Date serialization) handle করুন এবং fair comparison-এর জন্য object key ordering normalize করুন।"
+          "title": "ফলাফল নর্মালাইজ করা",
+          "description": "ন্যায্য তুলনার জন্য টাইপের পার্থক্য (BigInt বনাম Number, Decimal প্রিসিশন, Date সিরিয়ালাইজেশন) সামলানো হয় এবং অবজেক্ট কী-এর ক্রম নর্মালাইজ করা হয়।"
         },
         {
-          "title": "Deep equality check",
-          "description": "Results একদম একই কিনা যাচাই করুন: row count, field values, nested relations, ordering। mismatch হলে test fail।"
+          "title": "গভীর সমতা যাচাই",
+          "description": "ফলাফল হুবহু মেলে কি না যাচাই করা হয়: একই সংখ্যক রো, একই ফিল্ড মান, একই নেস্টেড রিলেশন, একই ক্রম। কোনো অমিল থাকলে টেস্ট ফেল করে।"
         },
         {
-          "title": "Performance benchmark",
-          "description": "5 warmup runs, তারপর প্রতি test-এ 10–50 iterations average করে execution time মাপুন। Prisma v6, Prisma v7, এবং Drizzle ORM-এর সাথে compare করুন।"
+          "title": "পারফরম্যান্স বেঞ্চমার্ক",
+          "description": "5টি ওয়ার্মআপ রানের পর প্রতি টেস্টে 10-50টি ইটারেশনের গড় নিয়ে এক্সিকিউশন টাইম মাপা হয়। তুলনা করা হয় Prisma v6, Prisma v7, Prisma v8 ও Drizzle ORM-এর সাথে।"
         }
       ]
     },
     "advancedTechniques": {
-      "title": "Advanced validation techniques",
+      "title": "উন্নত যাচাই কৌশল",
       "dataTypes": {
-        "title": "Data type normalization",
+        "title": "ডেটা টাইপ নর্মালাইজেশন",
         "items": [
           {
-            "label": "BigInt conversion",
-            "description": "JavaScript BigInt → Number for comparison"
+            "label": "BigInt রূপান্তর",
+            "description": "তুলনার জন্য JavaScript BigInt → Number"
           },
           {
-            "label": "Decimal handling",
-            "description": "Prisma Decimal → Float with 10-digit precision"
+            "label": "Decimal সামলানো",
+            "description": "Prisma Decimal → 10-অঙ্কের প্রিসিশনসহ Float"
           },
           {
-            "label": "Date normalization",
-            "description": "All DateTime values → null (focus on data, not timestamps)"
+            "label": "Date নর্মালাইজেশন",
+            "description": "সব DateTime মান → null (টাইমস্ট্যাম্প নয়, ডেটার ওপর মনোযোগ)"
           },
           {
-            "label": "JSON parsing",
-            "description": "Automatic detection and parsing of JSON strings"
+            "label": "JSON পার্সিং",
+            "description": "JSON স্ট্রিং স্বয়ংক্রিয়ভাবে শনাক্ত ও পার্স করা"
           },
           {
-            "label": "Object key sorting",
-            "description": "Alphabetical ordering for consistent comparison"
+            "label": "অবজেক্ট কী সাজানো",
+            "description": "সামঞ্জস্যপূর্ণ তুলনার জন্য বর্ণানুক্রমিক ক্রম"
           }
         ]
       },
       "performance": {
-        "title": "Performance benchmarking",
+        "title": "পারফরম্যান্স বেঞ্চমার্কিং",
         "items": [
           {
-            "label": "Warmup phase",
-            "description": "5 iterations to prime caches and JIT"
+            "label": "ওয়ার্মআপ পর্ব",
+            "description": "ক্যাশ ও JIT প্রস্তুত করতে 5টি ইটারেশন"
           },
           {
-            "label": "Adaptive iterations",
-            "description": "5-50 runs based on query complexity"
+            "label": "অভিযোজিত ইটারেশন",
+            "description": "কুয়েরির জটিলতা অনুযায়ী 5-50টি রান"
           },
           {
-            "label": "Isolated measurement",
-            "description": "Each query type measured independently"
+            "label": "আলাদা পরিমাপ",
+            "description": "প্রতিটি কুয়েরি টাইপ স্বাধীনভাবে মাপা হয়"
           },
           {
-            "label": "Multi-ORM comparison",
-            "description": "Prisma v6, v7, v8, Drizzle, Generated SQL"
+            "label": "একাধিক ORM-এর তুলনা",
+            "description": "Prisma v6, v7, v8, Drizzle, জেনারেট হওয়া SQL"
           },
           {
-            "label": "SQL generation time",
-            "description": "Separate timing for query generation overhead"
+            "label": "SQL জেনারেশন টাইম",
+            "description": "কুয়েরি জেনারেশনের ওভারহেডের জন্য আলাদা টাইমিং"
           }
         ]
       }
     },
     "coverage": {
-      "title": "Comprehensive test coverage",
-      "subtitle": "Tests cover every Prisma read operation across multiple complexity levels",
+      "title": "বিস্তৃত টেস্ট কভারেজ",
+      "subtitle": "টেস্টগুলো বিভিন্ন জটিলতার স্তরে প্রতিটি Prisma রিড অপারেশন কভার করে",
       "categories": [
         {
-          "title": "Query operations",
+          "title": "কুয়েরি অপারেশন",
           "items": [
-            "findMany with complex filters",
-            "findFirst with skip & pagination",
-            "findUnique by ID & unique fields",
-            "count with WHERE conditions",
+            "জটিল ফিল্টারসহ findMany",
+            "skip ও পেজিনেশনসহ findFirst",
+            "ID ও ইউনিক ফিল্ড দিয়ে findUnique",
+            "WHERE শর্তসহ count",
             "aggregate (sum, avg, min, max)",
-            "groupBy with HAVING clauses"
+            "HAVING ক্লজসহ groupBy"
           ]
         },
         {
-          "title": "Complex scenarios",
+          "title": "জটিল পরিস্থিতি",
           "items": [
-            "Nested includes (4 levels deep)",
-            "Relation filters (some/every/none)",
-            "Distinct with window functions",
-            "Cursor pagination",
-            "Select + include combined",
-            "Relation counts (_count)"
+            "নেস্টেড include (4 স্তর গভীর)",
+            "রিলেশন ফিল্টার (some/every/none)",
+            "উইন্ডো ফাংশনসহ Distinct",
+            "কার্সর পেজিনেশন",
+            "select + include একসাথে",
+            "রিলেশন কাউন্ট (_count)"
           ]
         },
         {
-          "title": "Filter types",
+          "title": "ফিল্টারের ধরন",
           "items": [
-            "Comparison (lt/lte/gt/gte)",
-            "Logical (AND/OR/NOT)",
-            "String ops (contains/startsWith)",
-            "NULL checks (is/isNot)",
-            "IN/NOT IN arrays",
-            "Case sensitivity modes"
+            "তুলনা (lt/lte/gt/gte)",
+            "লজিক্যাল (AND/OR/NOT)",
+            "স্ট্রিং অপারেশন (contains/startsWith)",
+            "NULL যাচাই (is/isNot)",
+            "IN/NOT IN অ্যারে",
+            "কেস সেনসিটিভিটি মোড"
           ]
         }
       ]
     },
     "databaseSpecific": {
       "postgres": {
-        "title": "PostgreSQL testing",
+        "title": "PostgreSQL টেস্টিং",
         "items": [
-          "ILIKE case-insensitive searches",
-          "JSON/JSONB operations",
-          "Array field handling",
-          "Composite type support",
-          "Window function validation",
-          "Transaction isolation testing"
+          "ILIKE দিয়ে কেস-ইনসেনসিটিভ সার্চ",
+          "JSON/JSONB অপারেশন",
+          "অ্যারে ফিল্ড সামলানো",
+          "কম্পোজিট টাইপ সমর্থন",
+          "উইন্ডো ফাংশন যাচাই",
+          "ট্রানজ্যাকশন আইসোলেশন টেস্টিং"
         ]
       },
       "sqlite": {
-        "title": "SQLite testing",
+        "title": "SQLite টেস্টিং",
         "items": [
-          "LIKE pattern matching",
-          "JSON1 extension validation",
-          "Window function emulation",
-          "DISTINCT optimization",
-          "Subquery correlation",
-          "Text affinity handling"
+          "LIKE প্যাটার্ন ম্যাচিং",
+          "JSON1 এক্সটেনশন যাচাই",
+          "উইন্ডো ফাংশন এমুলেশন",
+          "DISTINCT অপটিমাইজেশন",
+          "সাবকুয়েরি কোরিলেশন",
+          "টেক্সট অ্যাফিনিটি সামলানো"
         ]
       }
     },
     "example": {
-      "title": "Example test case",
-      "subtitle": "Relation filters সহ একটি complex nested query আমরা কীভাবে validate করি দেখুন",
+      "title": "উদাহরণ টেস্ট কেস",
+      "subtitle": "রিলেশন ফিল্টারসহ একটি জটিল নেস্টেড কুয়েরি আমরা কীভাবে যাচাই করি দেখুন",
       "filename": "tests/e2e/postgres.test.ts",
-      "code": "it('nested relation filter', () =>\n  runParityTest(\n    db,\n    benchmarkResults,\n    'findMany nested relation',\n    'Organization',\n    {\n      method: 'findMany',\n      where: {\n        projects: {\n          some: {\n            tasks: { some: { status: 'DONE' } }\n          }\n        }\n      }\n    },\n    () => db.prisma.organization.findMany({\n      where: {\n        projects: {\n          some: {\n            tasks: { some: { status: 'DONE' } }\n          }\n        }\n      },\n      orderBy: { id: 'asc' }\n    }),\n  )\n)\n\n// runParityTest internally:\n// 1. Calls generateSQL() with the args\n// 2. Executes generated SQL directly\n// 3. Executes Prisma query\n// 4. Normalizes both results\n// 5. Deep equality check - fails if any difference\n// 6. Benchmarks execution time"
+      "code": "it('nested relation filter', () =>\n  runParityTest(\n    db,\n    benchmarkResults,\n    'findMany nested relation',\n    'Organization',\n    {\n      method: 'findMany',\n      where: {\n        projects: {\n          some: {\n            tasks: { some: { status: 'DONE' } }\n          }\n        }\n      }\n    },\n    () => db.prisma.organization.findMany({\n      where: {\n        projects: {\n          some: {\n            tasks: { some: { status: 'DONE' } }\n          }\n        }\n      },\n      orderBy: { id: 'asc' }\n    }),\n  )\n)\n\n// runParityTest ভেতরে যা করে:\n// 1. args দিয়ে generateSQL() কল করে\n// 2. জেনারেট হওয়া SQL সরাসরি চালায়\n// 3. Prisma কুয়েরি চালায়\n// 4. দুটি ফলাফলই নর্মালাইজ করে\n// 5. গভীর সমতা যাচাই - কোনো পার্থক্য থাকলে ফেল করে\n// 6. এক্সিকিউশন টাইম বেঞ্চমার্ক করে"
     },
     "executionFlow": {
-      "title": "Test execution চলাকালে কী ঘটে",
+      "title": "টেস্ট চলার সময় কী ঘটে",
       "steps": [
         {
           "number": "1",
-          "title": "Query generation (Microseconds)",
-          "description": "generateSQL() Prisma args parse করে parameterized SQL তৈরি করে। এই step আলাদাভাবে benchmark করা হয় query generation overhead মাপতে।"
+          "title": "কুয়েরি জেনারেশন (মাইক্রোসেকেন্ড)",
+          "description": "generateSQL() ফাংশন Prisma args পার্স করে প্যারামিটারাইজড SQL তৈরি করে। কুয়েরি জেনারেশনের ওভারহেড মাপতে এই ধাপ আলাদাভাবে বেঞ্চমার্ক করা হয়।"
         },
         {
           "number": "2",
-          "title": "Parallel execution (Milliseconds)",
-          "description": "Promise.all() দিয়ে দুটো query একসাথে একই database state hit করে—fair comparison ও identical data conditions নিশ্চিত করে।"
+          "title": "সমান্তরাল এক্সিকিউশন (মিলিসেকেন্ড)",
+          "description": "Promise.all() ব্যবহার করে দুটি কুয়েরি একই সময়ে ডেটাবেসের একই অবস্থার ওপর চলে, ফলে তুলনা ন্যায্য হয় এবং ডেটার অবস্থা অভিন্ন থাকে।"
         },
         {
           "number": "3",
-          "title": "Deep normalization",
-          "description": "Results recursive normalization পায়: BigInt→Number, Decimal→Float(10), Date→null, JSON parse, key sorting। এতে byte-for-byte comparison accuracy নিশ্চিত হয়।"
+          "title": "গভীর নর্মালাইজেশন",
+          "description": "ফলাফল রিকার্সিভ নর্মালাইজেশনের মধ্য দিয়ে যায়: BigInt→Number, Decimal→Float(10), Date→null, JSON পার্স, কী সাজানো। এতে বাইট-বাই-বাইট তুলনার নির্ভুলতা নিশ্চিত হয়।"
         },
         {
           "number": "4",
-          "title": "Strict equality",
-          "description": "Zero tolerance সহ JSON stringify comparison। row count, field values, nested objects বা ordering-এ কোনো mismatch হলে detailed diff output সহ fail।"
+          "title": "কঠোর সমতা",
+          "description": "শূন্য সহনশীলতায় JSON stringify তুলনা। রোয়ের সংখ্যা, ফিল্ড মান, নেস্টেড অবজেক্ট বা ক্রমে কোনো অমিল হলে বিস্তারিত diff আউটপুটসহ টেস্ট ফেল করে।"
         },
         {
           "number": "5",
-          "title": "Performance measurement",
-          "description": "Validation-এর পরে, 5–50 iterations average execution time মাপে। ফলাফল: Prisma v6, Prisma v7, Prisma v8, Drizzle ORM, Generated SQL, এবং SQL generation overhead।"
+          "title": "পারফরম্যান্স পরিমাপ",
+          "description": "যাচাইয়ের পর 5-50টি ইটারেশনে গড় এক্সিকিউশন টাইম মাপা হয়। ফলাফলে থাকে: Prisma v6, Prisma v7, Prisma v8, Drizzle ORM, জেনারেট হওয়া SQL এবং SQL জেনারেশনের ওভারহেড।"
         }
       ]
     },
     "multiVersion": {
-      "title": "Multi-version validation",
-      "description": "Compatibility নিশ্চিত করতে প্রতিটি test Prisma v6, v7, v8-এর বিরুদ্ধেই চলে:",
+      "title": "একাধিক ভার্সনে যাচাই",
+      "description": "বেঞ্চমার্ক করা প্রতিটি টেস্ট, যেখানে সমর্থিত, Prisma v6, v7 ও v8 জুড়ে চলে:",
       "v6": {
         "title": "Prisma v6 (6.19.3)",
         "items": [
-          "Direct PrismaClient usage",
-          "Legacy engine architecture",
-          "Baseline performance metrics"
+          "সরাসরি PrismaClient ব্যবহার",
+          "পুরনো ইঞ্জিন আর্কিটেকচার",
+          "বেসলাইন পারফরম্যান্স মেট্রিক্স"
         ]
       },
       "v7": {
         "title": "Prisma v7 (7.10.0)",
         "items": [
-          "Adapter-based architecture",
-          "@prisma/adapter-pg & adapter-better-sqlite3",
-          "New engine optimizations"
+          "অ্যাডাপ্টার-ভিত্তিক আর্কিটেকচার",
+          "@prisma/adapter-pg ও adapter-better-sqlite3",
+          "নতুন ইঞ্জিন অপটিমাইজেশন"
         ]
       },
       "v8": {
         "title": "Prisma v8 (8.1.0-dev.1)",
         "items": [
-          "Prisma v8",
-          "@prisma/adapter-*",
-          "PostgreSQL + SQLite"
+          "Prisma v8 dev রিলিজের কভারেজ",
+          "অ্যাডাপ্টার-ভিত্তিক আর্কিটেকচার",
+          "PostgreSQL ও SQLite বেঞ্চমার্ক প্যারিটি"
         ]
       }
     },
     "benchmarkReports": {
-      "title": "Automated benchmark reports",
-      "description": "সব benchmark results স্বয়ংক্রিয়ভাবে generate হয়ে JSON ফাইল হিসেবে সংরক্ষিত থাকে পূর্ণ transparency-র জন্য:",
+      "title": "স্বয়ংক্রিয় বেঞ্চমার্ক রিপোর্ট",
+      "description": "পূর্ণ স্বচ্ছতার জন্য সব বেঞ্চমার্ক ফলাফল স্বয়ংক্রিয়ভাবে তৈরি হয় এবং JSON ফাইল হিসেবে সংরক্ষিত থাকে:",
       "files": [
         "benchmark-results/v6-postgres-latest.json",
         "benchmark-results/v7-postgres-latest.json",
@@ -536,332 +536,332 @@
         "benchmark-results/v7-sqlite-latest.json",
         "benchmark-results/v8-sqlite-latest.json"
       ],
-      "footer": "প্রতি ফাইলে থাকে: test name, Prisma execution time, generated SQL time, Drizzle time, speedup ratios, এবং ISO timestamp।"
+      "footer": "প্রতিটি ফাইলে থাকে: টেস্টের নাম, Prisma এক্সিকিউশন টাইম, জেনারেট হওয়া SQL-এর টাইম, Drizzle টাইম, গতিবৃদ্ধির অনুপাত এবং ISO টাইমস্ট্যাম্প।"
     },
     "cta": {
-      "title": "Full test suite explore করুন",
-      "subtitle": "সব 137 tests open source। Test code, benchmarks, এবং validation logic review করুন।",
-      "button1": "View Test Suite →",
-      "button2": "See Benchmarks"
+      "title": "পূর্ণ টেস্ট স্যুট দেখুন",
+      "subtitle": "যাচাই স্যুট ও বেঞ্চমার্ক রিপোর্ট ওপেন সোর্স। টেস্ট কোড, বেঞ্চমার্ক ডেটা ও প্যারিটি চেক পর্যালোচনা করুন।",
+      "button1": "টেস্ট স্যুট দেখুন →",
+      "button2": "বেঞ্চমার্ক দেখুন"
     }
   },
   "sqlPrevention": {
     "meta": {
-      "title": "SQL Injection Prevention - prisma-sql Security",
-      "description": "SQL injection prevention methodology using parameter binding, schema-based validation, and 137 security-focused tests (current suite)",
-      "keywords": "sql injection prevention, parameterized queries, sql security, database security, prisma security"
+      "title": "SQL ইনজেকশন প্রতিরোধ - prisma-sql নিরাপত্তা",
+      "description": "প্যারামিটার বাইন্ডিং, স্কিমা-ভিত্তিক যাচাই এবং বর্তমান নিরাপত্তা-কেন্দ্রিক টেস্ট স্যুট ব্যবহার করে SQL ইনজেকশন প্রতিরোধের পদ্ধতি",
+      "keywords": "sql ইনজেকশন প্রতিরোধ, প্যারামিটারাইজড কুয়েরি, sql নিরাপত্তা, ডেটাবেস নিরাপত্তা, prisma নিরাপত্তা"
     },
     "hero": {
-      "badge": "🔒 Security first",
-      "title": "SQL Injection",
-      "titleHighlight": "Prevention",
-      "subtitle": "User-provided values are never interpolated into SQL text — values are bound via parameter placeholders (dialect-specific, e.g. $1 or ?)"
+      "badge": "🔒 নিরাপত্তা আগে",
+      "title": "SQL ইনজেকশন",
+      "titleHighlight": "প্রতিরোধ",
+      "subtitle": "ব্যবহারকারীর দেওয়া মান কখনো SQL টেক্সটে ইন্টারপোলেট করা হয় না — মানগুলো প্যারামিটার প্লেসহোল্ডারের মাধ্যমে বাইন্ড করা হয় (ডায়ালেক্ট-নির্দিষ্ট, যেমন $1 বা ?)"
     },
     "stats": [
       {
         "value": "100%",
-        "label": "Parameter bound",
-        "description": "All user-provided values use placeholders"
+        "label": "প্যারামিটার বাইন্ড",
+        "description": "ব্যবহারকারীর দেওয়া সব মান প্লেসহোল্ডার ব্যবহার করে"
       },
       {
-        "value": "Zero",
-        "label": "Value interpolation",
-        "description": "User data never appears in SQL text"
+        "value": "শূন্য",
+        "label": "মান ইন্টারপোলেশন",
+        "description": "ব্যবহারকারীর ডেটা কখনো SQL টেক্সটে আসে না"
       },
       {
-        "value": "Guaranteed",
-        "label": "Order preservation",
-        "description": "Placeholders map to params 1:1"
+        "value": "নিশ্চিত",
+        "label": "ক্রম সংরক্ষণ",
+        "description": "প্লেসহোল্ডার ও params 1:1 মেলে"
       },
       {
-        "value": "137",
-        "label": "Security tests",
-        "description": "Injection attempt coverage (current suite)"
+        "value": "বর্তমান",
+        "label": "নিরাপত্তা টেস্ট",
+        "description": "ইনজেকশন প্রচেষ্টার কভারেজ"
       }
     ],
     "threat": {
-      "title": "Understanding SQL injection",
-      "subtitle": "SQL injection remains one of the most critical web application vulnerabilities",
-      "description": "SQL injection occurs when untrusted data is incorporated into SQL text without safe parameter binding. Attackers can manipulate query meaning to access unauthorized data, modify records, or trigger unintended operations.",
+      "title": "SQL ইনজেকশন বোঝা",
+      "subtitle": "SQL ইনজেকশন এখনও ওয়েব অ্যাপ্লিকেশনের সবচেয়ে গুরুতর দুর্বলতাগুলোর একটি",
+      "description": "অবিশ্বস্ত ডেটা নিরাপদ প্যারামিটার বাইন্ডিং ছাড়া SQL টেক্সটে যুক্ত হলে SQL ইনজেকশন ঘটে। আক্রমণকারী কুয়েরির অর্থ বদলে দিয়ে অননুমোদিত ডেটা অ্যাক্সেস করতে, রেকর্ড পরিবর্তন করতে বা অনাকাঙ্ক্ষিত অপারেশন চালাতে পারে।",
       "examples": {
-        "title": "Common attack patterns",
+        "title": "সাধারণ আক্রমণের ধরন",
         "items": [
           {
-            "name": "Authentication bypass",
+            "name": "অথেনটিকেশন বাইপাস",
             "attack": "admin' OR '1'='1",
-            "description": "Attempts to bypass login by making the WHERE condition always true"
+            "description": "WHERE শর্তকে সবসময় সত্য বানিয়ে লগইন এড়ানোর চেষ্টা"
           },
           {
-            "name": "Data exfiltration",
+            "name": "ডেটা চুরি",
             "attack": "' UNION SELECT password FROM users--",
-            "description": "Uses UNION to attempt extracting data from other tables"
+            "description": "অন্য টেবিল থেকে ডেটা বের করার চেষ্টায় UNION ব্যবহার"
           },
           {
-            "name": "Destructive commands",
+            "name": "ধ্বংসাত্মক কমান্ড",
             "attack": "'; DROP TABLE users; --",
-            "description": "Attempts to append extra statements to delete data"
+            "description": "ডেটা মুছতে অতিরিক্ত স্টেটমেন্ট জুড়ে দেওয়ার চেষ্টা"
           },
           {
-            "name": "Parameter order bug abuse",
-            "attack": "Exploit: If placeholders and params are mismatched, authorization checks may use the wrong values",
-            "description": "Example: WHERE userId=$1 AND isAdmin=$2, but params=[true, 123] instead of [123, true] can incorrectly grant admin access"
+            "name": "প্যারামিটার ক্রমের বাগের অপব্যবহার",
+            "attack": "এক্সপ্লয়েট: প্লেসহোল্ডার ও params না মিললে অথরাইজেশন চেক ভুল মান ব্যবহার করতে পারে",
+            "description": "উদাহরণ: WHERE userId=$1 AND isAdmin=$2, কিন্তু [123, true]-এর বদলে params=[true, 123] হলে ভুলভাবে অ্যাডমিন অ্যাক্সেস দেওয়া হতে পারে"
           }
         ]
       }
     },
     "protection": {
-      "title": "Multi-layer protection strategy",
-      "subtitle": "Every query passes through multiple security validation layers",
+      "title": "বহুস্তরের সুরক্ষা কৌশল",
+      "subtitle": "প্রতিটি কুয়েরি একাধিক নিরাপত্তা যাচাই স্তরের মধ্য দিয়ে যায়",
       "layers": [
         {
-          "title": "Layer 1: Automatic parameter binding",
-          "description": "All user-provided values are converted into bound parameters. Values do not enter SQL text as literals.",
+          "title": "স্তর 1: স্বয়ংক্রিয় প্যারামিটার বাইন্ডিং",
+          "description": "ব্যবহারকারীর দেওয়া সব মান বাইন্ড করা প্যারামিটারে রূপান্তরিত হয়। মানগুলো লিটারাল হিসেবে SQL টেক্সটে ঢোকে না।",
           "guarantees": [
-            "User values are represented using dialect-specific placeholders (e.g. $1 or ?)",
-            "Array inputs are parameterized (expanded placeholders or array parameters depending on dialect/strategy)",
-            "NULL and optional values handled without concatenating user input into SQL text",
-            "Date/time values are parameterized",
-            "JSON values are parameterized"
+            "ব্যবহারকারীর মান ডায়ালেক্ট-নির্দিষ্ট প্লেসহোল্ডার দিয়ে প্রকাশ করা হয় (যেমন $1 বা ?)",
+            "অ্যারে ইনপুট প্যারামিটারাইজ করা হয় (ডায়ালেক্ট/কৌশল অনুযায়ী বিস্তৃত প্লেসহোল্ডার বা অ্যারে প্যারামিটার)",
+            "NULL ও ঐচ্ছিক মান ব্যবহারকারীর ইনপুট SQL টেক্সটে জোড়া না দিয়েই সামলানো হয়",
+            "তারিখ/সময়ের মান প্যারামিটারাইজ করা হয়",
+            "JSON মান প্যারামিটারাইজ করা হয়"
           ]
         },
         {
-          "title": "Layer 2: Field name validation",
-          "description": "Every field name is validated against the Prisma schema metadata before query generation.",
+          "title": "স্তর 2: ফিল্ড নাম যাচাই",
+          "description": "কুয়েরি জেনারেশনের আগে প্রতিটি ফিল্ডের নাম Prisma স্কিমা মেটাডেটার সাথে মিলিয়ে যাচাই করা হয়।",
           "guarantees": [
-            "Only schema-defined fields are allowed",
-            "Relation filters validated via schema metadata",
-            "No arbitrary field names accepted",
-            "Unsupported/computed fields rejected where applicable",
-            "Prototype pollution payloads are rejected (e.g. __proto__, constructor)"
+            "শুধু স্কিমায় সংজ্ঞায়িত ফিল্ড অনুমোদিত",
+            "রিলেশন ফিল্টার স্কিমা মেটাডেটা দিয়ে যাচাই করা হয়",
+            "যথেচ্ছ কোনো ফিল্ড নাম গ্রহণ করা হয় না",
+            "প্রযোজ্য ক্ষেত্রে অসমর্থিত/কম্পিউটেড ফিল্ড প্রত্যাখ্যান করা হয়",
+            "প্রোটোটাইপ পলিউশন পেলোড প্রত্যাখ্যান করা হয় (যেমন __proto__, constructor)"
           ]
         },
         {
-          "title": "Layer 3: Identifier sanitization",
-          "description": "Table names, column names, and aliases are validated and safely quoted/escaped as required.",
+          "title": "স্তর 3: আইডেন্টিফায়ার স্যানিটাইজেশন",
+          "description": "টেবিলের নাম, কলামের নাম ও অ্যালিয়াস যাচাই করা হয় এবং প্রয়োজন অনুযায়ী নিরাপদে কোট/এস্কেপ করা হয়।",
           "guarantees": [
-            "Control characters rejected",
-            "Reserved keywords are quoted when needed",
-            "Schema qualification supported where configured",
-            "Double-quote escaping (or dialect equivalent) for identifiers",
-            "Maximum identifier length enforced per dialect"
+            "কন্ট্রোল ক্যারেক্টার প্রত্যাখ্যান করা হয়",
+            "দরকার হলে সংরক্ষিত কীওয়ার্ড কোট করা হয়",
+            "যেখানে কনফিগার করা আছে সেখানে স্কিমা কোয়ালিফিকেশন সমর্থিত",
+            "আইডেন্টিফায়ারের জন্য ডাবল-কোট এস্কেপিং (বা ডায়ালেক্টের সমতুল্য)",
+            "প্রতি ডায়ালেক্টে আইডেন্টিফায়ারের সর্বোচ্চ দৈর্ঘ্য প্রয়োগ করা হয়"
           ]
         },
         {
-          "title": "Layer 4: Operator validation",
-          "description": "Only known, safe operators are allowed for each field type.",
+          "title": "স্তর 4: অপারেটর যাচাই",
+          "description": "প্রতিটি ফিল্ড টাইপের জন্য শুধু পরিচিত, নিরাপদ অপারেটর অনুমোদিত।",
           "guarantees": [
-            "String operators: contains, startsWith, endsWith",
-            "Numeric operators: lt, lte, gt, gte",
-            "Array operators: in, notIn with type validation",
-            "Logical operators: AND, OR, NOT validated structurally",
-            "Unknown operators rejected immediately"
+            "স্ট্রিং অপারেটর: contains, startsWith, endsWith",
+            "সংখ্যাসূচক অপারেটর: lt, lte, gt, gte",
+            "অ্যারে অপারেটর: টাইপ যাচাইসহ in, notIn",
+            "লজিক্যাল অপারেটর: AND, OR, NOT কাঠামোগতভাবে যাচাই করা হয়",
+            "অজানা অপারেটর সঙ্গে সঙ্গে প্রত্যাখ্যান করা হয়"
           ]
         },
         {
-          "title": "Layer 5: Parameter order guarantee",
-          "description": "Strict ordering ensures each placeholder maps to exactly one parameter in insertion order, preventing mismatches.",
+          "title": "স্তর 5: প্যারামিটার ক্রমের নিশ্চয়তা",
+          "description": "কঠোর ক্রম নিশ্চিত করে যে প্রতিটি প্লেসহোল্ডার যোগ করার ক্রম অনুযায়ী ঠিক একটি প্যারামিটারের সাথে মেলে, ফলে অমিল হয় না।",
           "guarantees": [
-            "Sequential counter prevents reordering",
-            "Lockstep SQL building and param array construction",
-            "No intermediate buffer or reordering operations",
-            "Test verification: generated SQL and params always align",
-            "One-to-one correspondence: placeholder N → params[N-1] (or equivalent mapping for the dialect)"
+            "ধারাবাহিক কাউন্টার ক্রম বদলানো প্রতিরোধ করে",
+            "SQL তৈরি ও param অ্যারে তৈরি একসাথে ধাপে ধাপে চলে",
+            "কোনো মধ্যবর্তী বাফার বা ক্রম বদলের অপারেশন নেই",
+            "টেস্টে যাচাই: জেনারেট হওয়া SQL ও params সবসময় মেলে",
+            "এক-এক সম্পর্ক: প্লেসহোল্ডার N → params[N-1] (বা ডায়ালেক্টের সমতুল্য ম্যাপিং)"
           ]
         }
       ]
     },
     "formalProofs": {
-      "title": "Formal security guarantees",
-      "subtitle": "Proof sketches for injection resistance under stated design assumptions (parameter binding, no raw-SQL bypass, correct driver usage)",
+      "title": "আনুষ্ঠানিক নিরাপত্তা নিশ্চয়তা",
+      "subtitle": "উল্লিখিত ডিজাইন অনুমানের অধীনে (প্যারামিটার বাইন্ডিং, raw-SQL বাইপাস নেই, ড্রাইভারের সঠিক ব্যবহার) ইনজেকশন প্রতিরোধের প্রমাণের রূপরেখা",
       "proofs": [
         {
-          "title": "Theorem 1: Value isolation",
-          "statement": "For all user-provided values V, there exists no execution path where V appears as SQL text in the generated query string.",
-          "proof": "By construction, all code paths that handle user values call addParameter(value) which:\n1. Stores the value in a separate params array\n2. Returns a placeholder token for the SQL text\n3. Only the placeholder token is appended into the SQL string\n4. The database driver receives SQL text and parameter values separately\n∴ User values are not parsed as SQL syntax",
+          "title": "উপপাদ্য 1: মান বিচ্ছিন্নতা",
+          "statement": "ব্যবহারকারীর দেওয়া সব মান V-এর জন্য এমন কোনো এক্সিকিউশন পথ নেই, যেখানে V জেনারেট হওয়া কুয়েরি স্ট্রিংয়ে SQL টেক্সট হিসেবে আসে।",
+          "proof": "গঠন অনুযায়ী, ব্যবহারকারীর মান সামলায় এমন সব কোড পথ addParameter(value) কল করে, যা:\n1. মানটি আলাদা একটি params অ্যারেতে রাখে\n2. SQL টেক্সটের জন্য একটি প্লেসহোল্ডার টোকেন ফেরত দেয়\n3. SQL স্ট্রিংয়ে শুধু প্লেসহোল্ডার টোকেন যোগ করা হয়\n4. ডেটাবেস ড্রাইভার SQL টেক্সট ও প্যারামিটারের মান আলাদাভাবে পায়\n∴ ব্যবহারকারীর মান SQL সিনট্যাক্স হিসেবে পার্স হয় না",
           "code": "const addParameter = (params: any[], value: any) => {\n  params.push(value)\n  const index = params.length\n  return `$${index}`\n}"
         },
         {
-          "title": "Theorem 2: Field name closure",
-          "statement": "The set of field names F in any generated query is a subset of schema-defined fields S, i.e., F ⊆ S.",
-          "proof": "For every field reference:\n1. Field name extracted from query object\n2. Lookup performed against schema metadata\n3. If the field does not exist in the schema, an error is thrown\n4. Only validated fields reach SQL generation\n∴ Arbitrary field names cannot appear in SQL",
+          "title": "উপপাদ্য 2: ফিল্ড নামের আবদ্ধতা",
+          "statement": "যেকোনো জেনারেট হওয়া কুয়েরিতে ফিল্ড নামের সেট F স্কিমায় সংজ্ঞায়িত ফিল্ড S-এর উপসেট, অর্থাৎ F ⊆ S।",
+          "proof": "প্রতিটি ফিল্ড রেফারেন্সের জন্য:\n1. কুয়েরি অবজেক্ট থেকে ফিল্ডের নাম বের করা হয়\n2. স্কিমা মেটাডেটায় খোঁজা হয়\n3. ফিল্ডটি স্কিমায় না থাকলে এরর থ্রো করা হয়\n4. শুধু যাচাইকৃত ফিল্ড SQL জেনারেশনে পৌঁছায়\n∴ যথেচ্ছ ফিল্ড নাম SQL-এ আসতে পারে না",
           "code": "const validateField = (field: string, model: Model) => {\n  if (!model.fields.has(field)) {\n    throw new Error(`Field ${field} does not exist`)\n  }\n  return model.fields.get(field)\n}"
         },
         {
-          "title": "Theorem 3: Operator safety",
-          "statement": "For any operator O applied to field F, O is a member of the allowed operators for F's type T.",
-          "proof": "Operator validation algorithm:\n1. Extract field type T from schema\n2. Define allowed_ops(T) = { valid operators for type T }\n3. For operator O in query:\n   - If O ∉ allowed_ops(T), throw error\n   - Else apply operator using parameter binding\n∴ Only type-appropriate operators can be used",
+          "title": "উপপাদ্য 3: অপারেটর নিরাপত্তা",
+          "statement": "ফিল্ড F-এ প্রয়োগ করা যেকোনো অপারেটর O, F-এর টাইপ T-এর জন্য অনুমোদিত অপারেটরগুলোর একটি।",
+          "proof": "অপারেটর যাচাইয়ের অ্যালগরিদম:\n1. স্কিমা থেকে ফিল্ড টাইপ T বের করা\n2. allowed_ops(T) = { টাইপ T-এর বৈধ অপারেটর } নির্ধারণ করা\n3. কুয়েরির অপারেটর O-এর জন্য:\n   - O ∉ allowed_ops(T) হলে এরর থ্রো করা\n   - অন্যথায় প্যারামিটার বাইন্ডিং দিয়ে অপারেটর প্রয়োগ করা\n∴ শুধু টাইপ-উপযুক্ত অপারেটর ব্যবহার করা যায়",
           "code": "const ALLOWED_OPS: Record<string, string[]> = {\n  String: ['contains', 'startsWith', 'endsWith'],\n  Int: ['lt', 'lte', 'gt', 'gte']\n}\nif (!ALLOWED_OPS[fieldType]?.includes(operator)) {\n  throw new Error('Invalid operator')\n}"
         },
         {
-          "title": "Theorem 4: Identifier safety",
-          "statement": "All SQL identifiers I are validated to prevent control characters and to ensure safe quoting/escaping per dialect.",
-          "proof": "Identifier processing:\n1. Reject if contains control characters\n2. Escape internal quote characters per dialect rules\n3. Quote identifiers when required (reserved keywords or special characters)\n4. Enforce per-dialect identifier length limits\n∴ Identifiers cannot break SQL syntax or introduce injected tokens",
+          "title": "উপপাদ্য 4: আইডেন্টিফায়ার নিরাপত্তা",
+          "statement": "সব SQL আইডেন্টিফায়ার I যাচাই করা হয়, যাতে কন্ট্রোল ক্যারেক্টার আটকানো যায় এবং প্রতি ডায়ালেক্টে নিরাপদ কোটিং/এস্কেপিং নিশ্চিত হয়।",
+          "proof": "আইডেন্টিফায়ার প্রসেসিং:\n1. কন্ট্রোল ক্যারেক্টার থাকলে প্রত্যাখ্যান\n2. ডায়ালেক্টের নিয়ম অনুযায়ী ভেতরের কোট ক্যারেক্টার এস্কেপ\n3. প্রয়োজনে আইডেন্টিফায়ার কোট করা (সংরক্ষিত কীওয়ার্ড বা বিশেষ ক্যারেক্টার)\n4. প্রতি ডায়ালেক্টে আইডেন্টিফায়ারের দৈর্ঘ্যসীমা প্রয়োগ\n∴ আইডেন্টিফায়ার SQL সিনট্যাক্স ভাঙতে বা ইনজেক্ট করা টোকেন ঢোকাতে পারে না",
           "code": "const quoteIdentifier = (id: string) => {\n  if (/[\\x00-\\x1F]/.test(id)) {\n    throw new Error('Invalid characters')\n  }\n  const escaped = id.replace(/\"/g, '\"\"')\n  const needsQuoting = /[^a-z0-9_]/i.test(id) || isReservedKeyword(id)\n  return needsQuoting ? `\"${escaped}\"` : id\n}"
         },
         {
-          "title": "Theorem 5: Parameter order consistency",
-          "statement": "For every placeholder position N emitted into the SQL text, params[N-1] contains the exact value intended for that position, with no reordering or mismatch.",
-          "proof": "Parameter ordering guarantee:\n1. A single tracker maintains insertion order\n2. Each add() call appends the value to params and immediately emits the next placeholder token\n3. SQL text construction and params construction proceed in lockstep\n4. No intermediate reordering operations occur\n∴ One-to-one correspondence is maintained throughout",
+          "title": "উপপাদ্য 5: প্যারামিটার ক্রমের সামঞ্জস্য",
+          "statement": "SQL টেক্সটে বসানো প্রতিটি প্লেসহোল্ডার অবস্থান N-এর জন্য params[N-1]-এ ঠিক সেই অবস্থানের জন্য নির্ধারিত মানটিই থাকে, কোনো ক্রম বদল বা অমিল ছাড়া।",
+          "proof": "প্যারামিটার ক্রমের নিশ্চয়তা:\n1. একটিমাত্র ট্র্যাকার যোগ করার ক্রম বজায় রাখে\n2. প্রতিটি add() কল মানটি params-এ যোগ করে এবং সঙ্গে সঙ্গে পরের প্লেসহোল্ডার টোকেন দেয়\n3. SQL টেক্সট তৈরি ও params তৈরি একসাথে ধাপে ধাপে এগোয়\n4. কোনো মধ্যবর্তী ক্রম বদলের অপারেশন ঘটে না\n∴ পুরো প্রক্রিয়ায় এক-এক সম্পর্ক বজায় থাকে",
           "code": "class ParameterTracker {\n  private params: any[] = []\n\n  add(value: any): string {\n    this.params.push(value)\n    return `$${this.params.length}`\n  }\n\n  getParams(): any[] {\n    return this.params\n  }\n}\n\nconst tracker = new ParameterTracker()\nconst sql = `WHERE email = ${tracker.add(email)} AND age > ${tracker.add(age)}`\nconst params = tracker.getParams()"
         }
       ]
     },
     "testCoverage": {
-      "title": "Comprehensive security test coverage",
-      "subtitle": "137 tests validate protection against common SQL injection vectors and edge cases (current suite)",
+      "title": "বিস্তৃত নিরাপত্তা টেস্ট কভারেজ",
+      "subtitle": "বর্তমান স্যুট সাধারণ SQL ইনজেকশন ভেক্টর ও এজ কেসের বিরুদ্ধে সুরক্ষা যাচাই করে",
       "categories": [
         {
-          "title": "Value Parameterization (basic.test.ts)",
+          "title": "মান প্যারামিটারাইজেশন (basic.test.ts)",
           "tests": [
-            "Strings with quotes: user'with'quotes",
-            "Strings with semicolons: user;extra",
-            "SQL keywords as values: DROP TABLE users",
-            "Complex injection: '; DROP TABLE users; --",
-            "Union attacks: ' UNION SELECT * FROM users--",
-            "Boolean attacks: admin' OR '1'='1",
-            "Comment injection: test@example.com' -- comment"
+            "কোটসহ স্ট্রিং: user'with'quotes",
+            "সেমিকোলনসহ স্ট্রিং: user;extra",
+            "মান হিসেবে SQL কীওয়ার্ড: DROP TABLE users",
+            "জটিল ইনজেকশন: '; DROP TABLE users; --",
+            "Union আক্রমণ: ' UNION SELECT * FROM users--",
+            "Boolean আক্রমণ: admin' OR '1'='1",
+            "কমেন্ট ইনজেকশন: test@example.com' -- comment"
           ]
         },
         {
-          "title": "Field Name Validation (identifiers.test.ts)",
+          "title": "ফিল্ড নাম যাচাই (identifiers.test.ts)",
           "tests": [
-            "Reject malicious field names in SELECT",
-            "Reject malicious field names in WHERE",
-            "Reject malicious field names in ORDER BY",
-            "Reject SQL injection in field names",
-            "Reject non-existent fields",
-            "Reject prototype pollution: __proto__, constructor"
+            "SELECT-এ ক্ষতিকর ফিল্ড নাম প্রত্যাখ্যান",
+            "WHERE-এ ক্ষতিকর ফিল্ড নাম প্রত্যাখ্যান",
+            "ORDER BY-তে ক্ষতিকর ফিল্ড নাম প্রত্যাখ্যান",
+            "ফিল্ড নামে SQL ইনজেকশন প্রত্যাখ্যান",
+            "অস্তিত্বহীন ফিল্ড প্রত্যাখ্যান",
+            "প্রোটোটাইপ পলিউশন প্রত্যাখ্যান: __proto__, constructor"
           ]
         },
         {
-          "title": "LIKE Pattern Safety (like-patterns.test.ts)",
+          "title": "LIKE প্যাটার্ন নিরাপত্তা (like-patterns.test.ts)",
           "tests": [
-            "Wildcard injection: %' OR '1'='1",
-            "Underscore injection: test_' OR '1'='1",
-            "Backslash handling: test\\\\'; DROP--",
-            "Multiple wildcards: %_%'; DROP--",
-            "Case insensitive injection: '; UNION SELECT--"
+            "ওয়াইল্ডকার্ড ইনজেকশন: %' OR '1'='1",
+            "আন্ডারস্কোর ইনজেকশন: test_' OR '1'='1",
+            "ব্যাকস্ল্যাশ সামলানো: test\\\\'; DROP--",
+            "একাধিক ওয়াইল্ডকার্ড: %_%'; DROP--",
+            "কেস-ইনসেনসিটিভ ইনজেকশন: '; UNION SELECT--"
           ]
         },
         {
-          "title": "Array Operator Safety (array-operators.test.ts)",
+          "title": "অ্যারে অপারেটর নিরাপত্তা (array-operators.test.ts)",
           "tests": [
-            "IN with malicious arrays: ['; DROP--', 'UNION SELECT--']",
-            "NOT IN with injection: ['; TRUNCATE--', 'DELETE FROM--']",
-            "Empty array handling",
-            "Large array validation (100+ items)",
-            "Mixed type array handling"
+            "ক্ষতিকর অ্যারেসহ IN: ['; DROP--', 'UNION SELECT--']",
+            "ইনজেকশনসহ NOT IN: ['; TRUNCATE--', 'DELETE FROM--']",
+            "খালি অ্যারে সামলানো",
+            "বড় অ্যারে যাচাই (100+ আইটেম)",
+            "মিশ্র টাইপের অ্যারে সামলানো"
           ]
         },
         {
-          "title": "Edge Cases (edge-cases.test.ts)",
+          "title": "এজ কেস (edge-cases.test.ts)",
           "tests": [
-            "Unicode injection: \\u0027 OR \\u00271\\u0027=\\u00271",
-            "Hex-encoded injection: 0x31=0x31--",
-            "URL encoded: %27%3B%20DROP%20TABLE",
-            "Stacked queries: '; DROP TABLE users; SELECT",
-            "Time-based blind (dialect-specific): WAITFOR DELAY '00:00:05'--",
-            "UNION-based: UNION ALL SELECT null, password",
-            "Second-order injection attempts"
+            "Unicode ইনজেকশন: \\u0027 OR \\u00271\\u0027=\\u00271",
+            "Hex-এনকোডেড ইনজেকশন: 0x31=0x31--",
+            "URL এনকোডেড: %27%3B%20DROP%20TABLE",
+            "স্ট্যাকড কুয়েরি: '; DROP TABLE users; SELECT",
+            "টাইম-ভিত্তিক ব্লাইন্ড (ডায়ালেক্ট-নির্দিষ্ট): WAITFOR DELAY '00:00:05'--",
+            "UNION-ভিত্তিক: UNION ALL SELECT null, password",
+            "সেকেন্ড-অর্ডার ইনজেকশনের চেষ্টা"
           ]
         },
         {
-          "title": "Parameter Order Verification (basic.test.ts)",
+          "title": "প্যারামিটার ক্রম যাচাই (basic.test.ts)",
           "tests": [
-            "Sequential placeholder positions",
-            "Parameter array matches placeholder order",
-            "Complex queries maintain order across conditions",
-            "Nested OR/AND conditions preserve parameter sequence",
-            "Relation filters maintain correct parameter mapping"
+            "ধারাবাহিক প্লেসহোল্ডার অবস্থান",
+            "প্যারামিটার অ্যারে প্লেসহোল্ডারের ক্রমের সাথে মেলে",
+            "জটিল কুয়েরিতে বিভিন্ন শর্ত জুড়ে ক্রম বজায় থাকে",
+            "নেস্টেড OR/AND শর্তে প্যারামিটারের ক্রম বজায় থাকে",
+            "রিলেশন ফিল্টারে সঠিক প্যারামিটার ম্যাপিং বজায় থাকে"
           ]
         }
       ]
     },
     "codeExamples": {
-      "title": "Safe vs. Unsafe: Code Comparison",
+      "title": "নিরাপদ বনাম অনিরাপদ: কোডের তুলনা",
       "unsafe": {
-        "title": "❌ Unsafe: String Concatenation",
+        "title": "❌ অনিরাপদ: স্ট্রিং জোড়া দেওয়া",
         "code": "const email = req.body.email\nconst sql = \"SELECT * FROM users WHERE email = '\" + email + \"'\""
       },
       "safe": {
-        "title": "✅ Safe: Automatic Parameter Binding",
+        "title": "✅ নিরাপদ: স্বয়ংক্রিয় প্যারামিটার বাইন্ডিং",
         "code": "const email = req.body.email\nconst { sql, params } = toSQL('User', 'findMany', {\n  where: { email }\n})\n\nconst result = { sql, params }"
       }
     },
     "implementation": {
-      "title": "Implementation Details",
+      "title": "বাস্তবায়নের বিস্তারিত",
       "sections": [
         {
-          "title": "Parameter Management",
-          "description": "Centralized parameter tracking ensures every user-provided value is parameter bound and order-stable",
+          "title": "প্যারামিটার ব্যবস্থাপনা",
+          "description": "কেন্দ্রীয় প্যারামিটার ট্র্যাকিং নিশ্চিত করে যে ব্যবহারকারীর দেওয়া প্রতিটি মান প্যারামিটার হিসেবে বাইন্ড হয় এবং ক্রম স্থির থাকে",
           "code": "class ParameterTracker {\n  private params: any[] = []\n\n  add(value: any): string {\n    this.params.push(value)\n    return `$${this.params.length}`\n  }\n\n  getParams(): any[] {\n    return this.params\n  }\n}"
         },
         {
-          "title": "Field Validation",
-          "description": "Schema-based validation prevents arbitrary field access",
+          "title": "ফিল্ড যাচাই",
+          "description": "স্কিমা-ভিত্তিক যাচাই যথেচ্ছ ফিল্ড অ্যাক্সেস প্রতিরোধ করে",
           "code": "function validateField(\n  fieldName: string,\n  model: ModelInfo\n): FieldInfo {\n  const field = model.fields.get(fieldName)\n  if (!field) {\n    throw new Error(\n      `Field \"${fieldName}\" does not exist`\n    )\n  }\n  return field\n}"
         },
         {
-          "title": "Identifier Quoting",
-          "description": "Dialect-aware identifier validation and quoting prevents identifier-based syntax injection",
+          "title": "আইডেন্টিফায়ার কোটিং",
+          "description": "ডায়ালেক্ট-সচেতন আইডেন্টিফায়ার যাচাই ও কোটিং আইডেন্টিফায়ার-ভিত্তিক সিনট্যাক্স ইনজেকশন প্রতিরোধ করে",
           "code": "function quoteIdentifier(identifier: string): string {\n  if (/[\\x00-\\x1F]/.test(identifier)) {\n    throw new Error('Invalid control characters')\n  }\n\n  const escaped = identifier.replace(/\"/g, '\"\"')\n  const needsQuoting = /[^a-z0-9_]/i.test(identifier) || isReservedKeyword(identifier)\n\n  if (needsQuoting) {\n    return `\"${escaped}\"`\n  }\n\n  return identifier\n}"
         }
       ]
     },
     "bestPractices": {
-      "title": "Security Best Practices",
+      "title": "নিরাপত্তার সেরা অনুশীলন",
       "practices": [
         {
-          "title": "Never Disable Validation",
-          "description": "Do not bypass schema validation or field checking. These are critical security layers.",
-          "do": "Use the library as designed with full validation",
-          "dont": "Bypass schema validation or inject raw SQL into query text"
+          "title": "কখনো যাচাই বন্ধ করবেন না",
+          "description": "স্কিমা যাচাই বা ফিল্ড চেক এড়িয়ে যাবেন না। এগুলো গুরুত্বপূর্ণ নিরাপত্তা স্তর।",
+          "do": "পূর্ণ যাচাইসহ লাইব্রেরিটি যেভাবে ডিজাইন করা সেভাবেই ব্যবহার করুন",
+          "dont": "স্কিমা যাচাই এড়িয়ে যাওয়া বা কুয়েরি টেক্সটে raw SQL ঢোকানো"
         },
         {
-          "title": "Keep Schema Updated",
-          "description": "Ensure your Prisma schema accurately reflects your database structure.",
-          "do": "Run prisma db pull and prisma generate after schema changes",
-          "dont": "Use outdated DMMF or schema definitions"
+          "title": "স্কিমা হালনাগাদ রাখুন",
+          "description": "নিশ্চিত করুন, আপনার Prisma স্কিমা ডেটাবেসের কাঠামো সঠিকভাবে প্রতিফলিত করে।",
+          "do": "স্কিমা পরিবর্তনের পর prisma db pull ও prisma generate চালান",
+          "dont": "পুরনো DMMF বা স্কিমা সংজ্ঞা ব্যবহার করা"
         },
         {
-          "title": "Validate Input Types",
-          "description": "TypeScript provides compile-time safety, but runtime validation adds defense in depth.",
-          "do": "Use Prisma's generated types for query arguments",
-          "dont": "Cast user input to any before passing to queries"
+          "title": "ইনপুট টাইপ যাচাই করুন",
+          "description": "TypeScript কম্পাইল-টাইম সেফটি দেয়, কিন্তু রানটাইম যাচাই সুরক্ষায় আরেকটি স্তর যোগ করে।",
+          "do": "কুয়েরি আর্গুমেন্টের জন্য Prisma-এর জেনারেট হওয়া টাইপ ব্যবহার করুন",
+          "dont": "কুয়েরিতে পাঠানোর আগে ব্যবহারকারীর ইনপুটকে any-তে কাস্ট করা"
         },
         {
-          "title": "Monitor Query Patterns",
-          "description": "Log and monitor generated SQL and parameters in production to detect anomalies and misuse.",
-          "do": "Enable query logging and review patterns",
-          "dont": "Run in production without monitoring"
+          "title": "কুয়েরি প্যাটার্ন মনিটর করুন",
+          "description": "অস্বাভাবিকতা ও অপব্যবহার ধরতে প্রোডাকশনে জেনারেট হওয়া SQL ও প্যারামিটার লগ ও মনিটর করুন।",
+          "do": "কুয়েরি লগিং চালু করুন এবং প্যাটার্ন পর্যালোচনা করুন",
+          "dont": "মনিটরিং ছাড়া প্রোডাকশনে চালানো"
         }
       ]
     },
     "securityCallout": {
-      "badge": "🔒 Verified Secure",
-      "title": "How do we prevent SQL injection?",
-      "description": "Multi-layer validation with parameter binding, schema-based field checks, and 137 security tests (current suite)",
-      "link": "View Security Details →"
+      "badge": "🔒 যাচাইকৃত নিরাপদ",
+      "title": "আমরা কীভাবে SQL ইনজেকশন প্রতিরোধ করি?",
+      "description": "প্যারামিটার বাইন্ডিং, স্কিমা-ভিত্তিক ফিল্ড চেক এবং বর্তমান নিরাপত্তা টেস্ট স্যুটসহ বহুস্তরের যাচাই",
+      "link": "নিরাপত্তার বিস্তারিত দেখুন →"
     },
     "cta": {
-      "title": "Security Through Design",
-      "subtitle": "SQL injection protection is built into every layer of this library. Review the security tests and implementation details directly.",
-      "button1": "View Security Tests →",
-      "button2": "View Source Code"
+      "title": "ডিজাইনেই নিরাপত্তা",
+      "subtitle": "এই লাইব্রেরির প্রতিটি স্তরে SQL ইনজেকশন সুরক্ষা তৈরি করা আছে। নিরাপত্তা টেস্ট ও বাস্তবায়নের বিস্তারিত সরাসরি পর্যালোচনা করুন।",
+      "button1": "নিরাপত্তা টেস্ট দেখুন →",
+      "button2": "সোর্স কোড দেখুন"
     }
   },
   "benchmarks": {
     "title": "বিস্তারিত বেঞ্চমার্ক ফলাফল",
-    "subtitle": "Welch-এর t-test এবং ১ms ব্যবহারিক তাৎপর্য সীমা সহ পরিসংখ্যানগত তুলনা",
-    "modeNote": "এই ফলাফলগুলো <runtime>রানটাইম মোড</runtime> প্রতিফলিত করে, যেখানে প্রতিটি অনুরোধে কুয়েরি SQL-এ রূপান্তরিত হয়। <prerendered>প্রি-রেন্ডারড মোডে</prerendered>, SQL বিল্ড সময়ে তৈরি হয় — রানটাইমে কোনো রূপান্তর ওভারহেড ছাড়াই কাঁচা প্যারামিটারাইজড কুয়েরি চালানো হয়।",
+    "subtitle": "Welch-এর t-test এবং 1ms ব্যবহারিক তাৎপর্য সীমাসহ পরিসংখ্যানগত তুলনা",
+    "modeNote": "এই ফলাফলগুলো <runtime>রানটাইম মোড</runtime> প্রতিফলিত করে, যেখানে প্রতিটি রিকোয়েস্টে কুয়েরি SQL-এ রূপান্তরিত হয়। <prerendered>প্রি-রেন্ডারড মোডে</prerendered> SQL বিল্ড টাইমে তৈরি হয় — রানটাইমে কোনো রূপান্তর ওভারহেড ছাড়াই raw প্যারামিটারাইজড কুয়েরি চলে।",
     "modeCallout": "রানটাইম মোড বেঞ্চমার্ক করা হয়েছে।",
-    "modeCalloutDetail": "প্রি-রেন্ডারড মোড রানটাইমে কুয়েরি-থেকে-SQL রূপান্তর সম্পূর্ণভাবে এড়িয়ে যায় — এখানে প্রদর্শিত সময়ের চেয়ে কম ল্যাটেন্সি আশা করুন, বিশেষ করে জটিল কুয়েরির ক্ষেত্রে যেখানে রূপান্তর খরচ তুলনামূলকভাবে বেশি।",
+    "modeCalloutDetail": "প্রি-রেন্ডারড মোড রানটাইমে কুয়েরি-থেকে-SQL রূপান্তর সম্পূর্ণভাবে এড়িয়ে যায় — এখানে দেখানো সময়ের চেয়ে কম ল্যাটেন্সি আশা করুন, বিশেষ করে জটিল কুয়েরিতে, যেখানে রূপান্তরের খরচ আনুপাতিকভাবে বেশি।",
     "noData": "কোনো বেঞ্চমার্ক ডেটা পাওয়া যায়নি।",
     "noDataHint": "ডেটা তৈরি করতে <code>BENCHMARK_JSON_OUTPUT=1</code> দিয়ে বেঞ্চমার্ক চালান।",
-    "avgVsPrisma": "গড় {speed} Prisma-এর তুলনায়",
-    "avgVsDrizzle": "গড় {speed} Drizzle-এর তুলনায়",
-    "significantWins": "{count}/{total} পরিসংখ্যানগতভাবে তাৎপর্যপূর্ণ জয়",
-    "withinNoise": "{count} নয়েজ সীমার মধ্যে",
+    "avgVsPrisma": "Prisma-এর তুলনায় গড় {speed}",
+    "avgVsDrizzle": "Drizzle-এর তুলনায় গড় {speed}",
+    "significantWins": "{count}/{total}টি তাৎপর্যপূর্ণ জয়",
+    "withinNoise": "{count}টি নয়েজ সীমার মধ্যে",
     "col": {
       "test": "টেস্ট",
       "prisma": "Prisma",
@@ -876,12 +876,247 @@
       "p001": "p < 0.001",
       "p01": "p < 0.01",
       "p05": "p < 0.05",
-      "ns": "পরিসংখ্যানগতভাবে তাৎপর্যপূর্ণ নয়",
+      "ns": "তাৎপর্যপূর্ণ নয়",
       "noiseFloor": "{threshold}ms নয়েজ সীমার মধ্যে",
-      "ci": "৯৫% আস্থা সীমা",
+      "ci": "95% আস্থা ব্যবধান",
       "highVariance": "উচ্চ ভ্যারিয়েন্স"
     },
-    "regressionWarning": "{count} টি টেস্টে {threshold}ms সীমা অতিক্রম করা পরিসংখ্যানগতভাবে তাৎপর্যপূর্ণ রিগ্রেশন রয়েছে।",
-    "viewRawData": "GitHub-এ কাঁচা বেঞ্চমার্ক ডেটা দেখুন →"
+    "regressionWarning": "{count}টি টেস্টে {threshold}ms সীমার বাইরে পরিসংখ্যানগতভাবে তাৎপর্যপূর্ণ রিগ্রেশন আছে।",
+    "viewRawData": "GitHub-এ raw বেঞ্চমার্ক ডেটা দেখুন →",
+    "methodology": {
+      "title": "পদ্ধতি",
+      "lines": [
+        "পুনরায় চালাতে: `npm run bench` (`BENCHMARK_JSON_OUTPUT=1` JSON লেখে)। ফলাফল যায় `benchmark-results/summary-<date>.json`-এ; `v<N>-<dialect>-latest.json` থেকে এই পেজের ডেটা আসে।",
+        "প্রতিটি কুয়েরি সব ক্লায়েন্টের জন্য একই ডেটাবেসে চলে: Prisma, prisma-sql, Drizzle। প্রতি টেস্টের স্যাম্পল সাইজ n কলামে দেখানো আছে।",
+        "প্রতিটি পক্ষের জন্য দেখানো হয়: mean, median, stdDev, p95, p99, CV%। তাৎপর্য নির্ণয়ে 1ms ব্যবহারিক সীমাসহ Welch-এর t-test ব্যবহার করা হয়; এরর বার 95% CI।",
+        "রানটাইম মোড মাপা হয়েছে: প্রতি রিকোয়েস্টে SQL রূপান্তর হয়। প্রি-রেন্ডারড (@optimize) কুয়েরি রূপান্তর সম্পূর্ণ এড়িয়ে যায় এবং এখানে দেখানোর চেয়ে দ্রুত চলে।",
+        "প্রতিটি রানে হার্ডওয়্যার ও ভার্সন আলাদা হতে পারে - প্রতিটি JSON ফাইলে নিজস্ব টাইমস্ট্যাম্প থাকে। একই মেশিনের রান তুলনা করুন।"
+      ]
+    }
+  },
+  "extras": {
+    "badge": "Prisma API-এর ওপর বাড়তি সুবিধা",
+    "title": "দ্রুত রিডের বাইরেও",
+    "subtitle": "prisma-sql এমন সক্ষমতা যোগ করে যা Prisma Client-এ নেই। একই টাইপ, একই কোড স্টাইল।",
+    "items": [
+      {
+        "name": "$batch",
+        "tagline": "N-টি ড্যাশবোর্ড কুয়েরি, একটি রাউন্ড ট্রিপ",
+        "description": "স্বাধীন রিডগুলোকে একটি PostgreSQL রাউন্ড ট্রিপে একত্র করুন। টাইপসহ অবজেক্ট ফলাফল, Promise.all নিয়ে ঝামেলা নেই।",
+        "code": "const dash = await prisma.$batch((b) => ({\n  users: b.user.count(),\n  posts: b.post.findMany({ take: 10 }),\n  stats: b.task.aggregate({ _count: true }),\n}))"
+      },
+      {
+        "name": "@optimize",
+        "tagline": "সবচেয়ে ঘন ঘন চলা কুয়েরি আগেই তৈরি করে রাখুন",
+        "description": "schema.prisma-তে একটি মডেলে অ্যানোটেশন দিন। generate-এর সময় হুবহু SQL তৈরি হয়ে যায়; রানটাইমে মিলে যাওয়া শেপগুলো রূপান্তর পুরোপুরি এড়িয়ে যায়।",
+        "code": "/// @optimize {\n///   \"method\": \"findMany\",\n///   \"query\": {\n///     \"where\": { \"status\": \"$status\" },\n///     \"take\": \"$take\"\n///   }\n/// }\nmodel User { ... }"
+      },
+      {
+        "name": "কার্ডিনালিটি প্ল্যানার",
+        "tagline": "কৌশল ঠিক হয় ডেটা দেখে, অনুমানে নয়",
+        "description": "সংগৃহীত রিলেশন পরিসংখ্যান অনুযায়ী ফ্ল্যাট JOIN, কোরিলেটেড সাবকুয়েরি এবং where-in সেগমেন্টেড লোডিংয়ের মধ্যে কৌশল বদলানো হয়। বড় চাইল্ড টেবিলে কখনো প্রতি-প্যারেন্ট স্ক্যান হয় না।",
+        "code": "prisma-sql-collect-stats \\\n  --output dist/planner.generated.js \\\n  --prisma-client dist/client/index.js"
+      }
+    ]
+  },
+  "parity": {
+    "title": "কী দ্রুত চলে, আর কী Prisma-তেই থাকে",
+    "subtitle": "PostgreSQL ও SQLite-এ আমাদের যাচাই করা প্রতিটি Prisma Client ফিচার। রাইট Prisma-তেই থাকে; শেপ সমর্থিত হলে রিড SQL-এ কম্পাইল হয়।",
+    "link": "পূর্ণ প্যারিটি ম্যাপ খুলুন",
+    "summary": "যাচাই করা {total}টি ফিচারের মধ্যে {accelerated}টি PostgreSQL-এ পুরোপুরি ত্বরান্বিত। {differs}টি Prisma-এর চেয়ে ভিন্ন ফলাফল দিতে পারে; পূর্ণ ম্যাপে প্রতিটির কারণসহ তালিকা আছে।"
+  },
+  "ui": {
+    "nav": {
+      "main": "প্রধান",
+      "docs": "ডকস",
+      "parity": "প্যারিটি",
+      "benchmarks": "বেঞ্চমার্ক",
+      "github": "GitHub-এ prisma-sql",
+      "npm": "npm-এ prisma-sql"
+    },
+    "footer": {
+      "product": "প্রোডাক্ট",
+      "elsewhere": "অন্যান্য জায়গায়",
+      "language": "ভাষা",
+      "docs": "ডকুমেন্টেশন",
+      "parity": "Prisma প্যারিটি ম্যাপ",
+      "benchmarks": "বেঞ্চমার্ক",
+      "testing": "টেস্টিং",
+      "security": "SQL ইনজেকশন প্রতিরোধ",
+      "changelog": "চেঞ্জলগ"
+    },
+    "hero": {
+      "copy": "কপি",
+      "copied": "কপি হয়েছে",
+      "copyFailed": "সিলেক্ট করে কপি করুন",
+      "copiedStatus": "{text} কপি হয়েছে",
+      "figureLabel": "একটি Prisma কুয়েরি এবং তার জন্য prisma-sql যে SQL জেনারেট করে",
+      "yourCall": "আপনার Prisma কল",
+      "sqlRuns": "prisma-sql যে SQL চালায়",
+      "database": "ডেটাবেস",
+      "params": "প্যারামিটার",
+      "statement": "1টি স্টেটমেন্ট",
+      "caption": "দুই মডেলের একটি স্কিমার জন্য <code>createToSQL</code>-এর আউটপুট, লাইন ব্রেক যোগ করা হয়েছে।"
+    },
+    "performance": {
+      "noData": "কোনো বেঞ্চমার্ক JSON ফাইল পাওয়া যায়নি।",
+      "casesPerRun": "প্রতি রানে {count}টি কুয়েরি কেস",
+      "vsDrizzle": "Drizzle-এর তুলনায় {speed}",
+      "measured": "{count}টি মাপা কুয়েরি কেস, Prisma-এর তুলনায় গড়",
+      "srRow": "{label}: Prisma-এর তুলনায় গড় গতিবৃদ্ধি {speed}",
+      "note": "সর্বশেষ <code>benchmark-results/*-latest.json</code> ফাইল থেকে বিল্ড টাইমে তৈরি। দুই ডেটাবেসের বারগুলো একই স্কেলে; অ্যাম্বার রং প্রতি ডেটাবেসের সেরা রান চিহ্নিত করে। আলাদা আলাদা কুয়েরি শেপে ফল ভিন্ন হয়।",
+      "perQuery": "প্রতি কুয়েরির টেবিল"
+    },
+    "howItWorks": {
+      "files": [
+        "generated/sql, অংশবিশেষ",
+        "PostgreSQL-এর জন্য SQL",
+        "generated/sql, অংশবিশেষ",
+        "users.ts"
+      ],
+      "resultNote": "// Prisma Client-এর মতোই একই ইনফার করা টাইপ।\n// Decimal, BigInt ও DateTime মান\n// ভিন্ন হতে পারে; প্যারিটি ম্যাপে প্রতিটি কেস আছে।"
+    },
+    "installation": {
+      "sqliteNote": "SQLite: একটি <code>better-sqlite3</code> ডেটাবেসসহ <code>speedExtension({ sqlite: db })</code> পাস করুন।",
+      "guide": "পূর্ণ সেটআপ গাইড"
+    },
+    "parity": {
+      "stripLabel": "PostgreSQL ও SQLite-এ যাচাই করা প্রতিটি Prisma Client ফিচারের অবস্থা, ক্ষেত্র অনুযায়ী সাজানো। ফিচারগুলোর মধ্যে যেতে অ্যারো কী ব্যবহার করুন।",
+      "tileLabel": "{feature}, {db}: {status}",
+      "tableCaption": "অবস্থা অনুযায়ী ফিচারের সংখ্যা",
+      "status": "অবস্থা",
+      "supportedOn": "Prisma যেখানে সমর্থন করে: {value}",
+      "inferred": "সোর্স থেকে অনুমান করা; কোনো টেস্ট রানে নিশ্চিত করা হয়নি।"
+    },
+    "queryStrip": {
+      "title": "বেঞ্চমার্ক করা প্রতিটি কুয়েরি, {count}টি শেপ",
+      "caption": "প্রতিটি বার সর্বশেষ রানের একটি কুয়েরি শেপ। ওপরে মানে Prisma-এর চেয়ে দ্রুত, নিচে মানে ধীর, লগ স্কেল।",
+      "faster": "{value}× দ্রুত",
+      "slower": "{value}× (ধীর)",
+      "notRun": "চালানো হয়নি"
+    },
+    "security": {
+      "do": "করুন",
+      "dont": "করবেন না",
+      "unsafeFile": "unsafe.ts",
+      "safeFile": "safe.ts"
+    },
+    "benchmarks": {
+      "region": "প্রতি কুয়েরির বেঞ্চমার্ক ফলাফল"
+    }
+  },
+  "parityData": {
+    "status": {
+      "accelerated": {
+        "label": "ত্বরান্বিত",
+        "description": "SQL-এ কম্পাইল হয়ে postgres.js বা better-sqlite3 দিয়ে চলে।"
+      },
+      "partial": {
+        "label": "আংশিক",
+        "description": "SQL-এ কম্পাইল হয়; কিছু আর্গুমেন্ট শেপে Prisma-তে ফলব্যাক করে।"
+      },
+      "fallback": {
+        "label": "ফলব্যাক করে",
+        "description": "SQL বিল্ডার এটি প্রত্যাখ্যান করে এবং কুয়েরিটি Prisma চালায়। একই ফলাফল, কোনো গতিবৃদ্ধি নেই।"
+      },
+      "prisma": {
+        "label": "Prisma-তে চলে",
+        "description": "ইন্টারসেপ্ট করা হয় না। Prisma Client আগের মতোই এটি চালায়।"
+      },
+      "differs": {
+        "label": "ভিন্ন হতে পারে",
+        "description": "ত্বরান্বিত, কিন্তু কোনো এরর ছাড়াই ফলাফল Prisma থেকে ভিন্ন হতে পারে।"
+      },
+      "missing": {
+        "label": "উপলব্ধ নয়",
+        "description": "Prisma এটি সমর্থন করে; prisma-sql-এ এর কোনো সমতুল্য নেই।"
+      },
+      "extra": {
+        "label": "শুধু prisma-sql",
+        "description": "prisma-sql যোগ করেছে। Prisma Client API-এর অংশ নয়।"
+      },
+      "na": {
+        "label": "Prisma-তে নেই",
+        "description": "ওই ডেটাবেসে Prisma এটি সমর্থন করে না।"
+      },
+      "unknown": {
+        "label": "যাচাই হয়নি",
+        "description": "এই ডেটাবেসে আচরণ এখনও যাচাই করা হয়নি।"
+      }
+    },
+    "groups": {
+      "Model methods": "মডেল মেথড",
+      "Query options": "কুয়েরি অপশন",
+      "Filters": "ফিল্টার",
+      "Ordering": "ক্রম নির্ধারণ",
+      "Aggregates": "অ্যাগ্রিগেট",
+      "Client API": "ক্লায়েন্ট API",
+      "Result types": "ফলাফলের টাইপ"
+    },
+    "notes": {
+      "findMany": "SQL-এ কম্পাইল হয়।",
+      "findFirst": "LIMIT 1 দিয়ে কম্পাইল হয়। `cursor` ও নেগেটিভ `take` উপেক্ষা করা হয়। `distinct` থাকলে ফলব্যাক করে।",
+      "findUnique": "`a_b: { a, b }`-এর মতো কম্পাউন্ড ইউনিক কী থাকলে ফলব্যাক করে।",
+      "findUniqueOrThrow, findFirstOrThrow": "ইন্টারসেপ্ট করা হয় না।",
+      "count": "`select: { _all, field }` উপেক্ষা করা হয় এবং অবজেক্টের বদলে একটি সংখ্যা ফেরত আসে। নেগেটিভ `take` থাকলে ফলব্যাক করে।",
+      "aggregate": "`take`, `skip`, `cursor` ও `orderBy` উপেক্ষা করা হয়, তাই মোট মান ভিন্ন হতে পারে।",
+      "groupBy": "`by` একটি স্ট্রিং হলে ফলব্যাক করে। অ্যাগ্রিগেট অনুযায়ী ক্রম নির্ধারণে ফলব্যাক হওয়ার কথা (যাচাই করা হয়নি)।",
+      "create, createMany, createManyAndReturn": "রাইট ইন্টারসেপ্ট করা হয় না।",
+      "update, updateMany, updateManyAndReturn": "রাইট ইন্টারসেপ্ট করা হয় না।",
+      "upsert, delete, deleteMany": "রাইট ইন্টারসেপ্ট করা হয় না।",
+      "findManyStream, findManyReduceStream": "রো স্ট্রিমিং। শুধু PostgreSQL; SQLite-এ এরর থ্রো করে।",
+      "select": "স্কেলার, রিলেশন ও `_count`। অজানা ফিল্ড থাকলে ফলব্যাক করে।",
+      "include": "গভীরতা, ফ্যান-আউট বা সার্কুলার include-এর সীমা ছাড়ানো কুয়েরি ফলব্যাক করে।",
+      "omit (per query)": "উপেক্ষা করা হয়। বাদ দেওয়া ফিল্ডও ফেরত আসে।",
+      "omit (client option)": "পড়া হয় না। `new PrismaClient({ omit })`-এ বাদ দেওয়া ফিল্ডও ফেরত আসে।",
+      "distinct": "PostgreSQL DISTINCT ON ব্যবহার করে; `orderBy` distinct ফিল্ড দিয়ে শুরু না হলে ক্রম ও `take` ভিন্ন হতে পারে (যাচাই করা হয়নি)। SQLite-এ `cursor` থাকলে ফলব্যাক করে।",
+      "Negative take": "নির্বাচিত স্কেলার ফিল্ডে `orderBy` লাগে; না থাকলে ফলব্যাক করে।",
+      "cursor": "কার্সর রো না থাকলে রো ফেরত আসে; Prisma খালি তালিকা ফেরত দেয়। `orderBy` ছাড়া রোয়ের ক্রম নির্দিষ্ট নয়।",
+      "relationLoadStrategy": "উপেক্ষা করা হয়। রিলেশন কীভাবে লোড হবে তা prisma-sql প্ল্যানার ঠিক করে।",
+      "_count in select / include": "ফিল্টার করা কাউন্ট সমর্থিত। রুট `_count: true` টু-ওয়ান রিলেশনও গুনতে পারে (যাচাই করা হয়নি)।",
+      "Nested orderBy": "শুধু স্কেলার ফিল্ড। রিলেশন ফিল্ড থাকলে ফলব্যাক করে।",
+      "Nested cursor, distinct": "প্রতি প্যারেন্টে আলাদাভাবে নয়, সব প্যারেন্টের জন্য একটি ব্যাচড চাইল্ড কুয়েরিতে প্রয়োগ হয়।",
+      "not": "Prisma-এর মতোই NULL রো বাদ পড়ে।",
+      "in, notIn": "খালি তালিকা Prisma-এর মতোই আচরণ করে।",
+      "lt, lte, gt, gte": "null মান থাকলে ফলব্যাক করে।",
+      "contains, startsWith, endsWith": "Prisma-এর মতোই `%` ও `_` এস্কেপ করা হয় না।",
+      "mode: 'insensitive'": "PostgreSQL ILIKE ব্যবহার করে। SQLite-এ, যেখানে Prisma `mode` প্রত্যাখ্যান করে, prisma-sql এটি গ্রহণ করে এবং LOWER() ব্যবহার করে।",
+      "AND, OR, NOT": "Prisma-এর মতোই খালি `OR` কোনো কিছুর সাথে মেলে না।",
+      "is, isNot": "দুটিই দেওয়া হলে `isNot` বাদ দেওয়া হয়।",
+      "Scalar lists: has, hasSome, hasEvery, isEmpty, equals": "`not` শুধু `{ equals }` গ্রহণ করে। `isEmpty` NULL তালিকাকে খালি হিসেবে ধরে।",
+      "Json string_contains, string_starts_with, string_ends_with": "সবসময় কেস-ইনসেনসিটিভ এবং পুরো JSON টেক্সটের সাথে মেলানো হয়।",
+      "DbNull, JsonNull, AnyNull": "ফিল্টারটি বাদ পড়তে পারে।",
+      "null, undefined": "Prisma-এর মতোই `undefined` এড়িয়ে যাওয়া হয়।",
+      "Enum values": "`@map` নামে ম্যাপ করা হয়।",
+      "{ sort, nulls }": "SQLite NULLS FIRST / LAST এমুলেট করে।",
+      "Relation field": "টু-ওয়ান রিলেশন, নেস্টেড।",
+      "Optional relation { sort, nulls }": "prisma-sql-এর যোগ করা টাইপ এক্সটেনশন। অসমর্থিত হলে ফলব্যাক না করে এরর থ্রো করে।",
+      "groupBy having": "equals, not, gt, gte, lt, lte, in, notIn। অন্য অপারেটর থাকলে ফলব্যাক করে।",
+      "groupBy take, skip": "`orderBy` ছাড়াই গ্রহণ করা হয়; Prisma-তে এটি আবশ্যক।",
+      "aggregate take, skip, cursor, orderBy": "উপেক্ষা করা হয়।",
+      "_count: true result shape": "`{ _all: n }` ফেরত দেয়; Prisma `n` ফেরত দেয়।",
+      "$transaction(async (tx) => …)": "বেস ক্লায়েন্টে চলে। কলব্যাকের ভেতরের রিড ত্বরান্বিত হয় না।",
+      "$transaction([…])": "ত্বরান্বিত রিড Prisma ট্রানজ্যাকশনের বাইরে prisma-sql কানেকশনে চলতে পারে।",
+      "$transaction([{ model, method, args }])": "আইসোলেশন লেভেল ও টাইমআউটসহ prisma-sql-এর নিজস্ব রূপ। শুধু PostgreSQL।",
+      "findUnique batching": "প্রতিটি findUnique নিজস্ব SQL কুয়েরি চালায়।",
+      "log, $on('query')": "ত্বরান্বিত কুয়েরি Prisma লগে পৌঁছায় না। `debug` বা `onQuery` ব্যবহার করুন।",
+      "$batch, $batchCount": "এক রাউন্ড ট্রিপে একাধিক রিড। BigInt ও Decimal JS সংখ্যা হিসেবে ফেরত আসে।",
+      "createShardedReader": "raw রো ফেরত দেয়: কোনো টাইপ রূপান্তর নেই, কোনো enum ম্যাপিং নেই।",
+      "Multiple schemas (@@schema)": "স্কিমা `public`-এ নির্দিষ্ট।",
+      "Decimal": "ফ্ল্যাট রোতে স্ট্রিং, include করা রিলেশনের ভেতরে সংখ্যা। অ্যাগ্রিগেট Prisma.Decimal ফেরত দেয়।",
+      "BigInt": "ফ্ল্যাট রোতে স্ট্রিং, include করা রিলেশনের ভেতরে সংখ্যা। অ্যাগ্রিগেট bigint ফেরত দেয়।",
+      "DateTime": "PostgreSQL: ফ্ল্যাট রোতে Date, include করা রিলেশনের ভেতরে স্ট্রিং। SQLite: raw সংখ্যা বা স্ট্রিং।",
+      "Boolean": "SQLite 0 / 1 ফেরত দেয়।",
+      "Bytes": "ফ্ল্যাট রোতে Buffer, include করা রিলেশনের ভেতরে hex স্ট্রিং।",
+      "Json": "include না থাকলে SQLite raw JSON স্ট্রিং ফেরত দেয়।",
+      "Enum with @map": "স্কিমার নাম নয়, ডেটাবেসের মান ফেরত আসে।"
+    },
+    "support": {
+      "PostgreSQL, SQLite": "PostgreSQL, SQLite",
+      "No": "না",
+      "PostgreSQL (preview)": "PostgreSQL (প্রিভিউ)",
+      "PostgreSQL": "PostgreSQL",
+      "PostgreSQL, SQLite (preview)": "PostgreSQL, SQLite (প্রিভিউ)"
+    }
   }
 }

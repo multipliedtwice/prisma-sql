@@ -3,6 +3,7 @@ import Layout from './Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import en from '../i18n/en.json';
+import { localize } from '../lib/i18n';
 
 interface DocPage {
   path: string;
@@ -18,7 +19,7 @@ interface Props {
 }
 
 const { title, description, active } = Astro.props;
-const t = en;
+const t = localize(en, 'en');
 const locale = 'en';
 
 const base = '/prisma-sql';

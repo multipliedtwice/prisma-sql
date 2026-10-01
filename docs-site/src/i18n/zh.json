@@ -1,35 +1,35 @@
 {
   "meta": {
-    "title": "修复慢速 Prisma 查询 | prisma-sql",
-    "description": "prisma-sql 将受支持的 Prisma 读取查询编译为 SQL，并通过 postgres.js 或 better-sqlite3 直接执行。基准测试覆盖 Prisma v6–v8、PostgreSQL 与 SQLite。",
-    "keywords": "慢速 prisma, prisma 慢, prisma 性能, 修复慢速 prisma, 加速 prisma, prisma 优化, prisma 查询速度, postgresql, sqlite"
+    "title": "prisma-sql：加速受支持的 Prisma 读取",
+    "description": "prisma-sql 将受支持的 Prisma 读取查询编译为 SQL，并通过 postgres.js 或 better-sqlite3 执行。基准测试覆盖 Prisma v6–v8、PostgreSQL 与 SQLite。",
+    "keywords": "prisma 慢, 慢速 prisma, prisma 性能, 修复 prisma 慢, 加速 prisma, prisma 优化, prisma 查询速度, prisma 慢查询, prisma 性能问题, 让 prisma 更快, postgresql, sqlite"
   },
   "header": {
-    "cta": "加速 Prisma →"
+    "cta": "修复慢速 Prisma →"
   },
   "hero": {
-    "badge": "🚀 解决 Prisma 变慢问题",
+    "badge": "🚀 慢速 Prisma 的解决方案",
     "title": "修复慢速 Prisma 查询",
-    "titleHighlight": "立即提速 2–7 倍（最高 53.5 倍）",
-    "description": "Prisma 太慢？你并不孤单。喜欢 Prisma 的开发体验但需要更好的性能？",
-    "descriptionBold": "将慢速 Prisma 查询速度提升 2–7 倍",
-    "descriptionSuffix": "（SQLite 关系过滤最高 53.5 倍），无需修改现有查询代码。",
+    "titleHighlight": "直接执行 SQL",
+    "description": "喜欢 Prisma 的开发体验，但希望在受支持的查询结构上降低读取开销？",
+    "descriptionBold": "当前基准测试 JSON 显示了 Prisma v6、v7 和 v8 上的平均加速比",
+    "descriptionSuffix": "（受支持的 PostgreSQL 与 SQLite 读取）；各查询结构的结果不尽相同。",
     "cta1": "立即加速 Prisma",
     "cta2": "了解工作原理",
     "trustBadges": [
-      "更快的 Prisma 读取",
+      "更快的受支持读取",
       "无需改动查询",
-      "生产就绪",
-      "137 个端到端测试"
+      "当前基准测试 JSON",
+      "PostgreSQL 与 SQLite"
     ],
     "codeTitle": "一行代码解决 Prisma 慢",
     "codeSnippet": "import { PrismaClient, Prisma } from '@prisma/client'\nimport { speedExtension, convertDMMFToModels } from 'prisma-sql'\nimport postgres from 'postgres'\n\nconst sql = postgres(process.env.DATABASE_URL)\nconst models = convertDMMFToModels(Prisma.dmmf.datamodel)\n\nconst prisma = new PrismaClient().$extends(\n  speedExtension({ postgres: sql, models })\n)\n\nconst users = await prisma.user.findMany({\n  where: { status: 'ACTIVE' },\n  include: { posts: true }\n})"
   },
   "stats": [
     {
-      "value": "2–7倍",
-      "label": "更快的 Prisma 读取",
-      "subtitle": "典型加速",
+      "value": "v6–v8",
+      "label": "Prisma 覆盖范围",
+      "subtitle": "PostgreSQL 与 SQLite 基准测试矩阵",
       "color": "text-accent"
     },
     {
@@ -39,9 +39,9 @@
       "color": "text-blue-600"
     },
     {
-      "value": "137",
-      "label": "端到端测试",
-      "subtitle": "已验证的解决方案",
+      "value": "6",
+      "label": "基准测试文件",
+      "subtitle": "Prisma v6/v7/v8 × PG/SQLite",
       "color": "text-purple-600"
     },
     {
@@ -54,57 +54,57 @@
   "problem": {
     "title": "为什么 Prisma 慢？",
     "subtitle": "了解 Prisma 的演进和性能特征有助于解释为什么存在这个扩展。",
-    "historyTitle": "Prisma 的选择：优先 DX，但规模化时性能更关键",
+    "historyTitle": "Prisma 的历程：DX 优先，规模化时性能至关重要",
     "history": [
       {
         "period": "🎯 2019：现代 Prisma 的诞生",
-        "description": "Prisma 2 于 2019 年推出，推动了 TypeScript ORM 的发展：基于 schema 的类型安全访问与类型生成。引擎式架构使 Prisma 能够翻译查询、验证输入并提供一致的 API 语义。"
+        "description": "Prisma 2 于 2019 年发布，以类型安全的数据库访问和基于 schema 生成的类型改变了 TypeScript ORM 的格局。Prisma 引入了基于引擎的架构来翻译和验证查询，并提供传统 JavaScript ORM 难以实现的强保证。"
       },
       {
         "period": "⚡ 2020–2022：快速增长与功能扩展",
-        "description": "Prisma 增加了嵌套写入、事务与中间件等能力。功能更强的同时，每个查询仍要承担架构成本：请求表示、验证、执行与结果整形以匹配 Prisma API。"
+        "description": "Prisma 增加了嵌套写入、事务和中间件等强大功能。功能集不断扩展，但每个查询仍要承担架构成本：查询需要被表示、验证、执行，结果还要整形以匹配 Prisma API。"
       },
       {
         "period": "📊 2023：规模化时开销更明显",
-        "description": "在高并发与读密集的生产负载中，固定的每次查询开销变得可测量。它通常在读取、分析、聚合以及大结果集上更明显。这不是 bug，而是 Prisma 保证与 API 行为的代价。"
+        "description": "随着越来越多团队在高流量负载中部署 Prisma，固定的每次查询开销变得可测量。这在读密集型端点、分析、聚合和大结果集上最为明显。这种开销不是 bug，而是 Prisma 的保证与 API 行为的代价。"
       },
       {
         "period": "🚀 2024–2025：Prisma 持续优化性能",
-        "description": "Prisma 在此期间发布了多次重要更新，包含性能与引擎层面的改进。即便如此，相比直接执行原始 SQL，查询处理与结果整形仍会带来不可避免的额外成本。"
+        "description": "Prisma 发布了专注于性能和引擎变更的重大更新。即使有这些改进，与直接执行原始 SQL 相比，解析、验证、规划和结果整形仍有不可避免的成本。"
       },
       {
         "period": "🎯 2026：prisma-sql 扩展发布",
-        "description": "该扩展专注于读取性能。它为 findMany、findFirst、findUnique、count、aggregate、groupBy 提供更快的读取执行路径，同时保留 Prisma 用于写入、迁移、schema 管理与类型生成。上线前请确认与你的 Prisma 版本兼容。"
+        "description": "该扩展专注于读取性能。它为 findMany、findFirst、findUnique、count、aggregate 和 groupBy 绕过 Prisma 的读取执行路径，同时保留 Prisma 用于写入、迁移、schema 管理和类型生成。上线前请验证与你的 Prisma 版本的兼容性。"
       }
     ],
     "whyExists": {
       "title": "💡 为什么存在这个扩展",
-      "description": "Prisma 在类型安全、开发者体验与跨数据库一致性上做了正确的架构选择，但这些选择会带来规模化时明显的开销。此扩展不替代 Prisma，而是为读取提供更快的执行路径，保留 Prisma 的 DX。"
+      "description": "Prisma 为其目标做出了正确的架构选择：类型安全、开发者体验和跨数据库行为。但这些选择会带来规模化时明显的开销。此扩展不替代 Prisma——它为希望兼得 Prisma DX 与关键路径上更快执行速度的团队优化读取。"
     },
     "technical": [
       {
         "title": "查询转换层",
-        "description": "Prisma 将查询输入转换为特定数据库的 SQL，从而实现一致的 API 行为与跨数据库语义，但在数据库执行前会增加处理时间。",
+        "description": "Prisma 将你的查询输入转换为特定数据库的 SQL。这实现了跨数据库行为和 Prisma 的 API 语义，但在数据库收到 SQL 之前增加了处理时间。",
         "iconPath": "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
       },
       {
-        "title": "验证与保证",
-        "description": "Prisma 根据 schema 验证查询并确保 API 级别的保证。这些保障能避免一类问题，但也会增加每次查询的开销。",
+        "title": "验证与类型保证",
+        "description": "Prisma 根据 schema 验证查询并强制执行 API 级别的保证。这些保障能防止一类 bug，但也会增加每次查询的开销。",
         "iconPath": "M13 10V3L4 14h7v7l9-11h-7z"
       },
       {
         "title": "结果整形",
-        "description": "结果会被整形以匹配 Prisma 的 API 行为。这提升了 DX 与一致性，但在大结果集与复杂 include 上会增加延迟。",
+        "description": "结果会被整形以匹配 Prisma 的 API 行为。这有利于 DX 和一致性，但会增加延迟，尤其是在大结果集和复杂 include 上。",
         "iconPath": "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
       }
     ],
-    "conclusion": "此扩展通过为读取提供更快路径来补充 Prisma：保留 Prisma 的开发体验，同时在典型场景获得 2–7 倍更快的读取（SQLite 关系过滤最高 53.5 倍）。"
+    "conclusion": "此扩展为受支持的读取查询提供更快的路径，作为 Prisma 的补充。你继续使用 Prisma 管理 schema、迁移、写入和生成的类型，而生成的 SQL 通过数据库原生客户端处理选定的热点读取。"
   },
   "performance": {
     "title": "到底快多少？真实基准测试",
-    "subtitle": "Prisma v6、v7、v8、Drizzle ORM 与 Prisma-SQL 的全面对比",
-    "environment": "基准测试环境：MacBook Pro M1 • PostgreSQL 15 • SQLite 3.43 • 每个数据库 137 个测试用例",
-    "footer": "基准测试基于每个数据库 137 个 E2E 测试。Prisma v6.19.3, Prisma v7.10.0, Drizzle ORM latest.",
+    "subtitle": "基于最新基准测试 JSON，对比 Prisma v6、v7、v8、Drizzle ORM 与 prisma-sql",
+    "environment": "数据来源：当前检出代码中 benchmark-results/v6|v7|v8 × postgres|sqlite 的最新 JSON 文件",
+    "footer": "摘要由 benchmark-results 中最新的基准测试 JSON 文件生成。",
     "footerLink": "查看完整基准测试数据"
   },
   "howItWorks": {
@@ -121,18 +121,18 @@
       },
       {
         "title": "直接执行",
-        "description": "通过 postgres.js 或 better-sqlite3 直接执行读取，绕过 Prisma 读取开销"
+        "description": "通过 postgres.js 或 better-sqlite3 执行查询，绕过 Prisma 读取开销"
       },
       {
         "title": "返回兼容结果",
         "description": "结果与 Prisma 期望的结构一致。类型、IntelliSense 与现有查询代码保持不变"
       }
     ],
-    "codeExample": "const users = await prisma.user.findMany({\n  where: { status: 'ACTIVE' },\n  include: { posts: true }\n})\n\n// 读取使用直接 SQL 执行\n// 在该负载下基准约 ~1.00ms\n// 查询代码不变"
+    "codeExample": "const users = await prisma.user.findMany({\n  where: { status: 'ACTIVE' },\n  include: { posts: true }\n})\n\n// 读取使用直接 SQL 执行\n// 在该负载下基准测试约 ~1.00ms\n// 相同的 Prisma 查询代码"
   },
   "features": {
     "title": "为什么选择这个 Prisma 扩展？",
-    "subtitle": "为读取获得更快的 SQL 执行速度，同时保留 Prisma 的开发体验",
+    "subtitle": "为读取获得原始 SQL 的执行速度，同时保留 Prisma 的开发体验",
     "items": [
       {
         "title": "即时 Prisma 加速",
@@ -147,8 +147,8 @@
         "iconPath": "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
       },
       {
-        "title": "生产级验证方案",
-        "description": "137 个端到端测试验证与较新 Prisma 版本兼容。已用于生产环境加速读取。",
+        "title": "经过生产测试的方案",
+        "description": "当前的对等性测试在近期的 Prisma 版本上验证受支持的读取。在确认与你的 Prisma 版本和负载兼容后，可用于生产应用。",
         "color": "purple",
         "iconPath": "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
       },
@@ -160,7 +160,7 @@
       },
       {
         "title": "预编译选项",
-        "description": "可选生成器在构建时创建 SQL，将最热查询的开销减少到微秒。",
+        "description": "可选生成器在构建时创建 SQL，将最热查询的开销减少到微秒级。",
         "color": "yellow",
         "iconPath": "M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
       },
@@ -178,32 +178,32 @@
     "cases": [
       {
         "title": "📊 分析和报告",
-        "description": "聚合与 groupBy 往往能从直接 SQL 执行中明显受益",
+        "description": "Prisma 的聚合和 groupBy 操作能从直接 SQL 执行中显著受益",
         "color": "blue",
         "benefits": [
-          "groupBy 最高可加速约 5 倍",
-          "更快的 aggregate 查询",
+          "groupBy 快 5 倍，报表生成更快",
+          "更快的聚合查询",
           "更低延迟的实时指标"
         ]
       },
       {
         "title": "🚀 高流量 API",
-        "description": "在高并发下固定开销会叠加，尤其是读密集端点",
+        "description": "每次查询的开销在负载下不断累积，尤其是在读密集型端点上",
         "color": "purple",
         "benefits": [
           "更低的 API 响应时间",
-          "同等资源处理更多请求",
+          "每个实例处理更多请求",
           "降低基础设施成本"
         ]
       },
       {
         "title": "☁️ 无服务器函数",
-        "description": "无服务器中每毫秒都很重要：降低读取延迟",
+        "description": "在无服务器环境中每一毫秒都很重要：在关键处降低读取延迟",
         "color": "green",
         "benefits": [
-          "更好的 p95/p99 读取延迟",
-          "通过更快读取降低成本",
-          "无需重构即可提速"
+          "更好的读取 p95/p99",
+          "通过更快的读取降低成本",
+          "无需重构即可加快读取"
         ]
       },
       {
@@ -213,7 +213,7 @@
         "benefits": [
           "更快的信息流加载",
           "更快的分页",
-          "更顺滑的交互"
+          "响应更灵敏的交互"
         ]
       }
     ]
@@ -245,67 +245,67 @@
     "questions": [
       {
         "question": "为什么 Prisma 有开销？",
-        "answer": "Prisma 会增加开销，因为它实现了 API 层保证：基于 schema 的验证、一致的查询行为和结果整形。这些层带来更好的开发体验，但相比直接执行原始 SQL 会消耗更多时间。"
+        "answer": "Prisma 之所以有开销，是因为它实现了 API 保证，例如基于 schema 的验证、一致的查询行为和结果整形。这些层带来出色的开发体验，但与直接执行原始 SQL 相比会耗费时间。"
       },
       {
         "question": "如何优化 Prisma 查询？",
-        "answer": "使用此扩展优化读密集场景。它通过 postgres.js 或 better-sqlite3 直接执行读取 SQL，同时保持 Prisma 的 API 与类型。只需要对 Prisma Client 初始化做一次小改动，无需重构现有查询。"
+        "answer": "为读密集型 Prisma 负载添加此扩展即可优化。它通过 postgres.js 或 better-sqlite3 以直接 SQL 执行读取操作，同时保留 Prisma 的 API 与类型。设置只需对初始化做一次小改动，无需重构现有查询。"
       },
       {
         "question": "Prisma 比原始 SQL 慢吗？",
-        "answer": "在很多读取负载下是的，因为存在架构性开销。此扩展的目标是在保留 Prisma DX 的同时，通过直接 SQL 执行降低读取延迟。"
+        "answer": "对于许多读取负载来说，是的。与原始 SQL 执行相比存在架构性开销。此扩展旨在保留 Prisma DX 的同时，通过直接执行 SQL 降低读取延迟。"
       },
       {
         "question": "我可以在不修改现有查询的情况下加速 Prisma 吗？",
-        "answer": "可以。只需在 Prisma Client 初始化时加一次扩展，现有 Prisma 查询代码无需改变。读取会更快，同时 API、类型与 schema 保持一致。"
+        "answer": "可以。在 Prisma Client 初始化时添加一次扩展，现有 Prisma 查询代码保持不变。读取操作运行得更快，而 Prisma API、类型与 schema 保持不变。"
       },
       {
-        "question": "这在生产中有效吗？",
-        "answer": "可以。它有 137 个端到端测试，并以生产使用为目标。上线前建议确认与你的 Prisma 版本兼容，并跑一遍自己的回归测试。"
+        "question": "这能用于生产环境吗？",
+        "answer": "可以，它面向受支持读取路径上的生产使用而设计。上线前务必验证与你的 Prisma 版本的兼容性，并运行你自己的回归测试。"
       },
       {
         "question": "是什么导致 Prisma 聚合变慢？",
-        "answer": "聚合与 groupBy 往往会放大固定开销（查询处理与结果整形），并可能涉及更大的中间数据。此扩展通过直接生成并执行 SQL 来优化这些读取，通常能降低聚合型端点延迟。"
+        "answer": "聚合与 groupBy 往往会放大固定开销（查询处理与结果整形），并可能涉及更大的中间结果集。此扩展通过直接生成 SQL 来优化这些读取，通常能降低聚合密集型端点的延迟。"
       }
     ]
   },
   "cta": {
     "title": "准备好加速 Prisma 了吗？",
-    "subtitle": "加入已优化 Prisma 读取的开发者：提速 2–7 倍（最高 53.5 倍）",
+    "subtitle": "查看当前基准测试表中受支持的 PostgreSQL 与 SQLite 读取结果",
     "button1": "安装 Prisma-SQL",
     "button2": "在 GitHub 上查看"
   },
   "footer": {
-    "copyright": "© 2026 Prisma-SQL - Prisma 读取提速 2–7 倍（最高 53.5 倍）",
+    "copyright": "© 2026 Prisma-SQL - 更快的受支持 Prisma 读取",
     "tagline": "让 Prisma 变得更好"
   },
   "testingCallout": {
     "badge": "✓ 已验证",
     "title": "我们如何确保正确性？",
-    "description": "每个查询都通过 137 个端到端测试在 PostgreSQL 和 SQLite 上与 Prisma 进行验证",
+    "description": "受支持的查询在 PostgreSQL 和 SQLite 上与 Prisma 进行对照验证，基准测试报告覆盖 Prisma v6、v7、v8、Drizzle 和生成的 SQL。",
     "link": "查看测试方法论 →"
   },
   "testing": {
     "meta": {
       "title": "测试方法论 - prisma-sql",
-      "description": "全面的测试方法：137 个端到端测试确保生成的 SQL 与 Prisma 输出完全匹配",
+      "description": "受支持的查询在 PostgreSQL 和 SQLite 上与 Prisma 进行对照验证，基准测试报告对比 Prisma v6、v7、v8、Drizzle 和生成的 SQL。",
       "keywords": "prisma 测试, sql 验证, e2e 测试, orm 测试, 数据库测试"
     },
     "hero": {
       "badge": "🧪 质量保证",
       "title": "测试",
       "titleHighlight": "方法论",
-      "subtitle": "137 个端到端测试验证每个生成的 SQL 查询与 Prisma 输出完全一致"
+      "subtitle": "当前验证覆盖 PostgreSQL 与 SQLite 上的受支持读取，并提供 Prisma v6、v7、v8、Drizzle 和生成 SQL 的基准测试报告。"
     },
     "stats": [
       {
-        "value": "137",
-        "label": "端到端测试",
-        "description": "每个查询均已验证"
+        "value": "当前",
+        "label": "E2E 测试套件",
+        "description": "查询对等性已验证"
       },
       {
         "value": "100%",
-        "label": "完全对等",
+        "label": "对等性覆盖率",
         "description": "逐字节匹配"
       },
       {
@@ -389,7 +389,7 @@
           },
           {
             "label": "多 ORM 对比",
-            "description": "Prisma v6、v7、v8、Drizzle、Generated SQL"
+            "description": "Prisma v6、v7、v8、Drizzle、生成的 SQL"
           },
           {
             "label": "SQL 生成时间",
@@ -409,14 +409,14 @@
             "带 skip 和分页的 findFirst",
             "通过 ID 和唯一字段的 findUnique",
             "带 WHERE 条件的 count",
-            "聚合（sum、avg、min、max）",
+            "aggregate（sum、avg、min、max）",
             "带 HAVING 子句的 groupBy"
           ]
         },
         {
           "title": "复杂场景",
           "items": [
-            "嵌套 includes（4 层深度）",
+            "嵌套 include（4 层深度）",
             "关系过滤器（some/every/none）",
             "带窗口函数的 distinct",
             "游标分页",
@@ -493,13 +493,13 @@
         {
           "number": "5",
           "title": "性能测量",
-          "description": "验证后，5-50 次迭代测量平均执行时间。结果包括：Prisma v6、Prisma v7、Prisma v8、Drizzle ORM、Generated SQL 和 SQL 生成开销。"
+          "description": "验证后，5-50 次迭代测量平均执行时间。结果包括：Prisma v6、Prisma v7、Prisma v8、Drizzle ORM、生成的 SQL 和 SQL 生成开销。"
         }
       ]
     },
     "multiVersion": {
       "title": "多版本验证",
-      "description": "每个测试都在 Prisma v6、v7、v8 上运行，以确保跨版本兼容性：",
+      "description": "每个纳入基准测试的测试都会在受支持的情况下于 Prisma v6、v7 和 v8 上运行：",
       "v6": {
         "title": "Prisma v6 (6.19.3)",
         "items": [
@@ -519,9 +519,9 @@
       "v8": {
         "title": "Prisma v8 (8.1.0-dev.1)",
         "items": [
-          "Prisma v8",
-          "@prisma/adapter-*",
-          "PostgreSQL + SQLite"
+          "覆盖 Prisma v8 开发版",
+          "基于适配器的架构",
+          "PostgreSQL 与 SQLite 基准测试对等"
         ]
       }
     },
@@ -540,7 +540,7 @@
     },
     "cta": {
       "title": "探索完整的测试套件",
-      "subtitle": "全部 137 个测试都是开源的。查看测试代码、基准测试和验证逻辑。",
+      "subtitle": "验证套件和基准测试报告均为开源。查看测试代码、基准测试数据和对等性检查。",
       "button1": "查看测试套件 →",
       "button2": "查看基准测试"
     }
@@ -548,7 +548,7 @@
   "sqlPrevention": {
     "meta": {
       "title": "SQL 注入防护 - prisma-sql 安全",
-      "description": "SQL 注入防护方法：参数绑定、基于 Schema 的校验与 137 个安全测试（当前套件）",
+      "description": "SQL 注入防护方法：参数绑定、基于 schema 的校验，以及当前以安全为重点的测试套件",
       "keywords": "sql 注入防护, 参数化查询, sql 安全, 数据库安全, prisma 安全"
     },
     "hero": {
@@ -561,10 +561,10 @@
       {
         "value": "100%",
         "label": "参数绑定",
-        "description": "所有用户值使用占位符"
+        "description": "所有用户提供的值均使用占位符"
       },
       {
-        "value": "0",
+        "value": "零",
         "label": "值拼接",
         "description": "用户数据不出现在 SQL 文本中"
       },
@@ -574,15 +574,15 @@
         "description": "占位符与参数 1:1 对应"
       },
       {
-        "value": "137",
+        "value": "当前",
         "label": "安全测试",
-        "description": "注入尝试覆盖（当前套件）"
+        "description": "注入尝试覆盖"
       }
     ],
     "threat": {
       "title": "理解 SQL 注入",
       "subtitle": "SQL 注入仍然是最关键的 Web 应用漏洞之一",
-      "description": "当不受信任的数据被作为 SQL 文本的一部分而不是通过安全的参数绑定传入时，就会发生 SQL 注入。攻击者可能改变查询语义，从而访问未授权数据、修改记录或触发非预期操作。",
+      "description": "当不受信任的数据未经安全参数绑定就被并入 SQL 文本时，就会发生 SQL 注入。攻击者可能改变查询语义，从而访问未授权数据、修改记录或触发非预期操作。",
       "examples": {
         "title": "常见攻击模式",
         "items": [
@@ -604,7 +604,7 @@
           {
             "name": "参数顺序错配滥用",
             "attack": "利用：如果占位符与参数错配，权限检查可能使用错误的值",
-            "description": "示例：WHERE userId=$1 AND isAdmin=$2，但 params=[true, 123] 而不是 [123, true] 可能错误授予管理员权限"
+            "description": "示例：WHERE userId=$1 AND isAdmin=$2，但 params=[true, 123] 而不是 [123, true]，可能错误授予管理员权限"
           }
         ]
       }
@@ -615,7 +615,7 @@
       "layers": [
         {
           "title": "第1层：自动参数绑定",
-          "description": "所有用户值会被转换为绑定参数。用户值不会作为字面量进入 SQL 文本。",
+          "description": "所有用户提供的值都会转换为绑定参数。值不会以字面量形式进入 SQL 文本。",
           "guarantees": [
             "用户值使用方言相关的占位符表示（例如 $1 或 ?）",
             "数组输入会被参数化（展开为多个占位符或作为数组参数，取决于方言/策略）",
@@ -637,13 +637,13 @@
         },
         {
           "title": "第3层：标识符净化",
-          "description": "表名、列名与别名会被校验，并在需要时按方言安全加引号/转义。",
+          "description": "表名、列名与别名会被校验，并在需要时安全地加引号/转义。",
           "guarantees": [
             "拒绝控制字符",
             "保留关键字在需要时加引号",
             "在配置时支持 schema 限定引用",
-            "标识符按方言规则转义（例如双引号转义）",
-            "按方言规则强制标识符最大长度"
+            "标识符使用双引号转义（或方言等价方式）",
+            "按方言强制标识符最大长度"
           ]
         },
         {
@@ -659,13 +659,13 @@
         },
         {
           "title": "第5层：参数顺序保证",
-          "description": "严格顺序确保每个占位符位置都映射到对应参数，避免错配。",
+          "description": "严格的顺序确保每个占位符按插入顺序恰好映射到一个参数，防止错配。",
           "guarantees": [
             "顺序计数器防止重新排序",
             "SQL 构建与参数数组同步构造",
             "没有中间缓冲或重新排序步骤",
             "测试验证：生成的 SQL 与参数始终一致",
-            "一对一对应：位置 N → params[N-1]（或该方言的等价映射）"
+            "一对一对应：占位符 N → params[N-1]（或该方言的等价映射）"
           ]
         }
       ]
@@ -701,14 +701,14 @@
         {
           "title": "定理5：参数顺序一致性",
           "statement": "对 SQL 文本中出现的每个占位符位置 N，params[N-1] 都是该位置预期的确切值，不会发生重排或错配。",
-          "proof": "参数顺序保证：\n1. 单一追踪器维护插入顺序\n2. 每次 add() 都先追加值到 params，再立刻返回下一占位符\n3. SQL 构建与 params 构建同步进行\n4. 不存在中间重排步骤\n∴ 一对一映射始终成立",
+          "proof": "参数顺序保证：\n1. 单一追踪器维护插入顺序\n2. 每次 add() 调用都会将值追加到 params，并立即返回下一个占位符 token\n3. SQL 文本构建与 params 构建同步进行\n4. 不存在中间重排步骤\n∴ 一对一映射始终成立",
           "code": "class ParameterTracker {\n  private params: any[] = []\n\n  add(value: any): string {\n    this.params.push(value)\n    return `$${this.params.length}`\n  }\n\n  getParams(): any[] {\n    return this.params\n  }\n}\n\nconst tracker = new ParameterTracker()\nconst sql = `WHERE email = ${tracker.add(email)} AND age > ${tracker.add(age)}`\nconst params = tracker.getParams()"
         }
       ]
     },
     "testCoverage": {
       "title": "全面的安全测试覆盖",
-      "subtitle": "137 个测试验证对常见 SQL 注入向量与边缘情况的防护（当前套件）",
+      "subtitle": "当前套件验证对常见 SQL 注入向量与边缘情况的防护",
       "categories": [
         {
           "title": "值参数化 (basic.test.ts)",
@@ -793,7 +793,7 @@
       "sections": [
         {
           "title": "参数管理",
-          "description": "集中式参数跟踪确保每个用户值都被绑定且顺序稳定",
+          "description": "集中式参数跟踪确保每个用户提供的值都经过参数绑定且顺序稳定",
           "code": "class ParameterTracker {\n  private params: any[] = []\n\n  add(value: any): string {\n    this.params.push(value)\n    return `$${this.params.length}`\n  }\n\n  getParams(): any[] {\n    return this.params\n  }\n}"
         },
         {
@@ -815,11 +815,11 @@
           "title": "永远不要禁用验证",
           "description": "不要绕过 schema 验证或字段检查。这些是关键的安全层。",
           "do": "按设计使用库并进行完整验证",
-          "dont": "绕过 schema 验证或将 raw SQL 写入 SQL 文本"
+          "dont": "绕过 schema 验证或将原始 SQL 注入查询文本"
         },
         {
           "title": "保持 Schema 更新",
-          "description": "确保您的 Prisma schema 准确反映数据库结构。",
+          "description": "确保你的 Prisma schema 准确反映数据库结构。",
           "do": "在 schema 更改后运行 prisma db pull 和 prisma generate",
           "dont": "使用过时的 DMMF 或 schema 定义"
         },
@@ -840,7 +840,7 @@
     "securityCallout": {
       "badge": "🔒 安全验证",
       "title": "我们如何防止 SQL 注入？",
-      "description": "多层校验：参数绑定、基于 Schema 的字段检查与 137 个安全测试（当前套件）",
+      "description": "多层校验：参数绑定、基于 schema 的字段检查，以及当前的安全测试套件",
       "link": "查看安全详情 →"
     },
     "cta": {
@@ -882,6 +882,241 @@
       "highVariance": "高方差"
     },
     "regressionWarning": "{count} 项测试出现超过 {threshold}ms 阈值的统计显著性回归。",
-    "viewRawData": "在 GitHub 上查看原始基准测试数据 →"
+    "viewRawData": "在 GitHub 上查看原始基准测试数据 →",
+    "methodology": {
+      "title": "方法论",
+      "lines": [
+        "复现方式：`npm run bench`（`BENCHMARK_JSON_OUTPUT=1` 会写出 JSON）。结果保存在 `benchmark-results/summary-<date>.json`；本页面数据来自 `v<N>-<dialect>-latest.json`。",
+        "所有客户端（Prisma、prisma-sql、Drizzle）的每个查询都针对同一个数据库运行。每个测试的样本量显示在 n 列中。",
+        "每一方报告：平均值、中位数、标准差、p95、p99、CV%。显著性采用 Welch t 检验并设置 1ms 实际阈值；误差线为 95% 置信区间。",
+        "测量的是运行时模式：每次请求都会转换 SQL。预渲染（@optimize）查询完全跳过转换，速度比此处显示的更快。",
+        "不同运行之间的硬件和版本各不相同——每个 JSON 文件都带有自己的时间戳。请比较同一台机器上的运行结果。"
+      ]
+    }
+  },
+  "extras": {
+    "badge": "Prisma API 之外的额外功能",
+    "title": "不止于更快的读取",
+    "subtitle": "prisma-sql 增加了 Prisma Client 所没有的能力。相同的类型，相同的代码风格。",
+    "items": [
+      {
+        "name": "$batch",
+        "tagline": "N 个仪表盘查询，一次往返",
+        "description": "将独立的读取合并为一次 PostgreSQL 往返。返回带类型的对象结果，无需手动处理 Promise.all。",
+        "code": "const dash = await prisma.$batch((b) => ({\n  users: b.user.count(),\n  posts: b.post.findMany({ take: 10 }),\n  stats: b.task.aggregate({ _count: true }),\n}))"
+      },
+      {
+        "name": "@optimize",
+        "tagline": "预先生成最热查询",
+        "description": "在 schema.prisma 中为模型添加注解。在 generate 时生成确切的 SQL；运行时匹配的查询结构完全跳过转换。",
+        "code": "/// @optimize {\n///   \"method\": \"findMany\",\n///   \"query\": {\n///     \"where\": { \"status\": \"$status\" },\n///     \"take\": \"$take\"\n///   }\n/// }\nmodel User { ... }"
+      },
+      {
+        "name": "基数规划器",
+        "tagline": "策略由数据决定，而非猜测",
+        "description": "收集的关系统计信息驱动策略在扁平 JOIN、关联子查询和 where-in 分段加载之间切换。大型子表永远不会触发逐父记录扫描。",
+        "code": "prisma-sql-collect-stats \\\n  --output dist/planner.generated.js \\\n  --prisma-client dist/client/index.js"
+      }
+    ]
+  },
+  "parity": {
+    "title": "哪些运行更快，哪些仍由 Prisma 执行",
+    "subtitle": "我们检查过的每个 Prisma Client 功能，覆盖 PostgreSQL 和 SQLite。写入仍由 Prisma 执行；在查询结构受支持时，读取会被编译为 SQL。",
+    "link": "打开完整的对等性对照表",
+    "summary": "在已检查的 {total} 个功能中，有 {accelerated} 个在 PostgreSQL 上完全加速。{differs} 个可能返回与 Prisma 不同的结果；完整对照表列出了每一项及其原因。"
+  },
+  "ui": {
+    "nav": {
+      "main": "主页",
+      "docs": "文档",
+      "parity": "对等性",
+      "benchmarks": "基准测试",
+      "github": "GitHub 上的 prisma-sql",
+      "npm": "npm 上的 prisma-sql"
+    },
+    "footer": {
+      "product": "产品",
+      "elsewhere": "其他链接",
+      "language": "语言",
+      "docs": "文档",
+      "parity": "Prisma 对等性对照表",
+      "benchmarks": "基准测试",
+      "testing": "测试",
+      "security": "SQL 注入防护",
+      "changelog": "更新日志"
+    },
+    "hero": {
+      "copy": "复制",
+      "copied": "已复制",
+      "copyFailed": "请选中后复制",
+      "copiedStatus": "已复制 {text}",
+      "figureLabel": "一个 Prisma 查询及 prisma-sql 为其生成的 SQL",
+      "yourCall": "你的 Prisma 调用",
+      "sqlRuns": "prisma-sql 执行的 SQL",
+      "database": "数据库",
+      "params": "参数",
+      "statement": "1 条语句",
+      "caption": "<code>createToSQL</code> 针对两个模型的 schema 的输出，已添加换行。"
+    },
+    "performance": {
+      "noData": "未找到基准测试 JSON 文件。",
+      "casesPerRun": "每次运行 {count} 个查询用例",
+      "vsDrizzle": "{speed}（相较于 Drizzle）",
+      "measured": "{count} 个已测量的查询用例，相较于 Prisma 的平均值",
+      "srRow": "{label}：相较于 Prisma 平均加速 {speed}",
+      "note": "在构建时根据最新的 <code>benchmark-results/*-latest.json</code> 文件生成。两个数据库的柱状图使用同一刻度；琥珀色标记每个数据库的最佳运行。各查询结构的结果不尽相同。",
+      "perQuery": "逐查询表格"
+    },
+    "howItWorks": {
+      "files": [
+        "generated/sql，节选",
+        "PostgreSQL 的 SQL",
+        "generated/sql，节选",
+        "users.ts"
+      ],
+      "resultNote": "// 与 Prisma Client 推断的类型相同。\n// Decimal、BigInt 和 DateTime 值可能\n// 不同；对等性对照表列出了每种情况。"
+    },
+    "installation": {
+      "sqliteNote": "SQLite：传入 <code>speedExtension({ sqlite: db })</code>，其中 db 为 <code>better-sqlite3</code> 数据库。",
+      "guide": "完整安装指南"
+    },
+    "parity": {
+      "stripLabel": "PostgreSQL 与 SQLite 上每个已检查的 Prisma Client 功能的状态，按领域分组。使用方向键在功能之间移动。",
+      "tileLabel": "{feature}，{db}：{status}",
+      "tableCaption": "按状态统计的功能数量",
+      "status": "状态",
+      "supportedOn": "Prisma 支持情况：{value}",
+      "inferred": "根据源代码推断；未经测试运行确认。"
+    },
+    "queryStrip": {
+      "title": "所有已基准测试的查询，共 {count} 种结构",
+      "caption": "每个柱代表最新一次运行中的一种查询结构。向上表示比 Prisma 快，向下表示更慢，对数刻度。",
+      "faster": "快 {value}×",
+      "slower": "{value}×（更慢）",
+      "notRun": "未运行"
+    },
+    "security": {
+      "do": "应该",
+      "dont": "不应该",
+      "unsafeFile": "unsafe.ts",
+      "safeFile": "safe.ts"
+    },
+    "benchmarks": {
+      "region": "逐查询基准测试结果"
+    }
+  },
+  "parityData": {
+    "status": {
+      "accelerated": {
+        "label": "已加速",
+        "description": "编译为 SQL，并通过 postgres.js 或 better-sqlite3 执行。"
+      },
+      "partial": {
+        "label": "部分加速",
+        "description": "编译为 SQL；部分参数结构会回退到 Prisma。"
+      },
+      "fallback": {
+        "label": "回退",
+        "description": "SQL 构建器拒绝该查询，由 Prisma 执行。结果相同，没有加速。"
+      },
+      "prisma": {
+        "label": "由 Prisma 执行",
+        "description": "不拦截。Prisma Client 照常执行。"
+      },
+      "differs": {
+        "label": "可能不同",
+        "description": "已加速，但结果可能与 Prisma 不同，且不会报错。"
+      },
+      "missing": {
+        "label": "不可用",
+        "description": "Prisma 支持；prisma-sql 没有对应实现。"
+      },
+      "extra": {
+        "label": "仅 prisma-sql",
+        "description": "由 prisma-sql 添加。不属于 Prisma Client API。"
+      },
+      "na": {
+        "label": "Prisma 不支持",
+        "description": "Prisma 在该数据库上不支持此功能。"
+      },
+      "unknown": {
+        "label": "未检查",
+        "description": "尚未检查在该数据库上的行为。"
+      }
+    },
+    "groups": {
+      "Model methods": "模型方法",
+      "Query options": "查询选项",
+      "Filters": "过滤器",
+      "Ordering": "排序",
+      "Aggregates": "聚合",
+      "Client API": "客户端 API",
+      "Result types": "结果类型"
+    },
+    "notes": {
+      "findMany": "编译为 SQL。",
+      "findFirst": "以 LIMIT 1 编译。`cursor` 和负数 `take` 会被忽略。`distinct` 会回退。",
+      "findUnique": "`a_b: { a, b }` 这类复合唯一键会回退。",
+      "findUniqueOrThrow, findFirstOrThrow": "不拦截。",
+      "count": "`select: { _all, field }` 会被忽略，返回数字而不是对象。负数 `take` 会回退。",
+      "aggregate": "`take`、`skip`、`cursor` 和 `orderBy` 会被忽略，因此合计值可能不同。",
+      "groupBy": "`by` 为单个字符串时会回退。按聚合值排序预计会回退（未验证）。",
+      "create, createMany, createManyAndReturn": "不拦截写入操作。",
+      "update, updateMany, updateManyAndReturn": "不拦截写入操作。",
+      "upsert, delete, deleteMany": "不拦截写入操作。",
+      "findManyStream, findManyReduceStream": "逐行流式读取。仅支持 PostgreSQL；SQLite 会抛出错误。",
+      "select": "标量、关系和 `_count`。未知字段会回退。",
+      "include": "超出深度、扇出或循环 include 限制的查询会回退。",
+      "omit (per query)": "被忽略。被省略的字段仍会返回。",
+      "omit (client option)": "不读取。在 `new PrismaClient({ omit })` 中省略的字段仍会返回。",
+      "distinct": "PostgreSQL 使用 DISTINCT ON；当 `orderBy` 不以 distinct 字段开头时，顺序和 `take` 可能不同（未验证）。SQLite 配合 `cursor` 时会回退。",
+      "Negative take": "需要在已选择的标量字段上设置 `orderBy`；否则回退。",
+      "cursor": "当游标行不存在时仍会返回行；Prisma 返回空列表。未指定 `orderBy` 时，行顺序不固定。",
+      "relationLoadStrategy": "被忽略。由 prisma-sql 规划器决定关系的加载方式。",
+      "_count in select / include": "支持带过滤的计数。根级 `_count: true` 可能也会统计对一关系（未验证）。",
+      "Nested orderBy": "仅支持标量字段。关系字段会回退。",
+      "Nested cursor, distinct": "应用于跨所有父记录的一次批量子查询，而不是按每个父记录分别应用。",
+      "not": "与 Prisma 一样，排除 NULL 行。",
+      "in, notIn": "空列表的行为与 Prisma 相同。",
+      "lt, lte, gt, gte": "null 值会回退。",
+      "contains, startsWith, endsWith": "与 Prisma 一样，不转义 `%` 和 `_`。",
+      "mode: 'insensitive'": "PostgreSQL 使用 ILIKE。在 SQLite 上 Prisma 会拒绝 `mode`，而 prisma-sql 接受它并使用 LOWER()。",
+      "AND, OR, NOT": "与 Prisma 一样，空 `OR` 不匹配任何行。",
+      "is, isNot": "两者同时提供时，`isNot` 会被丢弃。",
+      "Scalar lists: has, hasSome, hasEvery, isEmpty, equals": "`not` 仅接受 `{ equals }`。`isEmpty` 将 NULL 列表视为空。",
+      "Json string_contains, string_starts_with, string_ends_with": "始终不区分大小写，并针对整个 JSON 文本进行匹配。",
+      "DbNull, JsonNull, AnyNull": "该过滤条件可能被丢弃。",
+      "null, undefined": "与 Prisma 一样，跳过 `undefined`。",
+      "Enum values": "映射为 `@map` 名称。",
+      "{ sort, nulls }": "SQLite 模拟 NULLS FIRST / LAST。",
+      "Relation field": "对一关系，支持嵌套。",
+      "Optional relation { sort, nulls }": "prisma-sql 添加的类型扩展。不受支持时抛出错误，而不是回退。",
+      "groupBy having": "equals、not、gt、gte、lt、lte、in、notIn。其他操作符会回退。",
+      "groupBy take, skip": "无需 `orderBy` 即可使用；Prisma 要求提供它。",
+      "aggregate take, skip, cursor, orderBy": "被忽略。",
+      "_count: true result shape": "返回 `{ _all: n }`；Prisma 返回 `n`。",
+      "$transaction(async (tx) => …)": "在基础客户端上运行。回调内的读取不会被加速。",
+      "$transaction([…])": "加速的读取可能在 prisma-sql 连接上运行，处于 Prisma 事务之外。",
+      "$transaction([{ model, method, args }])": "prisma-sql 专有形式，支持隔离级别和超时。仅支持 PostgreSQL。",
+      "findUnique batching": "每个 findUnique 都执行各自的 SQL 查询。",
+      "log, $on('query')": "加速的查询不会出现在 Prisma 日志中。请使用 `debug` 或 `onQuery`。",
+      "$batch, $batchCount": "一次往返执行多个读取。BigInt 和 Decimal 以 JS number 返回。",
+      "createShardedReader": "返回原始行：不做类型转换，不做枚举映射。",
+      "Multiple schemas (@@schema)": "schema 固定为 `public`。",
+      "Decimal": "扁平行中为字符串，被 include 的关系中为数字。聚合返回 Prisma.Decimal。",
+      "BigInt": "扁平行中为字符串，被 include 的关系中为数字。聚合返回 bigint。",
+      "DateTime": "PostgreSQL：扁平行中为 Date，被 include 的关系中为字符串。SQLite：原始数字或字符串。",
+      "Boolean": "SQLite 返回 0 / 1。",
+      "Bytes": "扁平行中为 Buffer，被 include 的关系中为十六进制字符串。",
+      "Json": "没有 include 时，SQLite 返回原始 JSON 字符串。",
+      "Enum with @map": "返回数据库中的值，而不是 schema 中的名称。"
+    },
+    "support": {
+      "PostgreSQL, SQLite": "PostgreSQL、SQLite",
+      "No": "不支持",
+      "PostgreSQL (preview)": "PostgreSQL（预览）",
+      "PostgreSQL": "PostgreSQL",
+      "PostgreSQL, SQLite (preview)": "PostgreSQL、SQLite（预览）"
+    }
   }
 }

@@ -7,6 +7,7 @@ import {
   type BenchmarkStats,
   type BenchmarkTest,
 } from '../lib/benchmark-data'
+import { fill, formatDate } from '../lib/i18n'
 
 interface Props {
   t: any
@@ -85,14 +86,6 @@ function fmtX(n: number): string {
 function ciMargin(stats: BenchmarkStats): number {
   if (stats.iterations < 2) return 0
   return 1.96 * stats.stdDev / Math.sqrt(stats.iterations)
-}
-
-function tpl(template: string, vars: Record<string, string | number>): string {
-  let out = template
-  for (const [k, v] of Object.entries(vars)) {
-    out = out.replaceAll(`{${k}}`, String(v))
-  }
-  return out
 }
 
 const results: BenchmarkResult[] = loadBenchmarkResults()
@@ -215,30 +208,30 @@ const b = t.benchmarks
               </h3>
               <div class="flex flex-wrap gap-3 text-sm">
                 <span class="bg-pine/40 text-[#9FE3C3] px-3 py-1 rounded-full">
-                  {tpl(b.avgVsPrisma, { speed: fmtX(p.result.avgSpeedupVsPrisma) })}
+                  {fill(b.avgVsPrisma, { speed: fmtX(p.result.avgSpeedupVsPrisma) })}
                 </span>
                 {p.result.avgSpeedupVsDrizzle > 0 && (
                   <span class="bg-steel/40 text-[#C4DAF5] px-3 py-1 rounded-full">
-                    {tpl(b.avgVsDrizzle, { speed: fmtX(p.result.avgSpeedupVsDrizzle) })}
+                    {fill(b.avgVsDrizzle, { speed: fmtX(p.result.avgSpeedupVsDrizzle) })}
                   </span>
                 )}
                 <span class="bg-white/[0.08] text-[#AFC2CC] px-3 py-1 rounded-full">
-                  {tpl(b.significantWins, { count: String(p.significantWins), total: String(p.tests.length) })}
+                  {fill(b.significantWins, { count: String(p.significantWins), total: String(p.tests.length) })}
                 </span>
                 {p.withinNoise > 0 && (
                   <span class="bg-white/[0.08] text-[#8FA6B3] px-3 py-1 rounded-full">
-                    {tpl(b.withinNoise, { count: String(p.withinNoise) })}
+                    {fill(b.withinNoise, { count: String(p.withinNoise) })}
                   </span>
                 )}
               </div>
               {p.result.timestamp && (
                 <span class="text-xs text-[#8FA6B3] ml-auto">
-                  {new Date(p.result.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                  {formatDate(p.result.timestamp, t.locale)}
                 </span>
               )}
             </div>
 
-            <div class="max-h-[min(70vh,40rem)] overflow-auto rounded-2xl border border-white/10" tabindex="0" role="region" aria-label="Per-query benchmark results">
+            <div class="max-h-[min(70vh,40rem)] overflow-auto rounded-2xl border border-white/10" tabindex="0" role="region" aria-label={t.ui.benchmarks.region}>
               <table class="w-full text-sm">
                 <thead class="sticky top-0 z-[1] bg-[#0b2e42]">
                   <tr class="text-[#AFC2CC] text-xs">
@@ -333,7 +326,7 @@ const b = t.benchmarks
               <span><span class="text-[#9FE3C3] font-mono">**</span>&ensp;{b.legend.p01}</span>
               <span><span class="text-[#9FE3C3] font-mono">*</span>&ensp;&ensp;{b.legend.p05}</span>
               <span><span class="text-[#8FA6B3]">ns</span>&ensp;{b.legend.ns}</span>
-              <span><span class="text-[#8FA6B3]">≈</span>&ensp;{tpl(b.legend.noiseFloor, { threshold: String(PRACTICAL_THRESHOLD_MS) })}</span>
+              <span><span class="text-[#8FA6B3]">≈</span>&ensp;{fill(b.legend.noiseFloor, { threshold: String(PRACTICAL_THRESHOLD_MS) })}</span>
               <span>±&ensp;{b.legend.ci}</span>
               <span><span class="text-amber">CV% &gt; 15%</span> = {b.legend.highVariance}</span>
             </div>
@@ -350,7 +343,7 @@ const b = t.benchmarks
 
             {p.significantRegressions > 0 && (
               <div class="mt-4 bg-oxide/20 border border-oxide/40 rounded-2xl px-4 py-3 text-sm text-[#FFB4A4]">
-                {tpl(b.regressionWarning, { count: String(p.significantRegressions), threshold: String(PRACTICAL_THRESHOLD_MS) })}
+                {fill(b.regressionWarning, { count: String(p.significantRegressions), threshold: String(PRACTICAL_THRESHOLD_MS) })}
               </div>
             )}
           </div>

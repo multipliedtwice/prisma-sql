@@ -924,5 +924,85 @@
     "subtitle": "Every Prisma Client feature we checked, on PostgreSQL and SQLite. Writes stay in Prisma; reads are compiled to SQL where the shape is supported.",
     "link": "Open the full parity map",
     "summary": "{accelerated} of {total} checked features are fully accelerated on PostgreSQL. {differs} can return a different result than Prisma; the full map lists each one with the reason."
+  },
+  "ui": {
+    "nav": {
+      "main": "Main",
+      "docs": "Docs",
+      "parity": "Parity",
+      "benchmarks": "Benchmarks",
+      "github": "prisma-sql on GitHub",
+      "npm": "prisma-sql on npm"
+    },
+    "footer": {
+      "product": "Product",
+      "elsewhere": "Elsewhere",
+      "language": "Language",
+      "docs": "Documentation",
+      "parity": "Prisma parity map",
+      "benchmarks": "Benchmarks",
+      "testing": "Testing",
+      "security": "SQL injection prevention",
+      "changelog": "Changelog"
+    },
+    "hero": {
+      "copy": "Copy",
+      "copied": "Copied",
+      "copyFailed": "Select and copy",
+      "copiedStatus": "Copied {text}",
+      "figureLabel": "A Prisma query and the SQL prisma-sql generates for it",
+      "yourCall": "Your Prisma call",
+      "sqlRuns": "SQL that prisma-sql runs",
+      "database": "Database",
+      "params": "params",
+      "statement": "1 statement",
+      "caption": "Output of <code>createToSQL</code> for a two-model schema, line breaks added."
+    },
+    "performance": {
+      "noData": "No benchmark JSON files found.",
+      "casesPerRun": "{count} query cases per run",
+      "vsDrizzle": "{speed} vs Drizzle",
+      "measured": "{count} measured query cases, average vs Prisma",
+      "srRow": "{label}: {speed} average speedup versus Prisma",
+      "note": "Generated at build time from the latest <code>benchmark-results/*-latest.json</code> files. Bars share one scale across both databases; amber marks the best run per database. Individual query shapes vary.",
+      "perQuery": "Per-query table"
+    },
+    "howItWorks": {
+      "files": [
+        "generated/sql, excerpt",
+        "SQL for PostgreSQL",
+        "generated/sql, excerpt",
+        "users.ts"
+      ],
+      "resultNote": "// Same inferred types as Prisma Client.\n// Decimal, BigInt and DateTime values can\n// differ; the parity map lists each case."
+    },
+    "installation": {
+      "sqliteNote": "SQLite: pass <code>speedExtension({ sqlite: db })</code> with a <code>better-sqlite3</code> database.",
+      "guide": "Full setup guide"
+    },
+    "parity": {
+      "stripLabel": "Status of each checked Prisma Client feature on PostgreSQL and SQLite, grouped by area. Use arrow keys to move between features.",
+      "tileLabel": "{feature}, {db}: {status}",
+      "tableCaption": "Feature count by status",
+      "status": "Status",
+      "supportedOn": "Prisma supports it on: {value}",
+      "inferred": "Inferred from the source; not confirmed by a test run."
+    },
+    "queryStrip": {
+      "title": "Every benchmarked query, {count} shapes",
+      "caption": "Each bar is one query shape from the latest run. Up is faster than Prisma, down is slower, log scale.",
+      "faster": "{value}× faster",
+      "slower": "{value}× (slower)",
+      "notRun": "not run"
+    },
+    "security": {
+      "do": "Do",
+      "dont": "Don't",
+      "unsafeFile": "unsafe.ts",
+      "safeFile": "safe.ts"
+    },
+    "benchmarks": {
+      "region": "Per-query benchmark results"
+    }
   }
 }
