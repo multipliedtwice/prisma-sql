@@ -146,9 +146,9 @@ jobs:
           NPM_CONFIG_PROVENANCE: true
 
   build-docs:
-    needs: publish
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    env:
+      ASTRO_TELEMETRY_DISABLED: '1'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -162,12 +162,13 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci
-          cd docs-site && npm install
+          cd docs-site && npm ci
 
       - name: Build Astro site
         run: cd docs-site && npm run build
 
       - name: Upload artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./docs
@@ -177,7 +178,9 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build-docs
+    needs:
+      - publish
+      - build-docs
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Deploy to GitHub Pages
