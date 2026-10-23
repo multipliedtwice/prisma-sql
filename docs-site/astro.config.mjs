@@ -1,5 +1,4 @@
 import { defineConfig } from 'astro/config';
-import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 import { isTranslation } from './src/lib/i18n-coverage.mjs';
 
@@ -8,7 +7,6 @@ export default defineConfig({
   base: '/prisma-sql',
   outDir: '../docs',
   integrations: [
-    tailwind(),
     sitemap({
       filter: (page) => {
         const { pathname } = new URL(page);
