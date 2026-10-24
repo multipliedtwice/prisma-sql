@@ -1,3 +1,10 @@
+## [1.93.1](https://github.com/multipliedtwice/prisma-sql/compare/v1.93.0...v1.93.1) (2026-10-24)
+
+
+### Bug Fixes
+
+* **deps:** patch vulnerable dependencies ([8e9cdba](https://github.com/multipliedtwice/prisma-sql/commit/8e9cdbadb11a5ab0e5a9dcb5ce86f006fb55fbb0))
+
 # [1.93.0](https://github.com/multipliedtwice/prisma-sql/compare/v1.92.0...v1.93.0) (2026-09-30)
 
 
